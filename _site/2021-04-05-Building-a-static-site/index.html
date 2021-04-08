@@ -214,7 +214,7 @@
 
 
   
-  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 1 minute read</span>
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 2 minute read</span>
 
 
             
@@ -250,7 +250,7 @@
 
 
   
-  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 1 minute read</span>
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 2 minute read</span>
 
 
             
@@ -313,9 +313,9 @@
 
 <h2 id="steps-for-generating-simple-static-site">Steps for generating simple static site</h2>
 
-<ol>
+<ul>
   <li>Clone from beautiful-jekyll : Derived From <a href="https://stackoverflow.com/questions/6613166/how-to-duplicate-a-git-repository-without-forking">Here</a></li>
-</ol>
+</ul>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
@@ -330,21 +330,94 @@
 11
 12
 13
+14
+15
+16
 </pre></td><td class="code"><pre><span class="nv">$ </span><span class="nb">mkdir </span>foo<span class="p">;</span> <span class="nb">cd </span>foo
-<span class="c"># move to a scratch dir</span>
+<span class="c">#move to a scratch dir</span>
 
 <span class="nv">$ </span>git clone <span class="nt">--bare</span> git@github.com:daattali/beautiful-jekyll.git
-<span class="c"># make a bare clone of this amazing template</span>
+<span class="c">#make a bare clone of this amazing template</span>
 
 <span class="nv">$ </span><span class="nb">cd </span>beautiful-jekyll
 <span class="nv">$ </span>git push <span class="nt">--mirror</span> git@github.com:exampleuser/exampleuser.github.io.git
-<span class="c"># push to the github page source</span>
+<span class="c">#push to the github page source</span>
 
 <span class="nv">$ </span><span class="nb">cd</span> ../
 <span class="nv">$ </span><span class="nb">rm</span> <span class="nt">-rf</span> beautiful-jekyll
-<span class="c"># remove temporary directory</span>
+<span class="c">#remove temporary directory</span>
+
+<span class="nv">$ </span>git clone git@github.com:exampleuser/exampleuser.github.io.git
+<span class="c">#Assuming Github Page setup already done</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
+<ul>
+  <li>
+    <p>Adding your content : Please refer to the <a href="https://github.com/daattali/beautiful-jekyll">home page</a></p>
+  </li>
+  <li>
+    <p>Deploying site locally : This is a must step for smooth content creation. I will present the minimum steps needed. Please refer to <a href="https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll">this</a> and <a href="https://jekyllrb.com/docs/installation/">this</a></p>
+  </li>
+</ul>
+
+<p class="box-warning"><strong>Warning:</strong> The commands presented here have been tested on Ubuntu 20.04 and were run on bash terminal. In case your system is very different (Ubuntu older versions should work fine) and you are not familiar with commands please refer to the source given above.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="code"><pre><span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install </span>ruby-full build-essential zlib1g-dev
+<span class="c">#install ruby and other required packages</span>
+
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'# Install Ruby Gems to ~/gems'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'export GEM_HOME="$HOME/gems"'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'export PATH="$HOME/gems/bin:$PATH"'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nv">$ </span><span class="nb">source</span> ~/.bashrc
+<span class="c">#These steps setup the gem(RubyGems Packages) installation directory</span>
+<span class="c">#your user account and update the environment variables.</span>
+
+<span class="nv">$ </span>gem <span class="nb">install </span>jekyll bundler
+<span class="c">#install jekyll and bundler : will take some time</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li>Build the site : The page will be automatically update whenever you change some file except configuration files. In the later case you need to repeat only last step again.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="code"><pre><span class="nv">$ </span><span class="nb">cd </span>exampleuser.github.io
+<span class="c">#move to the source folder(depends on where you cloned the repo)</span>
+
+<span class="nv">$ </span>bundle <span class="nb">install</span>
+<span class="c">#setup gem files</span>
+
+<span class="nv">$ </span>bundle <span class="nb">exec </span>jekyll serve
+<span class="c">#Ctrl+click on the local host server : You are all set</span>
+<span class="c">#Run this command if you changed some configration file</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<ul>
+  <li>That completes the process. Please refer to the jekyll docs and beautiful-jekyll homepage to learn about front matter, directory structure and different
+customization options available.</li>
+</ul>
+
+<p><strong>Thanks</strong></p>
 
       </article>
 
