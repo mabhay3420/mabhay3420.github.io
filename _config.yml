@@ -14,12 +14,13 @@ author: Abhay mishra
 # --- List of links in the navigation bar --- #
 
 navbar-links:
-  Home: "https://mabhay3420.github.io"
+  Home: "."
   About Me: "aboutme"
   Resources:
     - Visualize Algorithms: "https://visualgo.net/en"
     - LSTM: "http://colah.github.io/posts/2015-08-Understanding-LSTMs/"
-  Perosnal Blogs: "https://mabhay3420.github.io/personal-blog/"
+    - C++ STL: "http://www.martinbroadhurst.com/stl/"
+  # Perosnal Blogs: "https://mabhay3420.github.io/personal-blog/"
 
 # --- Logo --- #
 

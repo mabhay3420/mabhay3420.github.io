@@ -2,8 +2,8 @@
 layout: post
 title: How I build a simple static site
 subtitle: Use beautiful-jekyll template
-cover-img: assets/img/pexels-markus-spiske-1089438.jpg
-thumbnail-img: assets/img/pexels-markus-spiske-1089438.jpg
+cover-img: assets/img/pexels-pixabay-326311.jpg
+thumbnail-img: assets/img/pexels-negative-space-160107.jpg
 tags: [books, test]
 gh-repo: mabhay3420/mabhay3420.github.io
 gh-badge: [star, fork, follow]
