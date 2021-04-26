@@ -6,7 +6,7 @@ cover-img: assets/img/pexels-pixabay-326311.jpg
 thumbnail-img: assets/img/pexels-negative-space-160107.jpg
 tags: [books, test]
 gh-repo: mabhay3420/mabhay3420.github.io
-gh-badge: [star, fork, follow]
+gh-badge: [follow]
 tags: [Web Developement,Experiments]
 comments: true
 readtime: true
@@ -63,8 +63,7 @@ $ echo '# Install Ruby Gems to ~/gems' >> ~/.bashrc
 $ echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc
 $ echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc
 $ source ~/.bashrc
-#These steps setup the gem(RubyGems Packages) installation directory
-#your user account and update the environment variables.
+#These steps setup the gem(RubyGems Packages) installation directory in your home directory and update the PATH variable.
 
 $ gem install jekyll bundler
 #install jekyll and bundler : will take some time

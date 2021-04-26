@@ -42,12 +42,10 @@ h1, h2, h3, h4 {
 }
 a {
   color: #0000EE ;
-  font-weight: bold;
 }
 a:hover,
 a:focus {
   color: #b55400;
-  font-weight: bold;
 }
 blockquote {
   color: #1b1717;
