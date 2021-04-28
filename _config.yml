@@ -34,7 +34,7 @@ navbar-links:
 
 # If you want to have an image logo in the top-left corner instead of having the title of the website,
 # then specify the following parameter
-title-img: "/assets/img/main_logo.jpg"
+# title-img: "/assets/img/main_logo.jpg"
 
 
 # --- Footer social media links --- #
@@ -82,7 +82,7 @@ share-links-active:
 
 # How to display the link to your website in the footer
 # Remove this if you don't want a link in the footer
-url-pretty: "INVICTUS_ABHAY"
+url-pretty: "INVICTUS"
 
 # Excerpt word length - Truncate the excerpt of each post on the feed page to the specified number of words
 excerpt_length: 50
@@ -94,29 +94,29 @@ feed_show_excerpt: false
 feed_show_tags: false
 
 # The keywords to associate with your website, for SEO purposes
-#keywords: "my,list,of,keywords"
+keywords: "deep-learning,Machine Learning, Web Developement, Tech Blog"
 
 # --- Colours / background image --- #
 
 # Personalize the colours in your website. Colour values can be any valid CSS colour
 
-navbar-col: "#EAEAEA"
-navbar-text-col: "#404040"
-navbar-border-col: "#DDDDDD"
-page-col: "#DEE4E7"
-text-col: "#150e56"
-link-col: "#0000EE "
-hover-col: "#b55400"
-footer-col: "#EAEAEA"
-footer-text-col: "#777777"
-footer-link-col: "#ffcc29"
+navbar-col: "#FFFFFF"
+navbar-text-col: "#OE1A2D"
+navbar-border-col: "#OE12AD"
+page-col: "#0E1A2D"
+text-col: "#ffffff"
+link-col: "#ffffff"
+hover-col: "#0085A1"
+footer-col: "#FFFFFF"
+footer-text-col: "#OE1A2D"
+footer-link-col: "#0E1A2D"
 
 # Alternatively, the navbar, footer, and page background can be set to an image
 # instead of colour
 
-# navbar-img: "/assets/img/bgimage.png"
+# navbar-img: "assets/img/pexels-miguel-á-padriñán-255379.jpg"
 # footer-img: "/assets/img/bgimage.png"
-# page-img: "/assets/img/bgimage.png"
+# page-img: "assets/img/pexels-miguel-á-padriñán-19670.jpg"
 
 # Suggest a colour for mobile browsers to use as the browser's theme. This is only supported by a few mobile browsers.
 #mobile-theme-col: "#0085A1"

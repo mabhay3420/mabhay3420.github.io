@@ -12,21 +12,16 @@ comments: true
 readtime: true
 ---
 
-I was trying to make a portfolio cum blogging website from Sep 2020. I was completely new to field of web developement so it took me a bit of time to go through HTML and CSS in order to make a decent looking website.
+I was trying to make a portfolio cum blogging website from Sep 2020. I was completely new to field of web developement so it took me a bit of time to go through HTML and CSS in order to make a decent looking website.Yet Anyone who is begineer in the field knows its a bit complicated to develop a good looking website and then as it grows you want to automate things.I got busy with my online semester and the "Static Sites" were forgotten for some time. Recently I was getting frustated with current "Infinitely stretched Lockdown for University students" So i decided to work on it again.
 
-Yet Anyone who is begineer in the field knows its a bit complicated to develop a good looking website and then as it grows you want to automate things.
+I had seen a few websites based on jekyll templates.I tried to develop one with "Hugo" but because it involved a bit of "GO" templating, I decided to find some other option.In the end I stumbled across this amazing jekyll theme "beautiful-jekyll" and it works like charm.
 
-I got busy with my online semester and the "Static Sites" were forgotten for some time. Recently I was getting frustated with current "Infinitely stretched Lockdown for University students" So i decided to work on it again.
-
-I had seen a few websites based on jekyll templates.I tried to develop one with "Hugo" but because it involved a bit of "GO" templating, I decided to find some other option.
-
-In the end I stumbled across this amazing jekyll theme "beautiful-jekyll" and it works like charm.
-
-This is my first post and a test post. I will try some different things so bear with me if they get not-so-interesting.
-
-I will go step by step on how the whole process was completed. I am on Ubuntu 20.04.Using bash terminal.
+This is my first post and a test post. I will try some different things so bear with me if they get not-so-interesting.I will go step by step on how the whole process was completed. I am on Ubuntu 20.04.Using bash terminal.
 
 ## Steps for generating simple static site
+
+{: .box-note}
+**Note:** Make sure git is installed on your system.
 
 - Clone from beautiful-jekyll : Derived From [Here](https://stackoverflow.com/questions/6613166/how-to-duplicate-a-git-repository-without-forking)
 {%highlight bash linenos %}
@@ -69,6 +64,9 @@ $ gem install jekyll bundler
 #install jekyll and bundler : will take some time
 {%endhighlight%}
 
+{: .box-error}
+**Error:** In case you get any error try updating your system using "sudo apt-get update" and then repeat the same steps. Otherwise StackOverflow is your friend.
+
 - Build the site : The page will be automatically update whenever you change some file except configuration files. In the later case you need to repeat only last step again.
 
 {%highlight bash linenos %}
@@ -85,5 +83,8 @@ $ bundle exec jekyll serve
 
 - That completes the process. Please refer to the jekyll docs and beautiful-jekyll homepage to learn about front matter, directory structure and different
 customization options available.
+
+{: .box-success}
+**Success:** We have made a simple Static website. Jekyll Templates gives you the flexibility to just focus on content ( Which you write In Markdown ) and other things are taken care of, Ideal for Personal Blogs and Sites.
 
 **Thanks**
