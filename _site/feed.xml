@@ -10,6 +10,17 @@
     
     
       <item>
+        <title>The Prophet</title>
+        <description>
+          Khalil Gibran - 
+          “The Prophet”, A collection of poems written by Khalil Gibran. The Prophet is a person who lived in the city for 7 years waiting for A ship to come which will take him to his Home ( A metaphor ). Finally Ship has arrived And while Prophet Plans for departure,...
+        </description>
+        <pubDate>Fri, 14 May 2021 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/2021-05-14-The-Prophet/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021-05-14-The-Prophet/</guid>
+      </item>
+    
+      <item>
         <title>How I build a simple static site</title>
         <description>
           Use beautiful-jekyll template - 
@@ -18,6 +29,17 @@
         <pubDate>Mon, 05 Apr 2021 00:00:00 +0530</pubDate>
         <link>http://localhost:4000/2021-04-05-Building-a-static-site/</link>
         <guid isPermaLink="true">http://localhost:4000/2021-04-05-Building-a-static-site/</guid>
+      </item>
+    
+      <item>
+        <title>INVICTUS</title>
+        <description>
+          William Ernest Henley - 
+          While spending his days in Robben Isand Prison, Nelson Mandela used to recite a poem by the 18th century English poet, William Ernest Henley. This poem inspired him and other prison mates to stay put and keep going through the hard times. Out of the night that covers me Black...
+        </description>
+        <pubDate>Thu, 01 Apr 2021 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/2021-04-01-invictus/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021-04-01-invictus/</guid>
       </item>
     
   </channel>

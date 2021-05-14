@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Resources
-subtitle: Internet is a Wild Place And these are Unicorns
+subtitle: Internet ~~ Chamber of Secrets
 cover-img: "assets/img/pexels-irina-iriser-1379636.jpg"
 ---
 

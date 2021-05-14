@@ -5,6 +5,7 @@ subtitle: Many Mores To come
 cover-img: "assets/img/pexels-miguel-á-padriñán-255379.jpg"
 gh-repo: mabhay3420/mabhay3420.github.io
 gh-badge: [follow]
+usemathjax: true
 ---
 
 I have been doing many random things for the past two years.
