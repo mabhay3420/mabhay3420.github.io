@@ -1,0 +1,16 @@
+---
+layout: page
+title: Resources
+subtitle: Internet is a Wild Place And these are Unicorns
+cover-img: "assets/img/pexels-irina-iriser-1379636.jpg"
+---
+
+## Deep Learning
+1. LSTM: [http://colah.github.io/posts/2015-08-Understanding-LSTMs/](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+   
+## General Programming
+1. C++ STL: [http://www.martinbroadhurst.com/stl/](http://www.martinbroadhurst.com/stl/)
+2. Visualize Algorithms: [https://visualgo.net/en](https://visualgo.net/en)
+
+## Web Development
+1. Web Dev: [https://www.theodinproject.com/](https://www.theodinproject.com/)
