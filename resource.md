@@ -2,7 +2,7 @@
 layout: page
 title: Resources
 subtitle: Internet ~~ Chamber of Secrets
-cover-img: "assets/img/pexels-irina-iriser-1379636.jpg"
+cover-img: "https://source.unsplash.com/collection/1961290/1920x1080"
 ---
 
 ## Deep Learning

@@ -2,7 +2,8 @@
 layout: post
 title: The Prophet
 subtitle: Khalil Gibran
-cover-img: assets/img/quantum_drops.jpg
+cover-img: https://source.unsplash.com/collection/948143/1920x1080
+thumbnail-img: assets/img/quantum_drops.jpg
 tags: [poem]
 comments: true
 ---

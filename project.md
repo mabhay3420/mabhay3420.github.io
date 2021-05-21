@@ -2,7 +2,7 @@
 layout: page
 title: Projects
 subtitle: Many Mores To come
-cover-img: "assets/img/pexels-miguel-á-padriñán-255379.jpg"
+cover-img: "https://source.unsplash.com/collection/364871/1920x1080"
 gh-repo: mabhay3420/mabhay3420.github.io
 gh-badge: [follow]
 usemathjax: true

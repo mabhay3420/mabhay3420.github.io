@@ -2,7 +2,7 @@
 layout: page
 title: ABHAY MISHRA
 subtitle: SOPHOMORE @CSE IIT KANPUR, INDIA
-cover-img: "assets/img/ZTF_BH_Merger_webready.original.jpg"
+cover-img: "https://source.unsplash.com/collection/4390214/1920x1080"
 usemathjax: true
 ---
 ### I am experienced in:
