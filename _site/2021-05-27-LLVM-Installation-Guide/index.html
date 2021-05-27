@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Beautiful Jekyll 5.0.0 | Copyright Dean Attali 2020 -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  
+
+  
+
+  <title>Getting LLVM from Source</title>
+
+  
+  <meta name="author" content="Abhay mishra">
+  
+
+  <meta name="description" content="Minimize Build time and space usage.">
+
+  
+
+  
+  <meta name="keywords" content="deep-learning,Machine Learning, Web Developement, Tech Blog">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Abhay's Blog" href="http://localhost:4000/feed.xml">
+
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PK8RG1KPVB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PK8RG1KPVB');
+</script>
+
+
+  
+
+  
+<!-- Google Analytics -->
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'mabhay3420', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Abhay's Blog">
+  <meta property="og:title" content="Getting LLVM from Source">
+  <meta property="og:description" content="Minimize Build time and space usage.">
+
+  
+  <meta property="og:image" content="https://source.unsplash.com/collection/948143/1920x1080">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Abhay mishra">
+  <meta property="og:article:published_time" content="2021-05-27T00:00:00+05:30">
+  <meta property="og:url" content="http://localhost:4000/2021-05-27-LLVM-Installation-Guide/">
+  <link rel="canonical" href="http://localhost:4000/2021-05-27-LLVM-Installation-Guide/">
+  
+
+  
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="Getting LLVM from Source">
+  <meta property="twitter:description" content="Minimize Build time and space usage.">
+
+  
+  <meta name="twitter:image" content="https://source.unsplash.com/collection/948143/1920x1080">
+  
+
+  
+
+
+  
+
+  
+
+  <!-- for mathjax support -->
+    
+      <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+        });
+      </script>
+      <script type="text/javascript" async src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="http://localhost:4000/">Abhay's Blog</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/aboutme">About Me</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/project">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/resource">Resources</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+  <div id="header-big-imgs" data-num-img=1
+    
+    
+    
+      
+      data-img-src-1="https://source.unsplash.com/collection/948143/1920x1080"
+    
+    
+    
+  ></div>
+
+
+<header class="header-section has-img">
+
+<div class="big-img intro-header">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>Getting LLVM from Source</h1>
+          
+            
+              <h2 class="post-subheading">Minimize Build time and space usage.</h2>
+            
+          
+
+          
+            <span class="post-meta">Posted on May 27, 2021</span>
+            
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class='img-desc'></span>
+</div>
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>Getting LLVM from Source</h1>
+          
+            
+              <h2 class="post-subheading">Minimize Build time and space usage.</h2>
+            
+          
+
+          
+            <span class="post-meta">Posted on May 27, 2021</span>
+            
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <p>LLVM-Project comprises of many low-level utilities, The most important of which is <code class="language-plaintext highlighter-rouge">llvm</code> core.
+LLVM core is a big piece of software and when combined with additional packages which are part of LLVM-project. like clang and lld, The complete build size can reach up to 70-80 GB.</p>
+
+<p>In case you just want to use the command line interface of llvm tools like <code class="language-plaintext highlighter-rouge">clang</code> , <code class="language-plaintext highlighter-rouge">lld</code> , you should download pre-built binaries. Source code is needed when you want the bits and pieces of llvm in order to build something new or add something to or modify existing code.</p>
+
+<p>I spent whole day installing it and the result was super slow and 70GB Build. After setting proper option and using
+<code class="language-plaintext highlighter-rouge">ninja</code> I was able to build withing 40 minutes and total build size was 9GB.</p>
+
+<p>I will present here the minimum steps needed to get <code class="language-plaintext highlighter-rouge">llvm-project</code> source code and then build it efficiently.</p>
+<h2 id="get-the-source-code">Get the Source Code</h2>
+<p>This fetches complete source code, You may want to fetch only a particular version, for that refer llvm docs.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre>user@user:~<span class="nv">$ </span>git clone https://github.com/llvm/ llvm-project.git
+user@user:~<span class="nv">$ </span><span class="nb">cd </span>llvm-project
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h2 id="setup-build-directory-and-build-tool">Setup Build directory and build tool</h2>
+
+<p>Build tools automate the compilation of source files. Most popular of these is <code class="language-plaintext highlighter-rouge">make</code> and  <code class="language-plaintext highlighter-rouge">ninja</code> build system.
+We will need a <code class="language-plaintext highlighter-rouge">Makefile</code> or <code class="language-plaintext highlighter-rouge">build.ninja</code> files for specifying compilation rules.</p>
+
+<p><code class="language-plaintext highlighter-rouge">cmake</code> can generate these files for build system by using a <code class="language-plaintext highlighter-rouge">CMakefile</code>, Which are already present in the directory.</p>
+
+<p>Using <code class="language-plaintext highlighter-rouge">ninja</code> is recommended. Install these tools if not already installed with.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre>user@user:~<span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install </span>ninja-build
+user@user:~<span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install </span>cmake
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>Then generate build.ninja Files using <code class="language-plaintext highlighter-rouge">cmake</code> with proper flags:</p>
+
+<p class="box-note"><strong>Note:</strong> Flags are case sensitive. Files are generated for Release version with proper flags to make a good substitue of Slow and Big Debug Version. Make Sure they match your needs.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="code"><pre>user@user:~/llvm-project<span class="nv">$ </span><span class="nb">mkdir </span>build
+user@user:~/llvm-project<span class="nv">$ </span><span class="nb">cd </span>build
+user@user:~/llvm-project/build<span class="nv">$ </span>cmake <span class="nt">-G</span> <span class="s2">"Ninja"</span> <span class="nt">-DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s2">"clang"</span> <span class="nt">-DLLVM_USE_LINKER</span><span class="o">=</span>gold <span class="nt">-CMAKE_BUILD_TYPE</span><span class="o">=</span>Release <span class="nt">-LLVM_ENABLE_ASSERTIONS</span><span class="o">=</span>ON <span class="nt">-LLVM_CCACHE_BUILD</span><span class="o">=</span>ON ../llvm
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h2 id="build-and-run-test">Build And Run Test</h2>
+
+<p class="box-note"><strong>Tips:</strong> These Steps are probably going to take somewhere between \(1\) to \(1\frac{1}{2}\) hours, And your system will become slow ( By default <code class="language-plaintext highlighter-rouge">ninja</code> uses all cores to complete jobs in parallel.) .Plug in your charger And find yourself something else to do.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="code"><pre>user@user:~/llvm-project/build<span class="nv">$ </span>ninja
+user@user:~/llvm-project/build<span class="nv">$ </span>ninja check-clang
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h2 id="update-path">Update PATH</h2>
+<p>Add following lines to start using llvm tools</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre>user@user:~/llvm-project/build<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"export PATH="</span><span class="nv">$PATH</span>:~/llvm-project/build/bin<span class="s2">""</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+user@user:~/llvm-project/build<span class="nv">$ </span><span class="nb">source</span> ~/.bashrc
+<span class="c"># Start Using Clang or any of the tools available</span>
+user@user:~<span class="nv">$ </span>clang++ hello.cpp <span class="nt">-o</span> hello.o
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h2 id="complete-bash-script">Complete Bash Script</h2>
+
+<p class="box-warning"><strong>Warning:</strong> Before Using the script Make Sure you understand the steps and Change File Paths in the scrept when required.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="code"><pre><span class="c">#!/bin/bash</span>
+<span class="c"># Installing in home directory</span>
+<span class="nb">cd
+</span>git clone https://github.com/llvm/ llvm-project.git
+<span class="nb">cd </span>llvm-project
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>ninja-build
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>cmake
+<span class="nb">mkdir </span>build
+<span class="nb">cd </span>build
+cmake <span class="nt">-G</span> <span class="s2">"Ninja"</span> <span class="nt">-DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s2">"clang"</span> <span class="nt">-DLLVM_USE_LINKER</span><span class="o">=</span>gold <span class="nt">-CMAKE_BUILD_TYPE</span><span class="o">=</span>Release <span class="nt">-LLVM_ENABLE_ASSERTIONS</span><span class="o">=</span>ON <span class="nt">-LLVM_CCACHE_BUILD</span><span class="o">=</span>ON ../llvm
+ninja
+ninja check-clang
+<span class="nb">echo</span> <span class="s2">"export PATH="</span><span class="nv">$PATH</span>:~/llvm-project/build/bin<span class="s2">""</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nb">source</span> ~/.bashrc
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h3 id="why-use-ninja">Why Use Ninja</h3>
+<p><code class="language-plaintext highlighter-rouge">ninja</code> is a bit faster than <code class="language-plaintext highlighter-rouge">make</code>, But the main reason for using ninja is its ability to reduce the amount of time it takes to build next time.
+Suppose you wrote a new source file using llvm source files and want to build and use the binary. There are two things you can do:</p>
+<ol>
+  <li>
+    <p>Make a seperate CMakeLists.txt file and specify various configuration. ( For e.g. if you include files from llvm folder you need to specify this : include_directories(${LLVM_INCLUDE_DIRS}))</p>
+  </li>
+  <li>
+    <p>Add file to the source in proper place and update CMakeLists.txt file of the source code.</p>
+  </li>
+</ol>
+
+<p>Now because CMake Files of source code are obviously better than ours ( Well tested and with proper flags ) Choosing 2nd options seems logical.</p>
+
+<p>But that required building whole source again.When prompted to build, Both <code class="language-plaintext highlighter-rouge">make</code> and <code class="language-plaintext highlighter-rouge">ninja</code> check which files are needed to build again and build only them.Here <code class="language-plaintext highlighter-rouge">ninja</code> does a better job than <code class="language-plaintext highlighter-rouge">make</code>. <code class="language-plaintext highlighter-rouge">make</code> builds some files (other than those changed ) again,I don’t know why . Other than that it seems like <code class="language-plaintext highlighter-rouge">make</code> inspects every file one by one making build time approx 4-5 minutes, While <code class="language-plaintext highlighter-rouge">ninja</code> takes <strong>&lt;1 min</strong>.</p>
+
+<p>If you don’t change the source code and try to build <code class="language-plaintext highlighter-rouge">ninja</code> will say “No work to do” while <code class="language-plaintext highlighter-rouge">make</code> builds and links some “.inc” files.</p>
+
+<p class="box-success"><strong>Success:</strong> LLVM (And other tools in llvm-project) are great piece of software. The design and modularity not only makes various parts reusable, it also makes it easy to understand a particular part of software without worrying too much about the bigger picture. I am currently exploring Optimization part of Compiler (The llvm Core) and excited to learn more along the way.</p>
+
+
+      </article>
+
+      
+        <div class="blog-tags">
+          <span>Tags:</span>
+          
+            <a href="/tags#tech">tech</a>
+          
+        </div>
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=Getting+LLVM+from+Source&url=http%3A%2F%2Flocalhost%3A4000%2F2021-05-27-LLVM-Installation-Guide%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2021-05-27-LLVM-Installation-Guide%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2021-05-27-LLVM-Installation-Guide%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2021-05-14-The-Prophet/" data-toggle="tooltip" data-placement="top" title="The Prophet">&larr; Previous Post</a>
+        </li>
+        
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'mabhay3420-github-io';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="mailto:abhaymishra3420@gmail.com" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://www.facebook.com/invictusabhay" title="Facebook">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Facebook</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://github.com/mabhay3420" title="GitHub">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">GitHub</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Abhay mishra
+        &nbsp;&bull;&nbsp;
+      
+      2021
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="http://localhost:4000/">INVICTUS</a>
+        </span>
+      
+
+      
+      </p>
+      <p class="theme-by text-muted">
+        Powered by
+        <a href="https://beautifuljekyll.com">Beautiful Jekyll</a>
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+
+
+
+
+</body>
+</html>
