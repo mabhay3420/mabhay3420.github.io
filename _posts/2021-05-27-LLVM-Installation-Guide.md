@@ -45,7 +45,7 @@ Then generate build.ninja Files using `cmake` with proper flags:
 {% highlight bash linenos %}
 user@user:~/llvm-project$ mkdir build
 user@user:~/llvm-project$ cd build
-user@user:~/llvm-project/build$ cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_USE_LINKER=gold -CMAKE_BUILD_TYPE=Release -LLVM_ENABLE_ASSERTIONS=ON -LLVM_CCACHE_BUILD=ON ../llvm
+user@user:~/llvm-project/build$ cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_USE_LINKER=gold -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -LLVM_CCACHE_BUILD=ON ../llvm
 {% endhighlight %}
 
 ## Build And Run Test
@@ -83,7 +83,7 @@ sudo apt-get install ninja-build
 sudo apt-get install cmake
 mkdir build
 cd build
-cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_USE_LINKER=gold -CMAKE_BUILD_TYPE=Release -LLVM_ENABLE_ASSERTIONS=ON -LLVM_CCACHE_BUILD=ON ../llvm
+cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_USE_LINKER=gold -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -LLVM_CCACHE_BUILD=ON ../llvm
 ninja
 ninja check-clang
 echo "export PATH="$PATH:~/llvm-project/build/bin"" >> ~/.bashrc

@@ -300,7 +300,7 @@ user@user:~<span class="nv">$ </span><span class="nb">sudo </span>apt-get <span 
 3
 </pre></td><td class="code"><pre>user@user:~/llvm-project<span class="nv">$ </span><span class="nb">mkdir </span>build
 user@user:~/llvm-project<span class="nv">$ </span><span class="nb">cd </span>build
-user@user:~/llvm-project/build<span class="nv">$ </span>cmake <span class="nt">-G</span> <span class="s2">"Ninja"</span> <span class="nt">-DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s2">"clang"</span> <span class="nt">-DLLVM_USE_LINKER</span><span class="o">=</span>gold <span class="nt">-CMAKE_BUILD_TYPE</span><span class="o">=</span>Release <span class="nt">-LLVM_ENABLE_ASSERTIONS</span><span class="o">=</span>ON <span class="nt">-LLVM_CCACHE_BUILD</span><span class="o">=</span>ON ../llvm
+user@user:~/llvm-project/build<span class="nv">$ </span>cmake <span class="nt">-G</span> <span class="s2">"Ninja"</span> <span class="nt">-DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s2">"clang"</span> <span class="nt">-DLLVM_USE_LINKER</span><span class="o">=</span>gold <span class="nt">-DCMAKE_BUILD_TYPE</span><span class="o">=</span>Release <span class="nt">-DLLVM_ENABLE_ASSERTIONS</span><span class="o">=</span>ON <span class="nt">-LLVM_CCACHE_BUILD</span><span class="o">=</span>ON ../llvm
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <h2 id="build-and-run-test">Build And Run Test</h2>
@@ -353,7 +353,7 @@ user@user:~<span class="nv">$ </span>clang++ hello.cpp <span class="nt">-o</span
 <span class="nb">sudo </span>apt-get <span class="nb">install </span>cmake
 <span class="nb">mkdir </span>build
 <span class="nb">cd </span>build
-cmake <span class="nt">-G</span> <span class="s2">"Ninja"</span> <span class="nt">-DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s2">"clang"</span> <span class="nt">-DLLVM_USE_LINKER</span><span class="o">=</span>gold <span class="nt">-CMAKE_BUILD_TYPE</span><span class="o">=</span>Release <span class="nt">-LLVM_ENABLE_ASSERTIONS</span><span class="o">=</span>ON <span class="nt">-LLVM_CCACHE_BUILD</span><span class="o">=</span>ON ../llvm
+cmake <span class="nt">-G</span> <span class="s2">"Ninja"</span> <span class="nt">-DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s2">"clang"</span> <span class="nt">-DLLVM_USE_LINKER</span><span class="o">=</span>gold <span class="nt">-DCMAKE_BUILD_TYPE</span><span class="o">=</span>Release <span class="nt">-DLLVM_ENABLE_ASSERTIONS</span><span class="o">=</span>ON <span class="nt">-LLVM_CCACHE_BUILD</span><span class="o">=</span>ON ../llvm
 ninja
 ninja check-clang
 <span class="nb">echo</span> <span class="s2">"export PATH="</span><span class="nv">$PATH</span>:~/llvm-project/build/bin<span class="s2">""</span> <span class="o">&gt;&gt;</span> ~/.bashrc
