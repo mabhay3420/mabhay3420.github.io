@@ -1,7 +1,7 @@
 ---
 layout: page
 title: ABHAY MISHRA
-subtitle: SOPHOMORE @CSE IIT KANPUR, INDIA
+subtitle: JUNIOR UNDERGRAD @CSE IIT KANPUR, INDIA
 cover-img: "https://source.unsplash.com/collection/4390214/1920x1080"
 usemathjax: true
 ---
