@@ -25,6 +25,7 @@ h1,h2,h3,h4,h5,h6 {
 }
 h1 {
   font-size: 2.25rem;
+  text-shadow: 0 0 3px #ff0000, 0 0 3px rgb(26, 2, 248);
 }
 h2 {
   font-size: 1.875rem;
@@ -46,7 +47,8 @@ a {
 }
 a:hover,
 a:focus {
-  color: #0085A1;
+  color:#a17b00
+  /* color: #0085A1; */
 }
 blockquote {
    color: #f6f20e;
@@ -445,7 +447,8 @@ footer .footer-custom-content {
 .post-preview a:focus,
 .post-preview a:hover {
   text-decoration: none;
-  color: #0085A1;
+  color:#a17b00
+  /* color: #0085A1; */
 }
 
 .post-preview .post-title {
@@ -664,7 +667,8 @@ nav.top-nav-short-permanent ~ header > .intro-header.big-img {
   /* font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
   font-weight: 900;
   margin: 0.625rem 0 0;
-  color: #ff7b00;
+  color: #00ffff;
+  text-shadow: 0 0 1px #ff0000, 0 0 1px rgb(26, 2, 248);
 }
 .intro-header .post-heading .post-subheading {
   margin-bottom: 1.25rem;
