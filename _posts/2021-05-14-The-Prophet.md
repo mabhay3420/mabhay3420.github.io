@@ -46,6 +46,4 @@ when i was watching "JoJo Rabbit (2019)".
 ![keeping Up](/assets/img/the_prophet/keeping_up.png)
 
 I will Update the list as i read more. All images were 
-made using Adobe spark and i plan to use the same in future. 
-None of the images are copied from internet because 
-there is no point in doing so.
+made using Adobe spark . 
