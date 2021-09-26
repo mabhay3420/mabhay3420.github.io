@@ -10,6 +10,17 @@
     
     
       <item>
+        <title>Lambda Calculas</title>
+        <description>
+          Principle of Programming languages - 
+          Untyped Lambda Calculas Syntax t := x variable |λx.t Abstraction |t t Application Reducing the no of parenthesis λx.t1 t2 t3 == λx.(t1 t2 t3) t1 t2 t3 == (t1 t2) t3 : Associate to the left λx y z.t == λx.(λy.(λz.t)) Free and Bound Variables Occurence of x inside...
+        </description>
+        <pubDate>Sun, 05 Sep 2021 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/2021-09-05-Lambda-Calculas-Notes/</link>
+        <guid isPermaLink="true">http://localhost:4000/2021-09-05-Lambda-Calculas-Notes/</guid>
+      </item>
+    
+      <item>
         <title>Getting LLVM from Source</title>
         <description>
           Minimize Build time and space usage. - 

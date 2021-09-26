@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Beautiful Jekyll 5.0.0 | Copyright Dean Attali 2020 -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  
+
+  
+
+  <title>Lambda Calculas</title>
+
+  
+  <meta name="author" content="Abhay mishra">
+  
+
+  <meta name="description" content="Principle of Programming languages">
+
+  
+
+  
+  <meta name="keywords" content="deep-learning,Machine Learning, Web Developement, Tech Blog">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Abhay's Blog" href="http://localhost:4000/feed.xml">
+
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PK8RG1KPVB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PK8RG1KPVB');
+</script>
+
+
+  
+
+  
+<!-- Google Analytics -->
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'mabhay3420', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Abhay's Blog">
+  <meta property="og:title" content="Lambda Calculas">
+  <meta property="og:description" content="Principle of Programming languages">
+
+  
+  <meta property="og:image" content="https://source.unsplash.com/collection/16292248/1920x1080">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Abhay mishra">
+  <meta property="og:article:published_time" content="2021-09-05T00:00:00+05:30">
+  <meta property="og:url" content="http://localhost:4000/2021-09-05-Lambda-Calculas-Notes/">
+  <link rel="canonical" href="http://localhost:4000/2021-09-05-Lambda-Calculas-Notes/">
+  
+
+  
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="Lambda Calculas">
+  <meta property="twitter:description" content="Principle of Programming languages">
+
+  
+  <meta name="twitter:image" content="https://source.unsplash.com/collection/16292248/1920x1080">
+  
+
+  
+
+
+  
+
+  
+
+  <!-- for mathjax support -->
+    
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="http://localhost:4000/">Abhay's Blog</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/aboutme">About Me</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/project">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/resource">Resources</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+  <div id="header-big-imgs" data-num-img=1
+    
+    
+    
+      
+      data-img-src-1="https://source.unsplash.com/collection/16292248/1920x1080"
+    
+    
+    
+  ></div>
+
+
+<header class="header-section has-img">
+
+<div class="big-img intro-header">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>Lambda Calculas</h1>
+          
+            
+              <h2 class="post-subheading">Principle of Programming languages</h2>
+            
+          
+
+          
+            <span class="post-meta">Posted on September 5, 2021</span>
+            
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class='img-desc'></span>
+</div>
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>Lambda Calculas</h1>
+          
+            
+              <h2 class="post-subheading">Principle of Programming languages</h2>
+            
+          
+
+          
+            <span class="post-meta">Posted on September 5, 2021</span>
+            
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <h2 id="untyped-lambda-calculas">Untyped Lambda Calculas</h2>
+
+<h3 id="syntax">Syntax</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     t :=   x   variable
+            |λx.t  Abstraction
+            |t t  Application
+</code></pre></div></div>
+
+<h3 id="reducing-the-no-of-parenthesis">Reducing the no of parenthesis</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    λx.t1 t2 t3 == λx.(t1 t2 t3)
+    t1 t2 t3 == (t1 t2) t3 : Associate to the left
+    λx y z.t == λx.(λy.(λz.t))
+</code></pre></div></div>
+
+<h3 id="free-and-bound-variables">Free and Bound Variables</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Occurence of x inside a term "λx.N" // important
+            λx - binder
+            N - scope of the binder
+            A variable occurence that is not bound is free
+            FV(M) : The set of free variables of M.
+            e.g. M = (λx.x y)(λy. y z) : x is a bound variable
+            FV(M) = {y,z}
+            some constrains are set on the value
+
+            --
+            whatever the function get value explicity it gets bounded
+            Free variables in some sense similar to global
+</code></pre></div></div>
+
+<h3 id="α-renaming">α-renaming</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Name of bound variable has no meaning
+    Renaming does not changed the meaning
+    λx.x x y == λu.u u y
+    λu.u u y ≠ λx.x x w (cannot rename free variables)
+</code></pre></div></div>
+
+<h3 id="substitution">Substitution</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    M[x:=N]: Substitute all free occurence of x in M by N
+    Issues:
+            1. Replace free variables only
+             x(λx y.x)[x:=N] = N(λx y.x) ≠ N(λxy.N)
+            2. No unintended name captures
+             M = λx.y x
+             N ≡ λz.x z
+             Then M[y := N] is λx.(λz.xz)x
+             ⇒ a free variable x becomes bound
+
+    Solution: α renaming
+    M[y:=N] = (λx'.y x')[y := N] = λx'.N x'
+       = λx'.(λz.x z)x'
+</code></pre></div></div>
+
+<h3 id="β-reduction">β-Reduction</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Applying abstraction:
+    λx.t1 t2 ⇒ t1[x:= t2] // replace only free variables
+            // notice we are substituting
+            // in t1 and not in whole λx.t1 t2
+    Caution
+            1. Free variables should not be captured
+             (λxλy.x)(λx.y) → β reduction → λy.(λx.y)
+              // wrong because y gets bounded
+             // first α renaming
+             (λuλv.u)(λx.y) → β reduction → λv.(λx.y)
+             FV = {y}
+</code></pre></div></div>
+
+<h3 id="execution-semantics">Execution Semantics</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    β-reduction gives the execution model of program
+    β-redex : (λx.M)N
+    one-step β-reduction: M[x:= N]
+     (λz.z z)(λw.w) = (λw1.w1)(λw2.w2) 
+             = (λw2.w2)
+     (λx.y)((λz.z z)(λw.w)) → β-reduction → y
+    A term which does not have a β-redexes, are said to be
+         normal form
+    M → β-reduction → M' where M' is in normal form we say
+       M evaluates to M' 
+</code></pre></div></div>
+
+<h2 id="simply-typed-lamda-calculas">Simply Typed Lamda calculas</h2>
+
+<h3 id="simple-types-over-bools">Simple types over Bools</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T :=        - Types
+    Bool    - Boolean type
+    T → T   - Function type
+
+type constructor → is right associative:
+    T1 → T2 → T3 ≡ T1 → ( T2 → T3)
+This is compatible with application order:
+    t1 t2 t3 ≡ ((t1 t2) t3)
+    e.g.
+        (λx.x λy.y λz.z) will take
+        x as argument first then returns a function
+        which takes y as arguments returns
+        a value of type z
+        { Improve a little bit}
+
+    e.g.
+        Bool → Bool : NOT
+        Bool → Bool → Bool : AND, OR 
+        (Bool → Bool) → Bool:
+            A function which takes another
+            function and returns a bool
+
+            The input function itself takes a 
+            bool input and produces another bool
+            input
+
+            NOT: λx.x false true
+            λx:Bool → Bool.x true
+</code></pre></div></div>
+
+<h3 id="the-abstract-syntax">The Abstract Syntax</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>t :=    x           - Variable
+|   λx.T.t          - Abstraction
+|   t t         - Application
+|   true            - constant true
+|   false           - constant false
+|   if t then t else t  - conditional
+</code></pre></div></div>
+
+<h3 id="the-set-of-values">The set of Values</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>v :=            - values
+    λx: T.t     - Abstraction Value
+  | true        - value true
+  | false       - value false
+</code></pre></div></div>
+
+<h3 id="evaluation">Evaluation</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>t1 → t1' ⇒ t1 t2 → t1' t2   [ E-APP1 ]
+t2 → t2' ⇒ v t2 → v t2'     [ E-APP2 ]
+    [ i.e. first reduce t1 to its normal
+    form and then start reducing t2]
+(λx:T.t1)v2 → [x → v2]t1    [ E APPABS]
+    [ Use β-reduction ]
+</code></pre></div></div>
+
+<h3 id="the-typing-relation">The Typing Relation</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A typing context or Type Environment, Γ,
+    : A sequence of variables with their types
+
+e.g. Γ [ x:Bool, y:Bool → Bool, z: T → Bool]
+
+Adding a new entry: Γ,x: T
+    ▶ The name x is assumed to be distinct from
+    any existing name in Γ
+        : Rename if needed
+        : Note that types are always associated
+         with bound variables
+
+▶ Γ,x: T1  ⊢ t2: T2 ⇒ Γ ⊢ λx: T1.t2: T1 → T2 [ T-ABS]
+▶ x: T ∈ Γ ⇒ Γ ⊢ x: T   [ T-VAR]
+    [ this is like a base case]
+▶ Γ ⊢ t1 : T1 → T2  Γ ⊢ t2 : T1 
+        ⇒ Γ ⊢ t1 t2 : T2    [ T-APP ]
+</code></pre></div></div>
+
+<h3 id="the-inversion-of-the-typing-relation">The inversion of the typing relation</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>▶ if Γ ⊢ x: R, then x:R ∈ Γ
+    No other way to infer the definition
+▶ if Γ ⊢ λx:T1.t2: R, then R = T1 → R2 for some R2 with
+    Γ,x: T1 ⊢ t2 : R2
+▶ if Γ ⊢ t1 t2: R, then ∃ T1 s.t. Γ ⊢ t1 : T1 → R and Γ ⊢ t2 : T1  
+▶ Γ ⊢ true : R, then R = Bool
+▶ Γ ⊢ false: R then R: Bool
+▶ Γ ⊢ if t1 then t2 else t3: R then
+    ▶ Γ ⊢ t1 : Bool
+    ▶ Γ t2 : R
+    ▶ Γ t3 : R
+</code></pre></div></div>
+
+<p>These notes were prepared in the starting of CS350(POPL).
+One fine morning I planned to take notes using <code class="language-plaintext highlighter-rouge">vim</code> while watching
+lectures ( Because i thought it was cool). Everything was fine until
+Greek letters started appearing. One option was to use latex but that
+seemed overkill, so i decided to stick with text format. Vim has
+something called <code class="language-plaintext highlighter-rouge">digraphs</code> for inserting unicode symbols. In order to
+insert a symbols, you use <code class="language-plaintext highlighter-rouge">Ctrl-K</code> + <code class="language-plaintext highlighter-rouge">symbol code</code>. Symbol codes were
+very intutive e.g. for λ : “Ctrl-K” + “l*”.
+But because for inserting a single symbol you need 4 keystrokes i had to
+do some hack over this. As always created new key mappings, in particular:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    " Shortcut for digraphs insertion in text files
+    digraphs tl 8866
+    " ⊢ symbol 
+    inoremap &lt;leader&gt;tl &lt;C-k&gt;tl
+    " \in : ∈
+    inoremap &lt;leader&gt;in &lt;C-k&gt;(-
+    " Capital gamma: Γ
+    inoremap &lt;leader&gt;Gm &lt;C-k&gt;G*
+    " small lambda : λ
+    inoremap &lt;leader&gt;ld &lt;C-k&gt;l*
+</code></pre></div></div>
+
+<p>So what you see below took atleast 6 hours.(Including 2-3 hours of google search
+and exploring different vim customizations and plugins)</p>
+
+      </article>
+
+      
+        <div class="blog-tags">
+          <span>Tags:</span>
+          
+            <a href="/tags#notes">notes</a>
+          
+        </div>
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=Lambda+Calculas&url=http%3A%2F%2Flocalhost%3A4000%2F2021-09-05-Lambda-Calculas-Notes%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2021-09-05-Lambda-Calculas-Notes%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2021-09-05-Lambda-Calculas-Notes%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2021-05-27-LLVM-Installation-Guide/" data-toggle="tooltip" data-placement="top" title="Getting LLVM from Source">&larr; Previous Post</a>
+        </li>
+        
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'mabhay3420-github-io';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="mailto:abhaymishra3420@gmail.com" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://www.facebook.com/invictusabhay" title="Facebook">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Facebook</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://github.com/mabhay3420" title="GitHub">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">GitHub</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Abhay mishra
+        &nbsp;&bull;&nbsp;
+      
+      2021
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="http://localhost:4000/">INVICTUS</a>
+        </span>
+      
+
+      
+      </p>
+      <p class="theme-by text-muted">
+        Powered by
+        <a href="https://beautifuljekyll.com">Beautiful Jekyll</a>
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+
+
+
+
+</body>
+</html>
