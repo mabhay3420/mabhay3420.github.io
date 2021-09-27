@@ -11,8 +11,8 @@ html {
 }
 
 body {
-  font-family: 'Fira Code', monospace;
-  font-size: 1.125rem;
+  font-family: 'Source Sans Pro',monospace;
+  font-size: 1rem;
   color: {{ site.text-col | default: "#ffffff" }};
   position: relative;
   background-color: {{ site.page-col | default: "#2843de" }};
