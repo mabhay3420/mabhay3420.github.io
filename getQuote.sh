@@ -1,9 +1,5 @@
 #!/bin/bash
-
-# usage: ./run_program.sh file_name
-# options: 
-#          -t: stress test using format described in stress_test.py
-# update quote 
+# Usage ./getQuote.sh fileName
 quote=$(curl -s "https://api.quotable.io/random" | jq '.content')
 # remove the last "
 quote=${quote:1:-1}

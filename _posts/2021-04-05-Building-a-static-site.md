@@ -4,7 +4,6 @@ title: How I build a simple static site
 subtitle: Use beautiful-jekyll template
 cover-img: https://source.unsplash.com/collection/2513270/1920x1080
 thumbnail-img: assets/img/pexels-negative-space-160107.jpg
-tags: [books, test]
 gh-repo: mabhay3420/mabhay3420.github.io
 gh-badge: [follow]
 tags: [Web Developement,Experiments]
