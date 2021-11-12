@@ -2,9 +2,9 @@
 layout: post
 title: हिम्मत और ज़िन्दगी 
 subtitle: रामधारी सिंह 'दिनकर'
-cover-img: https://source.unsplash.com/collection/80255989/1920x1080
-thumbnail-img: https://source.unsplash.com/collection/80255989/1920x1080 
-tags: [poem]
+cover-img: https://source.unsplash.com/collection/8877554/1920x1080
+thumbnail-img: https://source.unsplash.com/collection/88775549/1920x1080 
+tags: [article]
 comments: true
 readtime: true
 ---
