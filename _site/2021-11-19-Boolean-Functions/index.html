@@ -9,13 +9,13 @@
 
   
 
-  <title>INVICTUS</title>
+  <title>Boolean Functions</title>
 
   
   <meta name="author" content="Abhay mishra">
   
 
-  <meta name="description" content="Blessed is the man who expects nothing, for he shall never be disappointed.-Dalai Lama">
+  <meta name="description" content="And Why they might matter?">
 
   
 
@@ -96,17 +96,19 @@
 
   
   <meta property="og:site_name" content="Abhay's Blog">
-  <meta property="og:title" content="INVICTUS">
-  <meta property="og:description" content="Blessed is the man who expects nothing, for he shall never be disappointed.-Dalai Lama">
+  <meta property="og:title" content="Boolean Functions">
+  <meta property="og:description" content="And Why they might matter?">
 
   
-  <meta property="og:image" content="https://source.unsplash.com/collection/2322477/1920x1080">
+  <meta property="og:image" content="https://source.unsplash.com/collection/8877554/1920x1080">
   
 
   
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="http://localhost:4000/page2/">
-  <link rel="canonical" href="http://localhost:4000/page2/">
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Abhay mishra">
+  <meta property="og:article:published_time" content="2021-11-19T00:00:00+05:30">
+  <meta property="og:url" content="http://localhost:4000/2021-11-19-Boolean-Functions/">
+  <link rel="canonical" href="http://localhost:4000/2021-11-19-Boolean-Functions/">
   
 
   
@@ -115,11 +117,11 @@
   <meta name="twitter:site" content="@">
   <meta name="twitter:creator" content="@">
 
-  <meta property="twitter:title" content="INVICTUS">
-  <meta property="twitter:description" content="Blessed is the man who expects nothing, for he shall never be disappointed.-Dalai Lama">
+  <meta property="twitter:title" content="Boolean Functions">
+  <meta property="twitter:description" content="And Why they might matter?">
 
   
-  <meta name="twitter:image" content="https://source.unsplash.com/collection/2322477/1920x1080">
+  <meta name="twitter:image" content="https://source.unsplash.com/collection/8877554/1920x1080">
   
 
   
@@ -130,6 +132,13 @@
   
 
   <!-- for mathjax support -->
+    
+      <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+        });
+      </script>
+      <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
     
 
 </head>
@@ -179,7 +188,7 @@
     
     
       
-      data-img-src-1="https://source.unsplash.com/collection/2322477/1920x1080"
+      data-img-src-1="https://source.unsplash.com/collection/8877554/1920x1080"
     
     
     
@@ -192,15 +201,30 @@
   <div class="container-md">
     <div class="row">
       <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
-        <div class="page-heading">
-          <h1>INVICTUS</h1>
+        <div class="post-heading">
+          <h1>Boolean Functions</h1>
           
             
-              <hr class="small">
-              <span class="page-subheading">Blessed is the man who expects nothing, for he shall never be disappointed.<br>-Dalai Lama</span>
+              <h2 class="post-subheading">And Why they might matter?</h2>
             
           
 
+          
+            <span class="post-meta">Posted on November 19, 2021</span>
+            
+            
+              <!--- "ReadTime on GitHub Jekyll" (c) 2020 Ruby Griffith Ramirez, MIT License -->
+
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 1 minute read</span>
+
+
+            
           
         </div>
       </div>
@@ -213,15 +237,30 @@
   <div class="container-md">
     <div class="row">
       <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
-        <div class="page-heading">
-          <h1>INVICTUS</h1>
+        <div class="post-heading">
+          <h1>Boolean Functions</h1>
           
             
-              <hr class="small">
-              <span class="page-subheading">Blessed is the man who expects nothing, for he shall never be disappointed.<br>-Dalai Lama</span>
+              <h2 class="post-subheading">And Why they might matter?</h2>
             
           
 
+          
+            <span class="post-meta">Posted on November 19, 2021</span>
+            
+            
+              <!--- "ReadTime on GitHub Jekyll" (c) 2020 Ruby Griffith Ramirez, MIT License -->
+
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 1 minute read</span>
+
+
+            
           
         </div>
       </div>
@@ -234,161 +273,135 @@
 
 
 
-<div class=" container-md " role="main">
+<div class=" container-md ">
   <div class="row">
     <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
       
 
-      <!-- Find A way to Somehow change these quotes regularly. -->
+      
+
+      <article role="main" class="blog-post">
+        <p>A boolean function is a function which takes a binary string as its input
+and outputs a single bit, 0 or 1.
+Mathematically,</p>
+
+\[f : {\sum}^{*} \rightarrow \sum\]
+
+\[\sum = \{0, 1\}\]
+
+<p>The star(*) operation simply denotes that one can concat elements from B
+as many times as one wants.</p>
+
+<p>A friend of mine is working on getting lower bound on the time complexities of a
+boolean function.  Loosely speaking, one want to deduce the minimum time taken by 
+the computation that f performs.</p>
+
+<p>These functions seemed interesting to me because it seemed that almost
+all problems can be formulated as decision problem, i.e. a problem which gives 
+an answer of type “yes” or “no” to each question asked.</p>
+
+<p>This guess was not something original. I have read some part of Alan turing’s famous
+paper “Can machines think?”. The construction of machine which can reason on
+its own essentially works by answering questions in the form of yes and no.</p>
+
+<p>Now the relation between a general problem and this type of question-answering machine
+was not clear to me immediately, But when i came across the following statement in
+my Theory of Computation lecture notes something clicked to me:</p>
+
+<blockquote>
+  <p>Languages === Boolean Functions</p>
+</blockquote>
+
+      </article>
+
+      
+        <div class="blog-tags">
+          <span>Tags:</span>
+          
+            <a href="/tags#tcs">tcs</a>
+          
+            <a href="/tags#article">article</a>
+          
+        </div>
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
 
 
 
 
-<div class="posts-list">
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
   
-  <article class="post-preview">
-    
-
-    
-    
-    <div class="post-image post-image-normal">
-      <a href="http://localhost:4000/2021-05-14-The-Prophet/" aria-label="Thumbnail">
-        <img src="http://localhost:4000/assets/img/quantum_drops.jpg" alt="Post thumbnail">
-      </a>
-    </div>
-    
-    
-
-    <a href="http://localhost:4000/2021-05-14-The-Prophet/">
-      <h2 class="post-title">The Prophet</h2>
-
-      
-        <h3 class="post-subtitle">
-        Khalil Gibran
-        </h3>
-      
+    <a href="https://twitter.com/intent/tweet?text=Boolean+Functions&url=http%3A%2F%2Flocalhost%3A4000%2F2021-11-19-Boolean-Functions%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
     </a>
-
-    <p class="post-meta">
-      
-      Posted on May 14, 2021
-    </p>
-
-    
-    <div class="post-image post-image-small">
-      <a href="http://localhost:4000/2021-05-14-The-Prophet/" aria-label="Thumbnail">
-        <img src="http://localhost:4000/assets/img/quantum_drops.jpg" alt="Post thumbnail">
-      </a>
-    </div>
-    
-
-    
-
-    
-
-   </article>
   
-  <article class="post-preview">
-    
 
-    
-    
-    <div class="post-image post-image-normal">
-      <a href="http://localhost:4000/2021-04-05-Building-a-static-site/" aria-label="Thumbnail">
-        <img src="http://localhost:4000/assets/img/pexels-negative-space-160107.jpg" alt="Post thumbnail">
-      </a>
-    </div>
-    
-    
-
-    <a href="http://localhost:4000/2021-04-05-Building-a-static-site/">
-      <h2 class="post-title">How I build a simple static site</h2>
-
-      
-        <h3 class="post-subtitle">
-        Use beautiful-jekyll template
-        </h3>
-      
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2021-11-19-Boolean-Functions%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
     </a>
-
-    <p class="post-meta">
-      
-      Posted on April 5, 2021
-    </p>
-
-    
-    <div class="post-image post-image-small">
-      <a href="http://localhost:4000/2021-04-05-Building-a-static-site/" aria-label="Thumbnail">
-        <img src="http://localhost:4000/assets/img/pexels-negative-space-160107.jpg" alt="Post thumbnail">
-      </a>
-    </div>
-    
-
-    
-
-    
-
-   </article>
   
-  <article class="post-preview">
-    
 
-    
-    
-    <div class="post-image post-image-normal">
-      <a href="http://localhost:4000/2021-04-01-invictus/" aria-label="Thumbnail">
-        <img src="http://localhost:4000/assets/img/pexels-max-ravier-3331094.jpg" alt="Post thumbnail">
-      </a>
-    </div>
-    
-    
-
-    <a href="http://localhost:4000/2021-04-01-invictus/">
-      <h2 class="post-title">INVICTUS</h2>
-
-      
-        <h3 class="post-subtitle">
-        William Ernest Henley
-        </h3>
-      
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2021-11-19-Boolean-Functions%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
     </a>
-
-    <p class="post-meta">
-      
-      Posted on April 1, 2021
-    </p>
-
-    
-    <div class="post-image post-image-small">
-      <a href="http://localhost:4000/2021-04-01-invictus/" aria-label="Thumbnail">
-        <img src="http://localhost:4000/assets/img/pexels-max-ravier-3331094.jpg" alt="Post thumbnail">
-      </a>
-    </div>
-    
-
-    
-
-    
-
-   </article>
   
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2021-11-10-Anokhi-Manyatayien/" data-toggle="tooltip" data-placement="top" title="गाँव की अनोखी मान्यताएं">&larr; Previous Post</a>
+        </li>
+        
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'mabhay3420-github-io';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
 </div>
-
-
-<ul class="pagination main-pager">
-  
-  <li class="page-item previous">
-    <a class="page-link" href="http://localhost:4000/">&larr; Newer Posts</a>
-  </li>
   
   
-</ul>
+
+  
 
 
 
-      
-
-      
 
     </div>
   </div>
