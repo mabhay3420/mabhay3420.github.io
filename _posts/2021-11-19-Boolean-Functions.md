@@ -10,31 +10,49 @@ readtime: true
 usemathjax: true
 ---
 
-A boolean function is a function which takes a binary string as its input
-and outputs a single bit, 0 or 1.
-Mathematically,
-
-$$ f : {\sum}^{*} \rightarrow \sum $$
-
-$$ \sum = \{0, 1\} $$
-
-The star(*) operation simply denotes that one can concat elements from B
-as many times as one wants.
-
 A friend of mine is working on getting lower bound on the time complexities of a
-boolean function.  Loosely speaking, one want to deduce the minimum time taken by 
-the computation that f performs. 
+boolean function. Boolean functions are functions that take a certain no of bits
+( equivalently a binary string ) and output a single bit ( 0 or 1).
 
-These functions seemed interesting to me because it seemed that almost
-all problems can be formulated as decision problem, i.e. a problem which gives 
-an answer of type "yes" or "no" to each question asked.
+Putting aside my love for fancy, pure mathematics, i was wondering why in the world
+someone would start studying the time complexities of these particulary type of 
+functions. 
 
-This guess was not something original. I have read some part of Alan turing's famous
-paper "Can machines think?". The construction of machine which can reason on
-its own essentially works by answering questions in the form of yes and no.
+I realized the following fact while revising my notes of "Theory of Computation",
+Every function/program with input and output, which can be executed in a computer is essentially a General boolean function.
+> function/Program :: Binary String -> Binary String
 
-Now the relation between a general problem and this type of question-answering machine
-was not clear to me immediately, But when i came across the following statement in
-my Theory of Computation lecture notes something clicked to me:
+One more thing, A function and program are essentially equivalent. A program can be
+seen as a composition of functions. Though this is not easy to see in C like languages,
+but there are pure functional languages like haskell which uses function application
+as the basis of computation. Now atleast on a higher level, we feel that C like languages
+and haskell ( or for that matter, any language that is turing complete ) are equivalent. 
 
->Languages === Boolean Functions
+Okay, So what does (simple) Boolean functions signify? They represent programs which take
+a input and output yes (1) or no (0).
+
+Now a lot of problems can be framed in a manner, so as to have a yes or no output. One example
+i can think of now is the following?
+```
+Original Program:
+	Input : a list of n positive integers
+	Output: Biggest number in the list
+Decision version:
+        Input : a list of n positive integers along with a number k
+	Output: Yes if k is larger than all the numbers
+Algorithm: k = 1 in the starting 
+           and Keep incrementing k till you get "YES" as answer.
+Biggest number : k - 1
+```
+
+Even though a large set of problems can be framed in this manner ( i.e. there is a decision
+version of the problem ), can we say that all programs ( that can be executed in a computer)
+can be computed ( executed ) in this manner?
+
+Honestly I am not completely sure about it, but what i can remember is that we are asking something similar to 
+what Alan Turing asks in his paper "[Can machines Think?](https://academic.oup.com/mind/article/LIX/236/433/986238)".
+
+He questioned about whether we can construct a machine that
+is intelligent, atleast indistinguishable from a human
+being. The machine proposed was a question answering
+machine, similar to what we are searching here.
