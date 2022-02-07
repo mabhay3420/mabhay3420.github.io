@@ -20,4 +20,4 @@ random things, below i list the ones i have organised properly:
 5. Implementation of HPSSA
 Construction Algorithm in
 the LLVM Compiler
-Framework : <a href="../PDF/HPSSA_REPORT.pdf" target="_blank">Report</a> | <a href="../PDF/HPSSA_PPT.pdf" target="_blank"> Presentation </a>
+Framework : <a href="../FILES/HPSSA_REPORT.pdf" target="_blank">Report</a> | <a href="../FILES/HPSSA_PPT.pdf" target="_blank"> Presentation </a>
