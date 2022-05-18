@@ -13,7 +13,7 @@
         <title>Boolean Functions</title>
         <description>
           And Why they might matter? - 
-          A friend of mine is working on getting lower bound on the time complexities of a boolean function. Boolean functions are functions that take a certain no of bits ( equivalently a binary string ) and output a single bit ( 0 or 1). Putting aside my love for fancy,...
+          A friend of mine,Aman Agrawal, is working on getting approximate lower bound on the time complexities of a boolean function. Boolean functions are functions that take a certain no of bits ( equivalently a binary string ) and output a single bit ( 0 or 1). Putting aside my love...
         </description>
         <pubDate>Fri, 19 Nov 2021 00:00:00 +0530</pubDate>
         <link>http://localhost:4000/2021-11-19-Boolean-Functions/</link>

@@ -10,7 +10,7 @@ readtime: true
 usemathjax: true
 ---
 
-A friend of mine is working on getting lower bound on the time complexities of a
+A friend of mine,[Aman Agrawal](https://aman-agrawal01.github.io/), is working on getting approximate lower bound on the time complexities of a
 boolean function. Boolean functions are functions that take a certain no of bits
 ( equivalently a binary string ) and output a single bit ( 0 or 1).
 
@@ -102,5 +102,5 @@ Boolean function over the (augmented) input.
 Thus getting a lower bound on time complexity of a boolean function is
 equivalent to getting a lower bound on solving the problem. There are technical
 details which I don't know yet, but the idea that you can prove that "No
-algorithm can exist which solves this problem in less than A particular Value"
+algorithm solving this problem will have time complexity better than O(something)"
 is Fascinating.
