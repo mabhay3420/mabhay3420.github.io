@@ -9,13 +9,13 @@
 
   
 
-  <title>गाँव की अनोखी मान्यताएं</title>
+  <title>BUILDING COMPILERS</title>
 
   
   <meta name="author" content="Abhay mishra">
   
 
-  <meta name="description" content="एक अलग दुनिया">
+  <meta name="description" content="And Why they might matter?">
 
   
 
@@ -96,19 +96,19 @@
 
   
   <meta property="og:site_name" content="Abhay's Blog">
-  <meta property="og:title" content="गाँव की अनोखी मान्यताएं">
-  <meta property="og:description" content="एक अलग दुनिया">
+  <meta property="og:title" content="BUILDING COMPILERS">
+  <meta property="og:description" content="And Why they might matter?">
 
   
-  <meta property="og:image" content="https://source.unsplash.com/collection/80255989/1920x1080">
+  <meta property="og:image" content="https://source.unsplash.com/featured/1920x1080/">
   
 
   
   <meta property="og:type" content="article">
   <meta property="og:article:author" content="Abhay mishra">
-  <meta property="og:article:published_time" content="2021-11-10T00:00:00+05:30">
-  <meta property="og:url" content="http://localhost:4000/2021-11-10-Anokhi-Manyatayien/">
-  <link rel="canonical" href="http://localhost:4000/2021-11-10-Anokhi-Manyatayien/">
+  <meta property="og:article:published_time" content="2024-05-03T00:00:00+05:30">
+  <meta property="og:url" content="http://localhost:4000/2024-05-03-building-compilers/">
+  <link rel="canonical" href="http://localhost:4000/2024-05-03-building-compilers/">
   
 
   
@@ -117,11 +117,11 @@
   <meta name="twitter:site" content="@">
   <meta name="twitter:creator" content="@">
 
-  <meta property="twitter:title" content="गाँव की अनोखी मान्यताएं">
-  <meta property="twitter:description" content="एक अलग दुनिया">
+  <meta property="twitter:title" content="BUILDING COMPILERS">
+  <meta property="twitter:description" content="And Why they might matter?">
 
   
-  <meta name="twitter:image" content="https://source.unsplash.com/collection/80255989/1920x1080">
+  <meta name="twitter:image" content="https://source.unsplash.com/featured/1920x1080/">
   
 
   
@@ -132,6 +132,13 @@
   
 
   <!-- for mathjax support -->
+    
+      <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+        });
+      </script>
+      <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
     
 
 </head>
@@ -181,7 +188,7 @@
     
     
       
-      data-img-src-1="https://source.unsplash.com/collection/80255989/1920x1080"
+      data-img-src-1="https://source.unsplash.com/featured/1920x1080/"
     
     
     
@@ -195,15 +202,15 @@
     <div class="row">
       <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
         <div class="post-heading">
-          <h1>गाँव की अनोखी मान्यताएं</h1>
+          <h1>BUILDING COMPILERS</h1>
           
             
-              <h2 class="post-subheading">एक अलग दुनिया</h2>
+              <h2 class="post-subheading">And Why they might matter?</h2>
             
           
 
           
-            <span class="post-meta">Posted on November 10, 2021</span>
+            <span class="post-meta">Posted on May 3, 2024</span>
             
             
               <!--- "ReadTime on GitHub Jekyll" (c) 2020 Ruby Griffith Ramirez, MIT License -->
@@ -214,7 +221,7 @@
 
 
   
-  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 1 minute read</span>
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> &lt; 1 minute read</span>
 
 
             
@@ -231,15 +238,15 @@
     <div class="row">
       <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
         <div class="post-heading">
-          <h1>गाँव की अनोखी मान्यताएं</h1>
+          <h1>BUILDING COMPILERS</h1>
           
             
-              <h2 class="post-subheading">एक अलग दुनिया</h2>
+              <h2 class="post-subheading">And Why they might matter?</h2>
             
           
 
           
-            <span class="post-meta">Posted on November 10, 2021</span>
+            <span class="post-meta">Posted on May 3, 2024</span>
             
             
               <!--- "ReadTime on GitHub Jekyll" (c) 2020 Ruby Griffith Ramirez, MIT License -->
@@ -250,7 +257,7 @@
 
 
   
-  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 1 minute read</span>
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> &lt; 1 minute read</span>
 
 
             
@@ -275,64 +282,11 @@
       
 
       <article role="main" class="blog-post">
-        <ol>
-  <li>
-    <p>जब रात को सियार बोल रहा हो, तब अगर आप मुट्ठी बंद कर लो, तो वह बोलना बंद कर
-देगा। ऐसी मान्यता है की मुट्ठी बंद करने से उसका गला हाथ की जकड में आ जाता है
-और इसलिये वो बोल नहीं पता।</p>
-  </li>
-  <li>
-    <p>खाने के बाद ऐढााना (किसी के शरीर को खींचने की क्रिया) नहीं करनी चाहिए। ऐसा
-माना जाता है की ऐसा करने से सारा भोजन कुत्ते के पेट में चला जाएगा और आपको कोई
-ऊर्जा नहीं मिलेगी।</p>
-  </li>
-  <li>
-    <p>अगर कोई आदमी 7 दिन लगातर आधी रात को इमली के पेड़ के नीचे दीपक जलाये तो आखिरी
-दिन जमीन फटेगी और हाड़ा (आमतौर पर पीतल से बने मटके के आकार का एक बड़ा बर्तन)
-निकलेगा। हाड़ा में बड़ी मात्रा में धन होगा।</p>
-  </li>
-  <li>
-    <p>चुड़ैल के पाव उल्टे होते हैं। भयार भूतनी की एक किस्म है जो एक औरत मरने के बाद
-बनती है। यदि आपको किसी तरह उसके बाल मिल गए, तो वह आपके पूर्ण नियंत्रण में
-होगी और आपके सभी आदेशों का पालन करेगी।</p>
-  </li>
-  <li>
-    <p>अगर ओलों के साथ भारी बारिश हो रही है तो मूसर(लंबा, मोटा डंडा जिससे ओखल में
-डाले हुए धान आदि को कूटते हैं ) को आंगन में फेंक दें। इससे कुछ समय बाद ओले
-पड़ना बंद हो जाएगा।</p>
-  </li>
-  <li>
-    <p>अपने नए गिरे हुए दांतों को थोड़े से चावल के साथ चूहे के छेद में रखें। चूहा
-दांत ले जाएगा और बदले में जल्द ही आप अपने मुंह में एक नया दांत प्राप्त
-करेंगे।</p>
-  </li>
-  <li>
-    <p>यदि आप अरुआ (एक निशाचर पक्षी) पर एक पत्थर फेंकते हैं, तो वह उसे पकड़ कर नदी
-में फेंक देगा। जैसे जैसे पत्थर पानी में घुलेगा, वैसा ही आपका शरीर भी
-घुलेगा। (आपका स्वास्थ्य खराब होगा और शरीर कामजोर)। इस पक्षी को लुआठ
-(आधा जला हुआ लकड़ी का टुकड़ा) दिखा कर डराना चाहिए।</p>
-  </li>
-  <li>
-    <p>बड़ी मात्रा में टिकोरी (छोटे कच्चे आम) खाने से विनाश फूट सकता है। विनाश फूटने
-का मतलब नाक से खून बहना । इसे ठीक करने का तरीका है: पीठ के बल लेटाकर कंडा
-(सूखा हुआ गोबर) सुघाना।</p>
-  </li>
-  <li>
-    <p>तुलसी को रात में नहीं छूना चाहिए क्योंकि तुलसी विष्णु की पत्नी है और रात में उसे छूना देवी
-का अपमान है। कच्चे आम का रस रात को खाने से कुछ दिनों तक पैरों में तेज दर्द रहता है। रात
-में मट्ठा खाने से बचना चाहिए क्योंकि यह ठंडा होता है।</p>
-  </li>
-</ol>
+        <p>Hello World
+Nice world</p>
 
       </article>
 
-      
-        <div class="blog-tags">
-          <span>Tags:</span>
-          
-            <a href="/tags#trivia">trivia</a>
-          
-        </div>
       
 
       
@@ -347,7 +301,7 @@
   <span class="sr-only">Share: </span>
 
   
-    <a href="https://twitter.com/intent/tweet?text=%E0%A4%97%E0%A4%BE%E0%A4%81%E0%A4%B5+%E0%A4%95%E0%A5%80+%E0%A4%85%E0%A4%A8%E0%A5%8B%E0%A4%96%E0%A5%80+%E0%A4%AE%E0%A4%BE%E0%A4%A8%E0%A5%8D%E0%A4%AF%E0%A4%A4%E0%A4%BE%E0%A4%8F%E0%A4%82&url=http%3A%2F%2Flocalhost%3A4000%2F2021-11-10-Anokhi-Manyatayien%2F"
+    <a href="https://twitter.com/intent/tweet?text=BUILDING+COMPILERS&url=http%3A%2F%2Flocalhost%3A4000%2F2024-05-03-building-compilers%2F"
       class="btn btn-social-icon btn-twitter" title="Share on Twitter">
       <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
       <span class="sr-only">Twitter</span>
@@ -355,7 +309,7 @@
   
 
   
-    <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2021-11-10-Anokhi-Manyatayien%2F"
+    <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2024-05-03-building-compilers%2F"
       class="btn btn-social-icon btn-facebook" title="Share on Facebook">
       <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
       <span class="sr-only">Facebook</span>
@@ -363,7 +317,7 @@
   
 
   
-    <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2021-11-10-Anokhi-Manyatayien%2F"
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2024-05-03-building-compilers%2F"
       class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
       <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
       <span class="sr-only">LinkedIn</span>
@@ -381,13 +335,9 @@
       <ul class="pagination blog-pager">
         
         <li class="page-item previous">
-          <a class="page-link" href="/2021-11-09-Himmat-Aur-Zindagi/" data-toggle="tooltip" data-placement="top" title="हिम्मत और ज़िन्दगी">&larr; Previous Post</a>
+          <a class="page-link" href="/2021-11-19-Boolean-Functions/" data-toggle="tooltip" data-placement="top" title="Boolean Functions">&larr; Previous Post</a>
         </li>
         
-        
-        <li class="page-item next">
-          <a class="page-link" href="/2021-11-19-Boolean-Functions/" data-toggle="tooltip" data-placement="top" title="Boolean Functions">Next Post &rarr;</a>
-        </li>
         
       </ul>
       

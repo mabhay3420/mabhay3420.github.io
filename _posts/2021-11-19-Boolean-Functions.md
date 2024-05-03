@@ -2,8 +2,8 @@
 layout: post
 title: Boolean Functions
 subtitle: And Why they might matter?
-cover-img: https://source.unsplash.com/collection/1695735/1920x1080
-thumbnail-img: https://source.unsplash.com/collection/1695735/1920x1080 
+cover-img: https://source.unsplash.com/collection/9945669/1920x1080
+thumbnail-img: https://source.unsplash.com/collection/9945669/1920x1080
 tags: [tcs, article]
 comments: true
 readtime: true
@@ -16,13 +16,14 @@ boolean function. Boolean functions are functions that take a certain no of bits
 
 Putting aside my love for fancy, pure mathematics, i was wondering why in the
 world someone would start studying the time complexities of these particulary
-type of functions. 
+type of functions.
 
 ## Programs and Boolean Functions
 
 I realized the following fact while revising my notes of "Theory of
 Computation", Every function/program with input and output, which can be
 executed in a computer is essentially a General boolean function.
+
 > function/Program :: Binary String -> Binary String
 
 ## Functions vs Programs
@@ -32,7 +33,7 @@ be seen as a composition of functions. Though this is not easy to see in C like
 languages, but there are pure functional languages like haskell which uses
 function application as the basis of computation. Now atleast on a higher level,
 we feel that C like languages and haskell ( or for that matter, any language
-that is turing complete ) are equivalent. 
+that is turing complete ) are equivalent.
 
 ## (Simple) Boolean Functions
 
@@ -46,6 +47,7 @@ output. One example i can think of now is the following?
 
 Input : a list of n positive integers  
 Output: Biggest number in the list
+
 ### Decision version
 
 Input : a list of n positive integers along with a number k  
@@ -53,11 +55,11 @@ Output: Yes if k is larger than all the numbers
 
 ### Algorithm
 
-k = 1 in the starting   
+k = 1 in the starting  
 Keep incrementing k till you get "YES" as answer.  
-Output  : k - 1
+Output : k - 1
 
-## Question-Answering Machine 
+## Question-Answering Machine
 
 Even though a large set of problems can be framed in this manner ( i.e. there is
 a decision version of the problem ), can we say that all programs ( that can be
