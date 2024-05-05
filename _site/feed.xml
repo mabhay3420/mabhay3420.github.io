@@ -10,6 +10,17 @@
     
     
       <item>
+        <title>State Machine Compiler - Rust Macros</title>
+        <description>
+          And Why they might matter? - 
+          In the previous post, we ended up with a rust implementation of state machine simulation. We also concluded that in order to test different state machine, we would like a better way, as writing full code involves a lot of boilerplate. Rust Macros allow us to generate rust code by...
+        </description>
+        <pubDate>Sun, 05 May 2024 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/2024-05-05-state-machine-compiler-rust-macros/</link>
+        <guid isPermaLink="true">http://localhost:4000/2024-05-05-state-machine-compiler-rust-macros/</guid>
+      </item>
+    
+      <item>
         <title>State Machine Compiler - Intro</title>
         <description>
           Computing numbers - 
