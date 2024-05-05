@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Beautiful Jekyll 5.0.0 | Copyright Dean Attali 2020 -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  
+
+  
+
+  <title>State Machine Compiler - Intro</title>
+
+  
+  <meta name="author" content="Abhay mishra">
+  
+
+  <meta name="description" content="Computing numbers">
+
+  
+
+  
+  <meta name="keywords" content="deep-learning,Machine Learning, Web Developement, Tech Blog, Compilers">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Abhay's Blog" href="http://localhost:4000/feed.xml">
+
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PK8RG1KPVB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PK8RG1KPVB');
+</script>
+
+
+  
+
+  
+<!-- Google Analytics -->
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'mabhay3420', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Abhay's Blog">
+  <meta property="og:title" content="State Machine Compiler - Intro">
+  <meta property="og:description" content="Computing numbers">
+
+  
+  <meta property="og:image" content="https://source.unsplash.com/featured/1920x1080/">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Abhay mishra">
+  <meta property="og:article:published_time" content="2024-05-03T00:00:00+05:30">
+  <meta property="og:url" content="http://localhost:4000/2024-05-03-State-Machine-Compiler-Intro/">
+  <link rel="canonical" href="http://localhost:4000/2024-05-03-State-Machine-Compiler-Intro/">
+  
+
+  
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="State Machine Compiler - Intro">
+  <meta property="twitter:description" content="Computing numbers">
+
+  
+  <meta name="twitter:image" content="https://source.unsplash.com/featured/1920x1080/">
+  
+
+  
+
+
+  
+
+  
+
+  <!-- for mathjax support -->
+    
+      <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+        });
+      </script>
+      <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+    
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="http://localhost:4000/">Abhay's Blog</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/aboutme">About Me</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/project">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/resource">Resources</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+  <div id="header-big-imgs" data-num-img=1
+    
+    
+    
+      
+      data-img-src-1="https://source.unsplash.com/featured/1920x1080/"
+    
+    
+    
+  ></div>
+
+
+<header class="header-section has-img">
+
+<div class="big-img intro-header">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>State Machine Compiler - Intro</h1>
+          
+            
+              <h2 class="post-subheading">Computing numbers</h2>
+            
+          
+
+          
+            <span class="post-meta">Posted on May 3, 2024</span>
+            
+            
+              <!--- "ReadTime on GitHub Jekyll" (c) 2020 Ruby Griffith Ramirez, MIT License -->
+
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 7 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class='img-desc'></span>
+</div>
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>State Machine Compiler - Intro</h1>
+          
+            
+              <h2 class="post-subheading">Computing numbers</h2>
+            
+          
+
+          
+            <span class="post-meta">Posted on May 3, 2024</span>
+            
+            
+              <!--- "ReadTime on GitHub Jekyll" (c) 2020 Ruby Griffith Ramirez, MIT License -->
+
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 7 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <p>Today the architecture of a computure seems very natural:</p>
+
+<ol>
+  <li>a memory unit: to store the result of computation (Disk, RAM etc.)</li>
+  <li>a logic unit: which performs computation(CPU, GPU etc.)</li>
+</ol>
+
+<p>This architecture is based on <a href="link_here">Von Neuman Model</a> of computing, but the
+roots trace back to <a href="link_here">Turing’s Paper</a> on what all numbers are computable.</p>
+
+<p>The paper starts with the setup in which a human computer( A human who is computing)
+computes a certain number via an algorithm. The human has access to a paper and pencil,
+and her own mind. The human is assumed to have finite amount of memory, where one tracks
+the current state of computation.</p>
+
+<p>This is then abstracted:</p>
+
+<ol>
+  <li>A tape divided into squares: this can be used as paper</li>
+  <li>A head: the location on tape which can be read and written. The head can move towards any of the two ends of tape.</li>
+  <li>Internal state logic: The logic of algorithm can be encoded in this device. This will
+control the state transition and the tape head movement</li>
+</ol>
+
+<p>A number is said to be computable if one can construct a state machine that will output
+the number on the tape in finite number of steps. [ Why finite?]</p>
+
+<p>Let’s take an example. Suppose we want to calculate a number of the form (01)^n, i.e.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0101010101...
+</code></pre></div></div>
+
+<p>Here is a description of state(tape) machine will:</p>
+
+<ol>
+  <li>Start with state a.</li>
+  <li>If the state is a, irrespective of content of tape, write 0 on current head and change internal state to b.</li>
+  <li>If the internal state is b and current head reads 0 then move the head to right and write 1 on tape. The internal state doesn’t change.</li>
+  <li>If the internal state is b and current head reads 1 then move the head to right and change internal state to a.</li>
+  <li>We are back at step 2.</li>
+</ol>
+
+<details>
+<summary>
+Here is how this plays out:
+</summary>
+
+Step 1:
+
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="n">Internal</span> <span class="n">state</span><span class="p">:</span> <span class="n">a</span>
+<span class="n">Tape</span><span class="p">:</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span><span class="o">...</span>
+<span class="n">Head</span><span class="p">:</span> <span class="o">^</span>
+<span class="n">Logic</span><span class="p">:</span> <span class="n">Write</span> <span class="mi">0</span> <span class="n">and</span> <span class="n">transition</span> <span class="n">to</span> <span class="n">b</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+
+Step 2:
+
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="n">Internal</span> <span class="n">state</span><span class="p">:</span> <span class="n">b</span>
+<span class="n">Tape</span><span class="p">:</span> <span class="p">|</span><span class="mi">0</span><span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span><span class="o">...</span>
+<span class="n">Head</span><span class="p">:</span> <span class="o">^</span>
+<span class="n">Logic</span><span class="p">:</span> <span class="n">Move</span> <span class="n">right</span> <span class="n">and</span> <span class="n">write</span> <span class="mi">1</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+
+Step 3:
+
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="n">Internal</span> <span class="n">state</span><span class="p">:</span> <span class="n">b</span>
+<span class="n">Tape</span><span class="p">:</span> <span class="p">|</span><span class="mi">0</span><span class="p">|</span><span class="mi">1</span><span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span><span class="o">...</span>
+<span class="n">Head</span><span class="p">:</span> <span class="o">^</span>
+<span class="n">Logic</span><span class="p">:</span> <span class="n">Move</span> <span class="n">right</span> <span class="n">and</span> <span class="n">transition</span> <span class="n">to</span> <span class="n">a</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+
+Step 4:
+
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="n">Internal</span> <span class="n">state</span><span class="p">:</span> <span class="n">a</span>
+<span class="n">Tape</span><span class="p">:</span> <span class="p">|</span><span class="mi">0</span><span class="p">|</span><span class="mi">1</span><span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span><span class="o">...</span>
+<span class="n">Head</span><span class="p">:</span> <span class="o">^</span>
+<span class="n">Logic</span><span class="p">:</span> <span class="n">Write</span> <span class="mi">0</span> <span class="n">and</span> <span class="n">transition</span> <span class="n">to</span> <span class="n">b</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+
+Step 5:
+
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="code"><pre><span class="n">Internal</span> <span class="n">state</span><span class="p">:</span> <span class="n">b</span>
+<span class="n">Tape</span><span class="p">:</span> <span class="p">|</span><span class="mi">0</span><span class="p">|</span><span class="mi">1</span><span class="p">|</span><span class="mi">0</span><span class="p">|</span> <span class="p">|</span> <span class="p">|</span><span class="o">...</span>
+<span class="n">Head</span><span class="p">:</span> <span class="o">^</span>
+<span class="n">Logic</span><span class="p">:</span> <span class="n">Move</span> <span class="n">right</span> <span class="n">and</span> <span class="n">write</span> <span class="mi">1</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+
+</details>
+
+<p>You get the idea. Here is more concise way of writing the same logic:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Current State</td>
+      <td>Required Current Tape Head Content</td>
+      <td>Action</td>
+      <td>Next State</td>
+    </tr>
+    <tr>
+      <td>a</td>
+      <td>None</td>
+      <td>P(0)</td>
+      <td>b</td>
+    </tr>
+    <tr>
+      <td>b</td>
+      <td>0</td>
+      <td>R-P(1)</td>
+      <td>b</td>
+    </tr>
+    <tr>
+      <td>b</td>
+      <td>1</td>
+      <td>R</td>
+      <td>a</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The paper presents another intereseting sequence that one can calculate by this setup:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0 01 011 0111 0111 ...
+</code></pre></div></div>
+
+<p>i.e. sequence[clarify sequence vs numbers] of the form: ?? . There is no simple formula
+for this sequence unlike the previous one((01)^n). [ why? proof?]</p>
+
+<p>Here is the table for that:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Current State</td>
+      <td>Tape Head Content</td>
+      <td>Action</td>
+      <td>Next State</td>
+    </tr>
+    <tr>
+      <td>b</td>
+      <td>_(any)</td>
+      <td>P(e)-R-P(e)-R-P(0)-R-R-P(0)-L-L</td>
+      <td>o</td>
+    </tr>
+    <tr>
+      <td>o</td>
+      <td>1</td>
+      <td>R-P(x)-L-L-L</td>
+      <td>o</td>
+    </tr>
+    <tr>
+      <td>o</td>
+      <td>0</td>
+      <td>X</td>
+      <td>q</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>0 or 1</td>
+      <td>R-R</td>
+      <td>q</td>
+    </tr>
+    <tr>
+      <td>q</td>
+      <td>X(empty)</td>
+      <td>P(1)-L</td>
+      <td>p</td>
+    </tr>
+    <tr>
+      <td>p</td>
+      <td>x</td>
+      <td>P(X)-R</td>
+      <td>q</td>
+    </tr>
+    <tr>
+      <td>p</td>
+      <td>e</td>
+      <td>R</td>
+      <td>f</td>
+    </tr>
+    <tr>
+      <td>p</td>
+      <td>X(empty)</td>
+      <td>L-L</td>
+      <td>p</td>
+    </tr>
+    <tr>
+      <td>f</td>
+      <td>_(any)</td>
+      <td>R-R</td>
+      <td>f</td>
+    </tr>
+    <tr>
+      <td>f</td>
+      <td>X(empty)</td>
+      <td>P(0)-L-L</td>
+      <td>o</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Now verifying the output of such a big table by hand is going to be cumbersome.
+How about we implementing a program to simulate this? The logic is simple: Depending on current state and current head content perform actions and change state. Keep repeating this for required number of steps and print the tape content in the end.</p>
+
+<p>I implemented this logic in rust, since i’ve been trying to learn it recently:</p>
+
+<details>
+
+<summary>
+Full Code
+</summary>
+
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+</pre></td><td class="code"><pre><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="n">fmt</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="n">io</span><span class="p">;</span>
+
+<span class="c">// Internal states #[derive(Debug, PartialEq, Eq)]</span>
+<span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
+<span class="n">b</span><span class="p">,</span>
+<span class="n">o</span><span class="p">,</span>
+<span class="n">q</span><span class="p">,</span>
+<span class="n">p</span><span class="p">,</span>
+<span class="n">f</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c">// Allowed symbols #[derive(Debug, PartialEq, Eq, Clone)]</span>
+<span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
+<span class="n">Symbol0</span><span class="p">,</span>
+<span class="n">Symbol1</span><span class="p">,</span>
+<span class="n">Symbole</span><span class="p">,</span>
+<span class="n">Symbolx</span><span class="p">,</span>
+<span class="n">SymbolX</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c">// For printing purposes</span>
+<span class="k">impl</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
+<span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
+<span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
+<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="k">=&gt;</span> <span class="s">"0"</span><span class="p">,</span>
+<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span> <span class="k">=&gt;</span> <span class="s">"1"</span><span class="p">,</span>
+<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbole</span> <span class="k">=&gt;</span> <span class="s">"e"</span><span class="p">,</span>
+<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span> <span class="k">=&gt;</span> <span class="s">"x"</span><span class="p">,</span>
+<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span> <span class="k">=&gt;</span> <span class="s">"X"</span>
+<span class="p">}</span>
+<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">// Internal State + Tape + Head</span>
+<span class="k">struct</span> <span class="n">TapeMachine</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span>
+<span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="n">index</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="n">TapeMachine</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="n">Self</span> <span class="p">{</span>
+<span class="n">state</span><span class="p">,</span>
+<span class="n">result</span><span class="p">,</span>
+<span class="n">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="p">}</span>
+
+    <span class="c">// Allowed Actions</span>
+
+    <span class="c">// Print</span>
+    <span class="k">fn</span> <span class="nf">p</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">:</span> <span class="n">TapeMachineSymbol</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="py">.result</span><span class="p">[</span><span class="k">self</span><span class="py">.index</span><span class="p">]</span> <span class="o">=</span> <span class="n">symbol</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c">// Move right</span>
+    <span class="k">fn</span> <span class="nf">r</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="py">.index</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c">// Move left</span>
+    <span class="k">fn</span> <span class="nf">l</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="py">.index</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"Enter the number of steps:"</span><span class="p">);</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">steps_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+<span class="nn">io</span><span class="p">::</span><span class="nf">stdin</span><span class="p">()</span><span class="nf">.read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">steps_input</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
+<span class="k">let</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="n">steps_input</span><span class="nf">.trim</span><span class="p">()</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
+
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Enter the total tape length:"</span><span class="p">);</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">tape_length_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+    <span class="nn">io</span><span class="p">::</span><span class="nf">stdin</span><span class="p">()</span><span class="nf">.read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">tape_length_input</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
+    <span class="k">let</span> <span class="n">max_len</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="n">tape_length_input</span><span class="nf">.trim</span><span class="p">()</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
+
+    <span class="c">// Initialise tape machine</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">result</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">;</span> <span class="n">max_len</span><span class="p">];</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">tape_machine</span> <span class="o">=</span> <span class="nn">TapeMachine</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">b</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">result</span><span class="p">);</span>
+
+    <span class="c">// Simulate for required number of steps</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">steps</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span>
+            <span class="n">i</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">]);</span>
+
+        <span class="k">match</span> <span class="p">(</span><span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">])</span> <span class="p">{</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span><span class="p">);</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="c">// X means do nothing</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="p">|</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">);</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">p</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">p</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">p</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">);</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">p</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbole</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">f</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">f</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">p</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">p</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">p</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">f</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span><span class="p">);</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">b</span><span class="p">,</span> <span class="mi">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbole</span><span class="p">);</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbole</span><span class="p">);</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span><span class="p">);</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span><span class="p">);</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">f</span><span class="p">,</span> <span class="mi">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">f</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">f</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="mi">_</span><span class="p">,</span> <span class="mi">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"State: {:?} Index: {:?} Symbol: {:?}"</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.index</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">]);</span>
+                <span class="k">let</span> <span class="n">binary_result</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span><span class="nf">.collect</span><span class="p">();</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">binary_result</span><span class="p">);</span>
+                <span class="nd">panic!</span><span class="p">(</span><span class="s">"Invalid state reached"</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">let</span> <span class="n">binary_result</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span><span class="nf">.collect</span><span class="p">();</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">binary_result</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">clean_result</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.filter</span><span class="p">(</span> <span class="p">|</span><span class="o">&amp;</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">)</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span><span class="nf">.collect</span><span class="p">();</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"=========</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">clean_result</span><span class="p">);</span>
+
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+
+</details>
+
+<p>The crux of implementation is this loop:</p>
+
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="code"><pre>    <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">steps</span> <span class="p">{</span>
+        <span class="nd">println!</span><span class="p">(</span><span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span>
+            <span class="n">i</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">]);</span>
+
+        <span class="c">// Depending on the current state and current tape head content</span>
+        <span class="k">match</span> <span class="p">(</span><span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">])</span> <span class="p">{</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="c">// Perform actions</span>
+                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span><span class="p">);</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="c">// X means do nothing</span>
+                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">;</span>
+                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="o">...</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>If you run the above code, for 1 000 steps and tape length set to 10 000, then you will get following cleaned up content( after removing empty spaces)</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>e0010110111011110111110111111011111110111111110111111111
+</code></pre></div></div>
+
+<p>If we ignore the first <code class="language-plaintext highlighter-rouge">e</code> , we are actually on track to get this sequence.</p>
+
+<details>
+<summary> Instructions to run the code</summary>
+
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">Assuming the code is saved <span class="k">in </span>state_machine.rs
+
+1. rustc state_machine.rs
+2. ./state_machine
+3. Enter the number of steps and tape length.
+   As a rule of thumb, Tape length <span class="o">&gt;=</span> 10 <span class="se">\*</span> Number of steps, but this obviously depends on the logic.</code></pre></figure>
+
+
+</details>
+
+<p>This is interesting. However, what if we want to test another state machine, i.e. one
+with different states and rules. We will have to rewrite the code again, which is
+a time taking process. The table description is pretty succinct. Can we generate
+simulation code with minimal description of state machine?</p>
+
+<p><a href="link_here">Rust Macros</a> can generate code by matching patterns. Can we use them to
+generate the code for us? We do it in the next post.</p>
+
+      </article>
+
+      
+        <div class="blog-tags">
+          <span>Tags:</span>
+          
+            <a href="/tags#compiler">compiler</a>
+          
+            <a href="/tags#toc">toc</a>
+          
+            <a href="/tags#computation">computation</a>
+          
+        </div>
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=State+Machine+Compiler+-+Intro&url=http%3A%2F%2Flocalhost%3A4000%2F2024-05-03-State-Machine-Compiler-Intro%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2024-05-03-State-Machine-Compiler-Intro%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2024-05-03-State-Machine-Compiler-Intro%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2021-11-19-Boolean-Functions/" data-toggle="tooltip" data-placement="top" title="Boolean Functions">&larr; Previous Post</a>
+        </li>
+        
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'mabhay3420-github-io';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="mailto:abhaymishra3420@gmail.com" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://www.facebook.com/invictusabhay" title="Facebook">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Facebook</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://github.com/mabhay3420" title="GitHub">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">GitHub</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Abhay mishra
+        &nbsp;&bull;&nbsp;
+      
+      2024
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="http://localhost:4000/">INVICTUS</a>
+        </span>
+      
+
+      
+      </p>
+      <p class="theme-by text-muted">
+        Powered by
+        <a href="https://beautifuljekyll.com">Beautiful Jekyll</a>
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+
+
+
+
+</body>
+</html>

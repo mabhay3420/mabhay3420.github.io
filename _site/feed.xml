@@ -10,16 +10,14 @@
     
     
       <item>
-        <title>BUILDING COMPILERS</title>
+        <title>State Machine Compiler - Intro</title>
         <description>
-          And Why they might matter? - 
-          Hello World
-Nice world
-
+          Computing numbers - 
+          Today the architecture of a computure seems very natural: a memory unit: to store the result of computation (Disk, RAM etc.) a logic unit: which performs computation(CPU, GPU etc.) This architecture is based on Von Neuman Model of computing, but the roots trace back to Turing’s Paper on what all...
         </description>
         <pubDate>Fri, 03 May 2024 00:00:00 +0530</pubDate>
-        <link>http://localhost:4000/2024-05-03-building-compilers/</link>
-        <guid isPermaLink="true">http://localhost:4000/2024-05-03-building-compilers/</guid>
+        <link>http://localhost:4000/2024-05-03-State-Machine-Compiler-Intro/</link>
+        <guid isPermaLink="true">http://localhost:4000/2024-05-03-State-Machine-Compiler-Intro/</guid>
       </item>
     
       <item>

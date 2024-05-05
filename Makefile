@@ -10,10 +10,10 @@ serve:
 define TEMPLATE
 ---
 layout: post
-title: $(shell echo $(filter-out $@,$(MAKECMDGOALS)) | tr '[:lower:]' '[:upper:]')
+title: $(shell echo $(filter-out $@,$(MAKECMDGOALS)))
 subtitle: And Why they might matter?
-cover-img: https://source.unsplash.com/collection/1695735/1920x1080
-thumbnail-img: https://source.unsplash.com/collection/1695735/1920x1080
+cover-img: https://source.unsplash.com/featured/1920x1080/
+thumbnail-img: https://source.unsplash.com/featured/1920x1080/
 tags: []
 comments: true
 readtime: true
