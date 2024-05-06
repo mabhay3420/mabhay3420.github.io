@@ -679,55 +679,78 @@ Full Code
 174
 175
 176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
 </pre></td><td class="code"><pre><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="n">fmt</span><span class="p">;</span>
 <span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="n">io</span><span class="p">;</span>
 
-<span class="c">// Internal states #[derive(Debug, PartialEq, Eq)]</span>
+<span class="c">// Internal states</span>
+<span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
-<span class="n">b</span><span class="p">,</span>
-<span class="n">o</span><span class="p">,</span>
-<span class="n">q</span><span class="p">,</span>
-<span class="n">p</span><span class="p">,</span>
-<span class="n">f</span><span class="p">,</span>
+    <span class="n">b</span><span class="p">,</span>
+    <span class="n">o</span><span class="p">,</span>
+    <span class="n">q</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">,</span>
+    <span class="n">f</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="c">// Allowed symbols #[derive(Debug, PartialEq, Eq, Clone)]</span>
+<span class="c">// Allowed symbols</span>
+<span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq,</span> <span class="nd">Clone)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-<span class="n">Symbol0</span><span class="p">,</span>
-<span class="n">Symbol1</span><span class="p">,</span>
-<span class="n">Symbole</span><span class="p">,</span>
-<span class="n">Symbolx</span><span class="p">,</span>
-<span class="n">SymbolX</span><span class="p">,</span>
+    <span class="n">Symbol0</span><span class="p">,</span>
+    <span class="n">Symbol1</span><span class="p">,</span>
+    <span class="n">Symbole</span><span class="p">,</span>
+    <span class="n">Symbolx</span><span class="p">,</span>
+    <span class="n">SymbolX</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="c">// For printing purposes</span>
 <span class="k">impl</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-<span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
-<span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="k">=&gt;</span> <span class="s">"0"</span><span class="p">,</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span> <span class="k">=&gt;</span> <span class="s">"1"</span><span class="p">,</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbole</span> <span class="k">=&gt;</span> <span class="s">"e"</span><span class="p">,</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span> <span class="k">=&gt;</span> <span class="s">"x"</span><span class="p">,</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span> <span class="k">=&gt;</span> <span class="s">"X"</span>
-<span class="p">}</span>
-<span class="p">}</span>
+    <span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
+        <span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
+            <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="k">=&gt;</span> <span class="s">"0"</span><span class="p">,</span>
+            <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span> <span class="k">=&gt;</span> <span class="s">"1"</span><span class="p">,</span>
+            <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbole</span> <span class="k">=&gt;</span> <span class="s">"e"</span><span class="p">,</span>
+            <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span> <span class="k">=&gt;</span> <span class="s">"x"</span><span class="p">,</span>
+            <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span> <span class="k">=&gt;</span> <span class="s">"X"</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="c">// Internal State + Tape + Head</span>
 <span class="k">struct</span> <span class="n">TapeMachine</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
-<span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span>
-<span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">,</span>
-<span class="n">index</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+    <span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span>
+    <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="n">TapeMachine</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
-<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-<span class="n">Self</span> <span class="p">{</span>
-<span class="n">state</span><span class="p">,</span>
-<span class="n">result</span><span class="p">,</span>
-<span class="n">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="p">}</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+        <span class="n">Self</span> <span class="p">{</span>
+            <span class="n">state</span><span class="p">,</span>
+            <span class="n">result</span><span class="p">,</span>
+            <span class="n">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
     <span class="c">// Allowed Actions</span>
 
@@ -745,14 +768,13 @@ Full Code
     <span class="k">fn</span> <span class="nf">l</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">self</span><span class="py">.index</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">}</span>
-
 <span class="p">}</span>
 
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-<span class="nd">println!</span><span class="p">(</span><span class="s">"Enter the number of steps:"</span><span class="p">);</span>
-<span class="k">let</span> <span class="k">mut</span> <span class="n">steps_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
-<span class="nn">io</span><span class="p">::</span><span class="nf">stdin</span><span class="p">()</span><span class="nf">.read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">steps_input</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
-<span class="k">let</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="n">steps_input</span><span class="nf">.trim</span><span class="p">()</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Enter the number of steps:"</span><span class="p">);</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">steps_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+    <span class="nn">io</span><span class="p">::</span><span class="nf">stdin</span><span class="p">()</span><span class="nf">.read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">steps_input</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
+    <span class="k">let</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="n">steps_input</span><span class="nf">.trim</span><span class="p">()</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
 
     <span class="nd">println!</span><span class="p">(</span><span class="s">"Enter the total tape length:"</span><span class="p">);</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">tape_length_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
@@ -765,8 +787,12 @@ Full Code
 
     <span class="c">// Simulate for required number of steps</span>
     <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">steps</span> <span class="p">{</span>
-        <span class="nd">println!</span><span class="p">(</span><span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span>
-            <span class="n">i</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">]);</span>
+        <span class="nd">println!</span><span class="p">(</span>
+            <span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span>
+            <span class="n">i</span><span class="p">,</span>
+            <span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span>
+            <span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">]</span>
+        <span class="p">);</span>
 
         <span class="k">match</span> <span class="p">(</span><span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">])</span> <span class="p">{</span>
             <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
@@ -783,7 +809,10 @@ Full Code
                 <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">;</span>
                 <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">);</span>
             <span class="p">}</span>
-            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="p">|</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+            <span class="p">(</span>
+                <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">,</span>
+                <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="p">|</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">,</span>
+            <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
                 <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
                 <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
                 <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">;</span>
@@ -840,8 +869,17 @@ Full Code
                 <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">f</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="p">(</span><span class="mi">_</span><span class="p">,</span> <span class="mi">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-                <span class="nd">println!</span><span class="p">(</span><span class="s">"State: {:?} Index: {:?} Symbol: {:?}"</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.index</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">]);</span>
-                <span class="k">let</span> <span class="n">binary_result</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span><span class="nf">.collect</span><span class="p">();</span>
+                <span class="nd">println!</span><span class="p">(</span>
+                    <span class="s">"State: {:?} Index: {:?} Symbol: {:?}"</span><span class="p">,</span>
+                    <span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span>
+                    <span class="n">tape_machine</span><span class="py">.index</span><span class="p">,</span>
+                    <span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">]</span>
+                <span class="p">);</span>
+                <span class="k">let</span> <span class="n">binary_result</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">tape_machine</span>
+                    <span class="py">.result</span>
+                    <span class="nf">.iter</span><span class="p">()</span>
+                    <span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span>
+                    <span class="nf">.collect</span><span class="p">();</span>
                 <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">binary_result</span><span class="p">);</span>
                 <span class="nd">panic!</span><span class="p">(</span><span class="s">"Invalid state reached"</span><span class="p">);</span>
             <span class="p">}</span>
@@ -850,10 +888,14 @@ Full Code
 
     <span class="k">let</span> <span class="n">binary_result</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span><span class="nf">.collect</span><span class="p">();</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">binary_result</span><span class="p">);</span>
-    <span class="k">let</span> <span class="n">clean_result</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.filter</span><span class="p">(</span> <span class="p">|</span><span class="o">&amp;</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">)</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span><span class="nf">.collect</span><span class="p">();</span>
+    <span class="k">let</span> <span class="n">clean_result</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">tape_machine</span>
+        <span class="py">.result</span>
+        <span class="nf">.iter</span><span class="p">()</span>
+        <span class="nf">.filter</span><span class="p">(|</span><span class="o">&amp;</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">)</span>
+        <span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span>
+        <span class="nf">.collect</span><span class="p">();</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"=========</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">clean_result</span><span class="p">);</span>
-
 <span class="p">}</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
