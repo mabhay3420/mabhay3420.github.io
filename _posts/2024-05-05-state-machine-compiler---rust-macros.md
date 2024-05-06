@@ -41,11 +41,11 @@ Following is the declaration of states:
 
 #[derive(Debug, PartialEq, Eq)]
 enum TapeMachineState {
-b,
-o,
-q,
-p,
-f,
+    b,
+    o,
+    q,
+    p,
+    f,
 }
 
 {% endhighlight %}
@@ -53,22 +53,21 @@ f,
 If we had to write the same code for a different state machine,
 say with states, a, b, c, d, then we will write:
 
-{% highlight rust %} #[derive(Debug, PartialEq, Eq)]
+{% highlight rust %}
+#[derive(Debug, PartialEq, Eq)]
 enum TapeMachineState {
-a,
-b,
-c,
-d,
+    a,
+    b, 
+    c,
+    d,
 }
-
 {% endhighlight %}
 
 Since only the inner contents of the enum are changing, it would
 be great if we could have something like this:
 
 {% highlight rust %}
-states(a, b, c, d);
-
+states!(a, b, c, d);
 {% endhighlight %}
 
 Rust macros does exactly this, with a little different syntax:
@@ -79,41 +78,37 @@ states!(a, b, c, d);
 // Generates the following code:
 // #[derive(Debug, PartialEq, Eq)]
 // enum TapeMachineState {
-// a,
-// b,
-// c,
-// d,
-}
-
+//     a,
+//     b,
+//     c,
+//     d,
+// }
 {% endhighlight %}
 
 Let me present the macro definition and then i can explain how it works.
 
 {% highlight rust %}
-
 macro_rules! states {
-( $( $x: ident),* ) => { #[derive(Debug)]
-enum TapeMachineState {
-$(
-$x,
-)\*\*
+    ( $( $x:ident ),* ) => {
+        #[derive(Debug, PartialEq, Eq)]
+        enum TapeMachineState {
+            $( $x ),*
+        }
+    };
 }
-};
-}
-
 {% endhighlight %}
 
 Lets break it down:
 
 1. `macro_rules!` is a macro definition. It takes a name and a body.
-2. `states!` is the name of the macro.
-3. `( $( $x: ident),* )` is the pattern. This is what macro will consume. Lets simplify it:
+2. `states` is the name of the macro.
+3. `( $( $x:ident ),* )` is the pattern. This is what macro will consume. Lets simplify it:
    a. If remove `$` and `ident` etc., we will end up with
    `(x),*`. This will expand to `x`, `x`, `x` and so on.
    Rust will try to match the pattern with the input, and store the
    matched values in the `$x` variables. `ident` means the values
    should be identifiers. We can ignore it for now.
-4. `#[derive(Debug)]` is the body of the macro. It will be output as
+4. `#[derive(Debug, PartialEq, Eq)]` is the body of the macro. It will be output as
    it is.
 5. Similarly, `enum TapeMachineState {`
 6. Now we end up with:
@@ -134,12 +129,15 @@ So for our example:
 1. `x` will be `a`, `b`, `c`, `d`
 2. On expanding the body `$($x),*`, we will get: `a, b, c, d`
 3. The whole body will be:
-   {% highlight rust %} #[derive(Debug)]
-   enum TapeMachineState {
-   a, b, c, d
-   }
-   {% endhighlight %}
-   Exactly what we wanted.
+
+{% highlight rust %}
+#[derive(Debug, PartialEq, Eq)]
+enum TapeMachineState {
+    a, b, c, d
+}
+{% endhighlight %}
+
+Exactly what we wanted.
 
 Let's look at symbol declarations:
 
@@ -147,11 +145,11 @@ Let's look at symbol declarations:
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 enum TapeMachineSymbol {
-Symbol0,
-Symbol1,
-Symbole,
-Symbolx,
-SymbolX,
+ Symbol0,
+ Symbol1,
+ Symbole,
+ Symbolx,
+ SymbolX,
 }
 
 {% endhighlight %}
@@ -162,14 +160,15 @@ We will want a macro like this:
 
 symbols!(0, 1, e, x, X);
 
-// Generates the following code:
+// Generates the following code: 
+// FIXME: this generates `SymbolZero` not `Symbol0`
 // #[derive(Debug, PartialEq, Eq, Clone)]
 // enum TapeMachineSymbol {
-// Symbol0,
-// Symbol1,
-// Symbole,
-// Symbolx,
-// SymbolX,
+//     Symbol0,
+//     Symbol1,
+//     Symbole,
+//     Symbolx,
+//     SymbolX,
 // }
 
 {% endhighlight %}
@@ -179,18 +178,18 @@ Following similar logic, we can define the macro as:
 [Clarify the `B`, `E`, `A` symbols. We dont need them actually.]
 {% highlight rust %}
 macro_rules! symbols {
-( $(($x: ident)),\* ) => { #[derive(Debug)]
-enum TapeMachineSymbol {
-$(
-$x,
-)\*\*
-B,
-E,
-A,
+ ( $( $x:ident ),* ) => {
+     #[derive(Debug, PartialEq, Eq, Clone)]
+     enum TapeMachineSymbol {
+         $( 
+             Symbol$x,
+         )*
+         B,
+         E,
+         A,
+     }
+ };
 }
-};
-}
-
 {% endhighlight %}
 
 However in our initial implementation, we also wanted support
@@ -199,17 +198,16 @@ Here is the code that we used:
 
 {% highlight rust %}
 impl TapeMachineSymbol {
-fn as_str(&self) -> &'static str {
-match self {
-TapeMachineSymbol::Symbol0 => "0",
-TapeMachineSymbol::Symbol1 => "1",
-TapeMachineSymbol::Symbole => "e",
-TapeMachineSymbol::Symbolx => "x",
-TapeMachineSymbol::SymbolX => "X"
+ fn as_str(&self) -> &'static str {
+     match self {
+         TapeMachineSymbol::Symbol0 => "0",
+         TapeMachineSymbol::Symbol1 => "1",
+         TapeMachineSymbol::Symbole => "e",
+         TapeMachineSymbol::Symbolx => "x",
+         TapeMachineSymbol::SymbolX => "X"
+     }
+ }
 }
-}
-}
-
 {% endhighlight %}
 
 We would like to generate this as well. That means we will need
@@ -222,57 +220,54 @@ symbols!((Zero, "0"), (One, "1"), (X, "x"));
 // Generates the following code:
 // #[derive(Debug, PartialEq, Eq, Clone)]
 // enum TapeMachineSymbol {
-// Symbol0,
-// Symbol1,
-// Symbole,
-// Symbolx,
-// SymbolX,
+//     Symbol0,
+//     Symbol1,
+//     Symbole,
+//     Symbolx,
+//     SymbolX,
 // }
 // impl TapeMachineSymbol {
-// fn as_str(&self) -> &'static str {
-// match self {
-// TapeMachineSymbol::Symbol0 => "0",
-// TapeMachineSymbol::Symbol1 => "1",
-// TapeMachineSymbol::Symbole => "e",
-// TapeMachineSymbol::Symbolx => "x",
-// TapeMachineSymbol::SymbolX => "X"
+//     fn as_str(&self) -> &'static str {
+//         match self {
+//             TapeMachineSymbol::Symbol0 => "0",
+//             TapeMachineSymbol::Symbol1 => "1",
+//             TapeMachineSymbol::Symbole => "e",
+//             TapeMachineSymbol::Symbolx => "x",
+//             TapeMachineSymbol::SymbolX => "X"
+//         }
+//     }
 // }
-// }
-// }
-
 {% endhighlight %}
 
 Here is the modified macro:
 
 {% highlight rust %}
-
 macro_rules! symbols {
-( $(($x: ident, $y: literal)),* ) => { #[derive(Debug)]
-enum TapeMachineSymbol {
-$(
-$x,
-)\*\*
-B,
-E,
-A,
+ ( $( ($x:ident, $y:literal) ),* ) => {
+     #[derive(Debug, PartialEq, Eq, Clone)]
+     enum TapeMachineSymbol {
+         $(
+             $x,
+         )*
+         B,
+         E,
+         A,
+     }
+
+     impl TapeMachineSymbol {
+         fn as_str(&self) -> &'static str {
+             match self {
+                 $(
+                     TapeMachineSymbol::$x => $y,
+                 )*
+                 TapeMachineSymbol::B => "",
+                 TapeMachineSymbol::E => "",
+                 TapeMachineSymbol::A => "*",
+             }
+         }
+     }
+ };
 }
-
-        impl TapeMachineSymbol {
-            fn as_str(&self) -> &'static str {
-                match self {
-                    $(
-                        TapeMachineSymbol::$x => $y,
-                    )*
-                    TapeMachineSymbol::B => "",
-                    TapeMachineSymbol::E => "",
-                    TapeMachineSymbol::A => "*",
-                }
-            }
-        }
-    };
-
-}
-
 {% endhighlight %}
 
 The only different is following line:
@@ -311,7 +306,7 @@ impl<'a> TapeMachine<'a> {
             state,
             result,
             index: 0,
-        } 
+        }
     }
 
     fn p(&mut self, symbol: TapeMachineSymbol) {
@@ -325,18 +320,15 @@ impl<'a> TapeMachine<'a> {
     fn l(&mut self) {
         self.index -= 1;
     }
-
 }
-
 {% endhighlight %}
 
 Notice how this specification doesnt vary with the symbols and
 state machine used. We can have a very simple macro like this:
 
 {% highlight rust %}
-
 macro_rules! init_tape {
-() => { 
+    () => {
         #[derive(Debug)]
         struct TapeMachine<'a> {
             state: &'a TapeMachineState,
@@ -369,33 +361,29 @@ macro_rules! init_tape {
             *index -= 1;
         }
     };
-
 }
-
 {% endhighlight %}
+
+[TODO - Highlight that this macro can be used only after the declaration of the enums and discuss if there is a better way to do it]
 
 Invoking the macro will simply generate the code for the
 tape machine implementation:
 
 {% highlight rust %}
-
 init_tape!();
-
 {% endhighlight %}
 
 To summarize, If we have following tape machine:
 
-1. States: a, b, c, d
+1. States: a, b, c, d 
 2. Symbols: 0, 1, 2, 3, 4
 
 We can generate the declarations using the following code:
 
 {% highlight rust %}
-
 states!(a, b, c, d);
 symbols!((Zero, "0"), (One, "1"), (Two, "2"), (Three, "3"), (Four, "4"));
 init_tape!();
-
 {% endhighlight %}
 
 Let's move on to the simulation part.
@@ -406,30 +394,34 @@ Here is the crux of the simulation:
 
 {% highlight rust %}
 for i in 0..steps {
-println!("Step: {} State: {:?} Symbol: {:?}",
-i, tape_machine.state, tape_machine.result[tape_machine.index]);
+    println!(
+        "Step: {} State: {:?} Symbol: {:?}",
+        i, tape_machine.state, tape_machine.result[tape_machine.index]
+    );
 
-        match (tape_machine.state, &tape_machine.result[tape_machine.index]) {
-            (TapeMachineState::o, TapeMachineSymbol::Symbol1) => {
-                tape_machine.r();
-                tape_machine.p(TapeMachineSymbol::Symbolx);
-                tape_machine.l();
-                tape_machine.l();
-                tape_machine.l();
-                tape_machine.state = &TapeMachineState::o;
-                println!("Final State: {:?}", TapeMachineState::o);
-            }
-            (TapeMachineState::o, TapeMachineSymbol::Symbol0) => {
-                // X means do nothing
-                tape_machine.state = &TapeMachineState::q;
-                println!("Final State: {:?}", TapeMachineState::q);
-            }
-
+    match (tape_machine.state, &tape_machine.result[tape_machine.index]) {
+        (TapeMachineState::o, TapeMachineSymbol::Symbol1) => {
+            tape_machine.r();
+            tape_machine.p(TapeMachineSymbol::Symbolx);
+            tape_machine.l();
+            tape_machine.l();
+            tape_machine.l();
+            tape_machine.state = &TapeMachineState::o;
+            println!("Final State: {:?}", TapeMachineState::o);
+        }
+        (TapeMachineState::o, TapeMachineSymbol::Symbol0) => {
+            // X means do nothing  
+            tape_machine.state = &TapeMachineState::q;
+            println!("Final State: {:?}", TapeMachineState::q);
+        }
+        // ... more rules
+    }
+}
 {% endhighlight %}
 
 Let's break down the structure:
 
-1. `for i in 0..steps` is the loop that will run for required
+1. `for i in 0..steps` is the loop that will run for required 
 2. `println!` is the print statement
 3. Match statement is simply conditioning on the current state and
    the current symbol.
@@ -441,23 +433,23 @@ If we can generate the code for one branch like this:
 
 {% highlight rust %}
 (TapeMachineState::o, TapeMachineSymbol::Symbol1) => {
-tape_machine.r();
-tape_machine.p(TapeMachineSymbol::Symbolx);
-tape_machine.l();
-tape_machine.l();
-tape_machine.l();
-tape_machine.state = &TapeMachineState::o;
-println!("Final State: {:?}", TapeMachineState::o);
+    tape_machine.r();
+    tape_machine.p(TapeMachineSymbol::Symbolx); 
+    tape_machine.l();
+    tape_machine.l();
+    tape_machine.l();
+    tape_machine.state = &TapeMachineState::o;
+    println!("Final State: {:?}", TapeMachineState::o);
 }
 {% endhighlight %}
 
-then we can just do `$(code generation logic for one rule)*` in our
-macro.
+then we can just do `$(code generation logic for one rule)*` in our 
+macro. 
 
 Let's focus on a single rule for now. Here are the things we need:
 
 1. The state
-2. The symbol
+2. The symbol 
 3. The actions in order. If its a print statement then value to be
    printed is the symbol.
 4. The next state
@@ -465,10 +457,8 @@ Let's focus on a single rule for now. Here are the things we need:
 I propose the following macro:
 
 {% highlight rust %}
-
 handle_rule!([O], [1], [R, P(x), L, L, L], [O]);
 // [state], [symbol], [actions], [next state]
-
 {% endhighlight %}
 
 Here is how this will look like in actual implementation:
@@ -482,7 +472,7 @@ Let's break it down:
 
 1. States: `[$state: ident]`
 2. Symbols: `[$($condition: ident)|+]` : One or more coditions
-3. Actions: `[$($action: expr),*]` : One or more actions
+3. Actions: `[$($action: expr),*]` : One or more actions 
 4. Final state: `[$final_state: ident]`
 
 All of them comma separated.
@@ -498,16 +488,14 @@ $([$state: ident], [$($condition: ident)|+], [$($action: expr),*], [$final_state
 ```
 
 However there is a slight problem with this. There is no way to know
-when a rule ends and when another rule starts. [ Clarify why we can't just use `;` ].
+when a rule ends and when another rule starts. [ Clarify why we can't just use `;` ]. 
 
 Let's settle on specifying multiple rules like this:
 
 {% highlight rust %}
-
 {[O], [1], [R, P(x), L, L, L], [O]},
 {[O], [0], [R], [q]}
 ...
-
 {% endhighlight %}
 
 i.e. each rule is wrapped up in curly braces, separated by comma.
@@ -542,7 +530,7 @@ output sequence.
 So to summarise:
 
 ```rust
-Raw text -> Pattern to Match -> Parsed Sequence -> Patter to generate -> Generated code
+Raw text -> Pattern to Match -> Parsed Sequence -> Pattern to Generate -> Generated code
 ```
 
 We can also work with lists of lists, with same restriction: No indexing, only output pattern. [ Clarify how index can be passed, but again with complications]
@@ -550,85 +538,85 @@ We can also work with lists of lists, with same restriction: No indexing, only o
 With this in mind, let me present the final macro:
 
 {% highlight rust %}
-macro*rules! transition_rules {
-($tape_machine: ident, $steps: ident, $({ [$state: ident], [$($condition: ident)|+], [$($action: expr),*], [$final_state: ident] } ),* )=> {
-for i in 0..$steps {
-            println!(
-                "Step: {} State: {:?} Symbol: {:?}",i,
-                $tape_machine.state, $tape_machine.result[$tape*machine.index]
-);
-match($tape_machine.state, $tape_machine.result[$tape_machine.index]) {
-$(
-                    (TapeMachineState::$state,
-$(
-                            process_action!($condition)
-) | _
-) => {
-$(
-$action;
-)_
-$tape_machine.state = &TapeMachineState::$final_state;
-println!("Final State: {:?}", TapeMachineState::$final_state);
+macro_rules! transition_rules {
+   ($tape_machine: ident, $steps: ident, $({ [$state: ident], [$($condition: ident)|+], [$($action: expr),*], [$final_state: ident] } ),*) => {
+       for i in 0..$steps {
+           println!(
+               "Step: {} State: {:?} Symbol: {:?}", 
+               i, $tape_machine.state, $tape_machine.result[$tape_machine.index]
+           );
+           match ($tape_machine.state, $tape_machine.result[$tape_machine.index]) {
+               $(
+                   (TapeMachineState::$state, 
+                       $(
+                           process_action!($condition)
+                       )|* 
+                   ) => {
+                       $(
+                           $action;
+                       )*
+                       $tape_machine.state = &TapeMachineState::$final_state;
+                       println!("Final State: {:?}", TapeMachineState::$final_state);
+                   }
+               )*
+               (_, _) => {
+                   println!(
+                       "{:?} {:?}",
+                       $tape_machine.state, $tape_machine.result[$tape_machine.index]
+                   );
+                   panic!("Invalid state reached");
+               }
+           }
+       }
+   };
 }
-)\*
-(*, **) => {
-println!(
-"{:?} {:?}",
-$tape_machine.state, $tape_machine.result[$tape_machine.index]
-);
-panic!("Invalid state reached");
-}
-}
-}
-};
-}
-
 {% endhighlight %}
 
-Notice the two levels of repeatation:
+Notice the two levels of repetition:
 
 ```
-$( // First level repations starts
-                    (TapeMachineState::$state,
-$(
-                            process_action!($condition)
-) | _ // Second level repeation 1
-) => {
-$(
-$action;
-)_ // Second level repeation 2
-$tape_machine.state = &TapeMachineState::$final_state;
-println!("Final State: {:?}", TapeMachineState::$final_state);
-}
-)\* // First level repations ends
+$(                                  // First level repetition starts
+    (TapeMachineState::$state,
+        $(
+            process_action!($condition) 
+        )|*                         // Second level repetition 1
+    ) => {
+        $(
+            $action;
+        )*                          // Second level repetition 2
+        $tape_machine.state = &TapeMachineState::$final_state;
+        println!("Final State: {:?}", TapeMachineState::$final_state);
+    }
+)*                                  // First level repetition ends
 
 ```
 
-1. First level repeatations are corresponding to different rules.
-2. Second level repeation 1 is for a particular rule, writing
-   multiple coditions. e.g. `Symbol1 | Symbol0`. Notice that we
+1. First level repetitions are corresponding to different rules.
+2. Second level repetition 1 is for a particular rule, writing
+   multiple conditions. e.g. `Symbol1 | Symbol0`. Notice that we 
    have used `|` to separate the conditions and used another macro
    `process_action!` to process the actions. This macro is defined
    below:
 
 {% highlight rust %}
-macro*rules! process_action {
-// If the rule states that for any symbol, the action
-// has to be performed then we will use `*`as per
-// rust syntax.
-(A) => {
-
-- };
-  // Otherwise simply use the symbol
-  ($action: ident) => {
+macro_rules! process_action {
+    // If the rule states that for any symbol, the action
+    // has to be performed then we will use `*` as per 
+    // rust syntax.
+    (A) => {
+        _
+    };
+    // Otherwise simply use the symbol  
+    ($action: ident) => {
         TapeMachineSymbol::$action
-  };
-  }
-  {% endhighlight %}
-  In summary all this trouble just to use`**` inside the match statement.
+    };
+}
+{% endhighlight %}
+   
+In summary all this trouble just to use `*` inside the match statement.
 
-3. Second level repeation 2 is for a particular rule, writing
-   multiple actions.e.g. `R, P(x), L, L, L` will translate to `R, P(x), L, L, L`.
+3. Second level repetition 2 is for a particular rule, writing
+   multiple actions. e.g. `R, P(x), L, L, L` will translate to `R, P(x), L, L, L`.
 
 But that's not what we wanted, right? We wanted something like this:
 
@@ -648,33 +636,31 @@ P!(x)
 L!()
 L!()
 L!()
-
 {% endhighlight %}
 
 These macros can be defined as follows:
 
 {% highlight rust %}
-
 macro_rules! P {
-($tape_machine: ident, $symbol: ident) => {
+    ($tape_machine:ident, $symbol:ident) => {
         p(
             &TapeMachineSymbol::$symbol,
-$tape_machine.index,
-$tape_machine.result,
-)
-};
+            $tape_machine.index,
+            $tape_machine.result,
+        )
+    };
 }
 
 macro_rules! R {
-($tape_machine: ident) => {
-r(&mut $tape_machine.index)
-};
+    ($tape_machine:ident) => {
+        r(&mut $tape_machine.index)
+    };
 }
 
 macro_rules! L {
-($tape_machine: ident) => {
-l(&mut $tape_machine.index)
-};
+    ($tape_machine:ident) => {
+        l(&mut $tape_machine.index)
+    };  
 }
 {% endhighlight %}
 
@@ -684,15 +670,14 @@ These macros will perform following actions:
 P!(tape_machine, Symbolx); -> p(&TapeMachineSymbol::Symbolx, tape_machine.index, tape_machine.result);
 L!(tape_machine); -> l(&mut tape_machine.index);
 R!(tape_machine); -> r(&mut tape_machine.index);
-
 {% endhighlight %}
 
 Where these functions have been defined in the declaration section.
 
 A sidenote:
-We need to pass `tape_machine` and `steps` in the `transition_rules!` macros. Why? Because we cannot just use
+We need to pass `tape_machine` and `steps` in the `transition_rules!` macros. Why? Because we cannot just use 
 arbitrary variables in macros. Macros can use the variables that are
-defined inside the body or the ones that are expicitly passed
+defined inside the body or the ones that are explicitly passed
 to the macro. [Read more about this][link_here]
 
 Alright, now we have all the macros defined, let's look at the final
@@ -701,48 +686,47 @@ program:
 {% highlight rust %}
 // Import the macros we defined
 // TODO - Modify the code structure so that macros
-// are defined in a separate file and can be imported
+// are defined in a separate file and can be imported 
 states!(B, O, Q, P, F);
-symbols!((Zero, "0"), (One, "1"), (X, "x"));
+symbols!((Zero, "0"), (One, "1"), (X, "x"));  
 init_tape!();
 
 // To test: rustc +nightly -Zunpretty=expanded src/main.rs
 
 fn main() {
-let max_len = 1000;
-let steps = 100;
-let mut result: Vec<&TapeMachineSymbol> = vec![&TapeMachineSymbol::B; max_len];
-let mut tape_machine = TapeMachine::new(&TapeMachineState::B, &mut result);
-transition_rules!(
-tape_machine,
-steps,
-{ [B], [A], [P!(tape_machine, E), R!(tape_machine), P!(tape_machine, E), R!(tape_machine), P!(tape_machine, Zero), R!(tape_machine), R!(tape_machine), P!(tape_machine, Zero), L!(tape_machine), L!(tape_machine)], [O] },
-{ [O], [One], [R!(tape_machine), P!(tape_machine, X), L!(tape_machine), L!(tape_machine), L!(tape_machine)], [O] },
-{ [O], [Zero], [], [Q] },
-{ [Q], [Zero | One], [R!(tape_machine), R!(tape_machine)], [Q] },
-{ [Q], [B], [P!(tape_machine, One), L!(tape_machine)], [P] },
-{ [P], [X], [E!(tape_machine), R!(tape_machine)], [Q] },
-{ [P], [E], [R!(tape_machine)], [F] },
-{ [P], [B], [L!(tape_machine), L!(tape_machine)], [P] },
-{ [F], [B], [P!(tape_machine, Zero), L!(tape_machine), L!(tape_machine)], [O] },
-{ [F], [A], [R!(tape_machine), R!(tape_machine)], [F] }
-);
-let binary_result = tape_machine
-.result
-.iter()
-.map(|x| x.as_str())
-.collect::<String>();
+    let max_len = 1000;
+    let steps = 100;
+    let mut result: Vec<&TapeMachineSymbol> = vec![&TapeMachineSymbol::B; max_len];
+    let mut tape_machine = TapeMachine::new(&TapeMachineState::B, &mut result);
+    transition_rules!(
+        tape_machine,
+        steps,
+        { [B], [A], [P!(tape_machine, E), R!(tape_machine), P!(tape_machine, E), R!(tape_machine), P!(tape_machine, Zero), R!(tape_machine), R!(tape_machine), P!(tape_machine, Zero), L!(tape_machine), L!(tape_machine)], [O] },
+        { [O], [One], [R!(tape_machine), P!(tape_machine, X), L!(tape_machine), L!(tape_machine), L!(tape_machine)], [O] },
+        { [O], [Zero], [], [Q] },
+        { [Q], [Zero | One], [R!(tape_machine), R!(tape_machine)], [Q] },
+        { [Q], [B], [P!(tape_machine, One), L!(tape_machine)], [P] },
+        { [P], [X], [E!(tape_machine), R!(tape_machine)], [Q] },
+        { [P], [E], [R!(tape_machine)], [F] },
+        { [P], [B], [L!(tape_machine), L!(tape_machine)], [P] },
+        { [F], [B], [P!(tape_machine, Zero), L!(tape_machine), L!(tape_machine)], [O] },
+        { [F], [A], [R!(tape_machine), R!(tape_machine)], [F] }
+    );
+    let binary_result = tape_machine
+        .result
+        .iter()
+        .map(|x| x.as_str())
+        .collect::<String>();
 
     // 0010110111011110111110111111011111110111111110111111111
     println!("{}", binary_result);
-
 }
-
 {% endhighlight %}
 
 Isn't this pretty concise? For a different state machine:
 
 |Current State|Required Current Tape Head Content|Action|Next State|
+|-------------|----------------------------------|------|----------|
 |a|None|P(0)|b|
 |b|0|R-P(1)|b|
 |b|1|R|a|
@@ -750,28 +734,27 @@ Isn't this pretty concise? For a different state machine:
 The program will be:
 
 {% highlight rust %}
-
 // Copy paste or import the macros we defined
 states!(a, b);
 symbols!((Zero, "0"), (One, "1"), (X, "x"));
 init_tape!();
 
 // Copy paste or import the transition macros
-// [ Need some work, since they cannot be out of oredr]
+// [ Need some work, since they cannot be out of order]
 
 fn main() {
-let max_len = 1000;
-let steps = 100;
-let mut result: Vec<&TapeMachineSymbol> = vec![&TapeMachineSymbol::B; max_len];
-// A is the initial state
-let mut tape_machine = TapeMachine::new(&TapeMachineState::A, &mut result);
-transition_rules!(
-tape_machine,
-steps,
-{[A], [A], [P!(tape_machine, Zero)],[B]},
-{[B], [Zero], [R!(tape_machine), P!(tape_machine, One)], [B]},
-{[B], [One], [R!(tape_machine)], [A]}
-);
+    let max_len = 1000;
+    let steps = 100;
+    let mut result: Vec<&TapeMachineSymbol> = vec![&TapeMachineSymbol::B; max_len];
+    // A is the initial state
+    let mut tape_machine = TapeMachine::new(&TapeMachineState::A, &mut result);
+    transition_rules!(
+        tape_machine,
+        steps,
+        {[A], [A], [P!(tape_machine, Zero)],[B]},
+        {[B], [Zero], [R!(tape_machine), P!(tape_machine, One)], [B]},
+        {[B], [One], [R!(tape_machine)], [A]}
+    );
 
     let binary_result = tape_machine
         .result
@@ -779,19 +762,17 @@ steps,
         .map(|x| x.as_str())
         .collect::<String>();
 
-    // 010101..
+    // 010101..  
     println!("{}", binary_result);
-
 }
-
 {% endhighlight %}
 
-Well, now we are in a much better state. Insted of having to
+Well, now we are in a much better state. Instead of having to
 write the same code for a different state machine, we can
 just specify the states, symbols and rules and we are done.
 
 We are done for practical purposes, however the syntax is a little
-bit verbose.
+bit verbose.  
 Can we specify the states, symbols and rules in a more concise way?
 How about this:
 
@@ -814,7 +795,7 @@ f, X, P(0)-L-L, o
 
 ```
 
-This is the most concise we will every get(may replacing L-L-L with 3L, but ignore that for now).
+This is the most concise we will every get (may replacing L-L-L with 3L, but ignore that for now).
 
 Can we parse this and generate the code from scratch?
 That is the topic of the next post.

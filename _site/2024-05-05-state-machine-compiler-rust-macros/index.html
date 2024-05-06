@@ -26,32 +26,10 @@
   <link rel="alternate" type="application/rss+xml" title="Abhay's Blog" href="http://localhost:4000/feed.xml">
 
   
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PK8RG1KPVB"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-PK8RG1KPVB');
-</script>
-
 
   
 
   
-<!-- Google Analytics -->
-<script>
-  (function (i, s, o, g, r, a, m) {
-    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-      (i[r].q = i[r].q || []).push(arguments)
-    }, i[r].l = 1 * new Date(); a = s.createElement(o),
-      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-  ga('create', 'mabhay3420', 'auto');
-  ga('send', 'pageview');
-</script>
-<!-- End Google Analytics -->
-
 
 
   
@@ -316,28 +294,28 @@ state. We perform this for required number of steps.</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
-<span class="n">b</span><span class="p">,</span>
-<span class="n">o</span><span class="p">,</span>
-<span class="n">q</span><span class="p">,</span>
-<span class="n">p</span><span class="p">,</span>
-<span class="n">f</span><span class="p">,</span>
+    <span class="n">b</span><span class="p">,</span>
+    <span class="n">o</span><span class="p">,</span>
+    <span class="n">q</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">,</span>
+    <span class="n">f</span><span class="p">,</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>If we had to write the same code for a different state machine,
 say with states, a, b, c, d, then we will write:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust"> <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq)]</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
-<span class="n">a</span><span class="p">,</span>
-<span class="n">b</span><span class="p">,</span>
-<span class="n">c</span><span class="p">,</span>
-<span class="n">d</span><span class="p">,</span>
+    <span class="n">a</span><span class="p">,</span>
+    <span class="n">b</span><span class="p">,</span> 
+    <span class="n">c</span><span class="p">,</span>
+    <span class="n">d</span><span class="p">,</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>Since only the inner contents of the enum are changing, it would
 be great if we could have something like this:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nf">states</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">states!</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span></code></pre></figure>
 
 <p>Rust macros does exactly this, with a little different syntax:</p>
 
@@ -346,36 +324,35 @@ be great if we could have something like this:</p>
 <span class="c">// Generates the following code:</span>
 <span class="c">// #[derive(Debug, PartialEq, Eq)]</span>
 <span class="c">// enum TapeMachineState {</span>
-<span class="c">// a,</span>
-<span class="c">// b,</span>
-<span class="c">// c,</span>
-<span class="c">// d,</span>
-<span class="p">}</span></code></pre></figure>
+<span class="c">//     a,</span>
+<span class="c">//     b,</span>
+<span class="c">//     c,</span>
+<span class="c">//     d,</span>
+<span class="c">// }</span></code></pre></figure>
 
 <p>Let me present the macro definition and then i can explain how it works.</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">macro_rules!</span> <span class="n">states</span> <span class="p">{</span>
-<span class="p">(</span> <span class="nv">$</span><span class="p">(</span> <span class="nv">$x</span><span class="p">:</span> <span class="n">ident</span><span class="p">),</span><span class="o">*</span> <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span> <span class="nd">#[derive(Debug)]</span>
-<span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
-<span class="nv">$</span><span class="p">(</span>
-<span class="nv">$x</span><span class="p">,</span>
-<span class="p">)</span>\<span class="o">*</span>\<span class="o">*</span>
-<span class="p">}</span>
-<span class="p">};</span>
+    <span class="p">(</span> <span class="nv">$</span><span class="p">(</span> <span class="nv">$x:ident</span> <span class="p">),</span><span class="o">*</span> <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+        <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq)]</span>
+        <span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
+            <span class="nv">$</span><span class="p">(</span> <span class="nv">$x</span> <span class="p">),</span><span class="o">*</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>Lets break it down:</p>
 
 <ol>
   <li><code class="language-plaintext highlighter-rouge">macro_rules!</code> is a macro definition. It takes a name and a body.</li>
-  <li><code class="language-plaintext highlighter-rouge">states!</code> is the name of the macro.</li>
-  <li><code class="language-plaintext highlighter-rouge">( $( $x: ident),* )</code> is the pattern. This is what macro will consume. Lets simplify it:
+  <li><code class="language-plaintext highlighter-rouge">states</code> is the name of the macro.</li>
+  <li><code class="language-plaintext highlighter-rouge">( $( $x:ident ),* )</code> is the pattern. This is what macro will consume. Lets simplify it:
 a. If remove <code class="language-plaintext highlighter-rouge">$</code> and <code class="language-plaintext highlighter-rouge">ident</code> etc., we will end up with
 <code class="language-plaintext highlighter-rouge">(x),*</code>. This will expand to <code class="language-plaintext highlighter-rouge">x</code>, <code class="language-plaintext highlighter-rouge">x</code>, <code class="language-plaintext highlighter-rouge">x</code> and so on.
 Rust will try to match the pattern with the input, and store the
 matched values in the <code class="language-plaintext highlighter-rouge">$x</code> variables. <code class="language-plaintext highlighter-rouge">ident</code> means the values
 should be identifiers. We can ignore it for now.</li>
-  <li><code class="language-plaintext highlighter-rouge">#[derive(Debug)]</code> is the body of the macro. It will be output as
+  <li><code class="language-plaintext highlighter-rouge">#[derive(Debug, PartialEq, Eq)]</code> is the body of the macro. It will be output as
 it is.</li>
   <li>Similarly, <code class="language-plaintext highlighter-rouge">enum TapeMachineState {</code></li>
   <li>Now we end up with:</li>
@@ -401,11 +378,10 @@ with <code class="language-plaintext highlighter-rouge">,</code> and then output
   <li>The whole body will be:</li>
 </ol>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust"> <span class="nd">#[derive(Debug)]</span>
-   <span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
-   <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span>
-   <span class="p">}</span>
-   </code></pre></figure>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq)]</span>
+<span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>Exactly what we wanted.</p>
 
@@ -413,25 +389,26 @@ with <code class="language-plaintext highlighter-rouge">,</code> and then output
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq,</span> <span class="nd">Clone)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-<span class="n">Symbol0</span><span class="p">,</span>
-<span class="n">Symbol1</span><span class="p">,</span>
-<span class="n">Symbole</span><span class="p">,</span>
-<span class="n">Symbolx</span><span class="p">,</span>
-<span class="n">SymbolX</span><span class="p">,</span>
+ <span class="n">Symbol0</span><span class="p">,</span>
+ <span class="n">Symbol1</span><span class="p">,</span>
+ <span class="n">Symbole</span><span class="p">,</span>
+ <span class="n">Symbolx</span><span class="p">,</span>
+ <span class="n">SymbolX</span><span class="p">,</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>We will want a macro like this:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">symbols!</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">X</span><span class="p">);</span>
 
-<span class="c">// Generates the following code:</span>
+<span class="c">// Generates the following code: </span>
+<span class="c">// FIXME: this generates `SymbolZero` not `Symbol0`</span>
 <span class="c">// #[derive(Debug, PartialEq, Eq, Clone)]</span>
 <span class="c">// enum TapeMachineSymbol {</span>
-<span class="c">// Symbol0,</span>
-<span class="c">// Symbol1,</span>
-<span class="c">// Symbole,</span>
-<span class="c">// Symbolx,</span>
-<span class="c">// SymbolX,</span>
+<span class="c">//     Symbol0,</span>
+<span class="c">//     Symbol1,</span>
+<span class="c">//     Symbole,</span>
+<span class="c">//     Symbolx,</span>
+<span class="c">//     SymbolX,</span>
 <span class="c">// }</span></code></pre></figure>
 
 <p>Following similar logic, we can define the macro as:</p>
@@ -439,16 +416,17 @@ with <code class="language-plaintext highlighter-rouge">,</code> and then output
 <p>[Clarify the <code class="language-plaintext highlighter-rouge">B</code>, <code class="language-plaintext highlighter-rouge">E</code>, <code class="language-plaintext highlighter-rouge">A</code> symbols. We dont need them actually.]</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">macro_rules!</span> <span class="n">symbols</span> <span class="p">{</span>
-<span class="p">(</span> <span class="nv">$</span><span class="p">((</span><span class="nv">$x</span><span class="p">:</span> <span class="n">ident</span><span class="p">)),</span>\<span class="o">*</span> <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span> <span class="nd">#[derive(Debug)]</span>
-<span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-<span class="nv">$</span><span class="p">(</span>
-<span class="nv">$x</span><span class="p">,</span>
-<span class="p">)</span>\<span class="o">*</span>\<span class="o">*</span>
-<span class="n">B</span><span class="p">,</span>
-<span class="n">E</span><span class="p">,</span>
-<span class="n">A</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="p">};</span>
+ <span class="p">(</span> <span class="nv">$</span><span class="p">(</span> <span class="nv">$x:ident</span> <span class="p">),</span><span class="o">*</span> <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+     <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq,</span> <span class="nd">Clone)]</span>
+     <span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
+         <span class="nv">$</span><span class="p">(</span> 
+             <span class="n">Symbol</span><span class="nv">$x</span><span class="p">,</span>
+         <span class="p">)</span><span class="o">*</span>
+         <span class="n">B</span><span class="p">,</span>
+         <span class="n">E</span><span class="p">,</span>
+         <span class="n">A</span><span class="p">,</span>
+     <span class="p">}</span>
+ <span class="p">};</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>However in our initial implementation, we also wanted support
@@ -456,15 +434,15 @@ for printing the symbols.
 Here is the code that we used:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">impl</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-<span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
-<span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="k">=&gt;</span> <span class="s">"0"</span><span class="p">,</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span> <span class="k">=&gt;</span> <span class="s">"1"</span><span class="p">,</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbole</span> <span class="k">=&gt;</span> <span class="s">"e"</span><span class="p">,</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span> <span class="k">=&gt;</span> <span class="s">"x"</span><span class="p">,</span>
-<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span> <span class="k">=&gt;</span> <span class="s">"X"</span>
-<span class="p">}</span>
-<span class="p">}</span>
+ <span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
+     <span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
+         <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="k">=&gt;</span> <span class="s">"0"</span><span class="p">,</span>
+         <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span> <span class="k">=&gt;</span> <span class="s">"1"</span><span class="p">,</span>
+         <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbole</span> <span class="k">=&gt;</span> <span class="s">"e"</span><span class="p">,</span>
+         <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span> <span class="k">=&gt;</span> <span class="s">"x"</span><span class="p">,</span>
+         <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span> <span class="k">=&gt;</span> <span class="s">"X"</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>We would like to generate this as well. That means we will need
@@ -476,51 +454,51 @@ following will do the job:</p>
 <span class="c">// Generates the following code:</span>
 <span class="c">// #[derive(Debug, PartialEq, Eq, Clone)]</span>
 <span class="c">// enum TapeMachineSymbol {</span>
-<span class="c">// Symbol0,</span>
-<span class="c">// Symbol1,</span>
-<span class="c">// Symbole,</span>
-<span class="c">// Symbolx,</span>
-<span class="c">// SymbolX,</span>
+<span class="c">//     Symbol0,</span>
+<span class="c">//     Symbol1,</span>
+<span class="c">//     Symbole,</span>
+<span class="c">//     Symbolx,</span>
+<span class="c">//     SymbolX,</span>
 <span class="c">// }</span>
 <span class="c">// impl TapeMachineSymbol {</span>
-<span class="c">// fn as_str(&amp;self) -&gt; &amp;'static str {</span>
-<span class="c">// match self {</span>
-<span class="c">// TapeMachineSymbol::Symbol0 =&gt; "0",</span>
-<span class="c">// TapeMachineSymbol::Symbol1 =&gt; "1",</span>
-<span class="c">// TapeMachineSymbol::Symbole =&gt; "e",</span>
-<span class="c">// TapeMachineSymbol::Symbolx =&gt; "x",</span>
-<span class="c">// TapeMachineSymbol::SymbolX =&gt; "X"</span>
-<span class="c">// }</span>
-<span class="c">// }</span>
+<span class="c">//     fn as_str(&amp;self) -&gt; &amp;'static str {</span>
+<span class="c">//         match self {</span>
+<span class="c">//             TapeMachineSymbol::Symbol0 =&gt; "0",</span>
+<span class="c">//             TapeMachineSymbol::Symbol1 =&gt; "1",</span>
+<span class="c">//             TapeMachineSymbol::Symbole =&gt; "e",</span>
+<span class="c">//             TapeMachineSymbol::Symbolx =&gt; "x",</span>
+<span class="c">//             TapeMachineSymbol::SymbolX =&gt; "X"</span>
+<span class="c">//         }</span>
+<span class="c">//     }</span>
 <span class="c">// }</span></code></pre></figure>
 
 <p>Here is the modified macro:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">macro_rules!</span> <span class="n">symbols</span> <span class="p">{</span>
-<span class="p">(</span> <span class="nv">$</span><span class="p">((</span><span class="nv">$x</span><span class="p">:</span> <span class="n">ident</span><span class="p">,</span> <span class="nv">$y</span><span class="p">:</span> <span class="n">literal</span><span class="p">)),</span><span class="o">*</span> <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span> <span class="nd">#[derive(Debug)]</span>
-<span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-<span class="nv">$</span><span class="p">(</span>
-<span class="nv">$x</span><span class="p">,</span>
-<span class="p">)</span>\<span class="o">*</span>\<span class="o">*</span>
-<span class="n">B</span><span class="p">,</span>
-<span class="n">E</span><span class="p">,</span>
-<span class="n">A</span><span class="p">,</span>
-<span class="p">}</span>
+ <span class="p">(</span> <span class="nv">$</span><span class="p">(</span> <span class="p">(</span><span class="nv">$x:ident</span><span class="p">,</span> <span class="nv">$y:literal</span><span class="p">)</span> <span class="p">),</span><span class="o">*</span> <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+     <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq,</span> <span class="nd">Clone)]</span>
+     <span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
+         <span class="nv">$</span><span class="p">(</span>
+             <span class="nv">$x</span><span class="p">,</span>
+         <span class="p">)</span><span class="o">*</span>
+         <span class="n">B</span><span class="p">,</span>
+         <span class="n">E</span><span class="p">,</span>
+         <span class="n">A</span><span class="p">,</span>
+     <span class="p">}</span>
 
-        <span class="k">impl</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-            <span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
-                <span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
-                    <span class="nv">$</span><span class="p">(</span>
-                        <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="nv">$x</span> <span class="k">=&gt;</span> <span class="nv">$y</span><span class="p">,</span>
-                    <span class="p">)</span><span class="o">*</span>
-                    <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">B</span> <span class="k">=&gt;</span> <span class="s">""</span><span class="p">,</span>
-                    <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">E</span> <span class="k">=&gt;</span> <span class="s">""</span><span class="p">,</span>
-                    <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">A</span> <span class="k">=&gt;</span> <span class="s">"*"</span><span class="p">,</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">};</span>
-
+     <span class="k">impl</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
+         <span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
+             <span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
+                 <span class="nv">$</span><span class="p">(</span>
+                     <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="nv">$x</span> <span class="k">=&gt;</span> <span class="nv">$y</span><span class="p">,</span>
+                 <span class="p">)</span><span class="o">*</span>
+                 <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">B</span> <span class="k">=&gt;</span> <span class="s">""</span><span class="p">,</span>
+                 <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">E</span> <span class="k">=&gt;</span> <span class="s">""</span><span class="p">,</span>
+                 <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">A</span> <span class="k">=&gt;</span> <span class="s">"*"</span><span class="p">,</span>
+             <span class="p">}</span>
+         <span class="p">}</span>
+     <span class="p">}</span>
+ <span class="p">};</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>The only different is following line:</p>
@@ -556,7 +534,7 @@ values to be printed for different symbols:</p>
             <span class="n">state</span><span class="p">,</span>
             <span class="n">result</span><span class="p">,</span>
             <span class="n">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="p">}</span> 
+        <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="k">fn</span> <span class="nf">p</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">:</span> <span class="n">TapeMachineSymbol</span><span class="p">)</span> <span class="p">{</span>
@@ -570,14 +548,13 @@ values to be printed for different symbols:</p>
     <span class="k">fn</span> <span class="nf">l</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">self</span><span class="py">.index</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">}</span>
-
 <span class="p">}</span></code></pre></figure>
 
 <p>Notice how this specification doesnt vary with the symbols and
 state machine used. We can have a very simple macro like this:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">macro_rules!</span> <span class="n">init_tape</span> <span class="p">{</span>
-<span class="p">()</span> <span class="k">=&gt;</span> <span class="p">{</span> 
+    <span class="p">()</span> <span class="k">=&gt;</span> <span class="p">{</span>
         <span class="nd">#[derive(Debug)]</span>
         <span class="k">struct</span> <span class="n">TapeMachine</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
             <span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span>
@@ -610,8 +587,9 @@ state machine used. We can have a very simple macro like this:</p>
             <span class="o">*</span><span class="n">index</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">};</span>
-
 <span class="p">}</span></code></pre></figure>
+
+<p>[TODO - Highlight that this macro can be used only after the declaration of the enums and discuss if there is a better way to do it]</p>
 
 <p>Invoking the macro will simply generate the code for the
 tape machine implementation:</p>
@@ -638,24 +616,29 @@ tape machine implementation:</p>
 <p>Here is the crux of the simulation:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">steps</span> <span class="p">{</span>
-<span class="nd">println!</span><span class="p">(</span><span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span>
-<span class="n">i</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">]);</span>
+    <span class="nd">println!</span><span class="p">(</span>
+        <span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">]</span>
+    <span class="p">);</span>
 
-        <span class="k">match</span> <span class="p">(</span><span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">])</span> <span class="p">{</span>
-            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-                <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
-                <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span><span class="p">);</span>
-                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
-                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
-                <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
-                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">;</span>
-                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-                <span class="c">// X means do nothing</span>
-                <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">;</span>
-                <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">);</span>
-            <span class="p">}</span></code></pre></figure>
+    <span class="k">match</span> <span class="p">(</span><span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="n">tape_machine</span><span class="py">.index</span><span class="p">])</span> <span class="p">{</span>
+        <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+            <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+            <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span><span class="p">);</span>
+            <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+            <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+            <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+            <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">;</span>
+            <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+            <span class="c">// X means do nothing  </span>
+            <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">;</span>
+            <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="c">// ... more rules</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>Let’s break down the structure:</p>
 
@@ -672,16 +655,16 @@ the current symbol.</li>
 <p>If we can generate the code for one branch like this:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-<span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
-<span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span><span class="p">);</span>
-<span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
-<span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
-<span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
-<span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">;</span>
-<span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
+    <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
+    <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span><span class="p">);</span> 
+    <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+    <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+    <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
+    <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">;</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
 <span class="p">}</span></code></pre></figure>
 
-<p>then we can just do <code class="language-plaintext highlighter-rouge">$(code generation logic for one rule)*</code> in our
+<p>then we can just do <code class="language-plaintext highlighter-rouge">$(code generation logic for one rule)*</code> in our 
 macro.</p>
 
 <p>Let’s focus on a single rule for now. Here are the things we need:</p>
@@ -763,92 +746,91 @@ output sequence.</p>
 
 <p>So to summarise:</p>
 
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Raw</span> <span class="n">text</span> <span class="k">-&gt;</span> <span class="n">Pattern</span> <span class="n">to</span> <span class="n">Match</span> <span class="k">-&gt;</span> <span class="n">Parsed</span> <span class="n">Sequence</span> <span class="k">-&gt;</span> <span class="n">Patter</span> <span class="n">to</span> <span class="n">generate</span> <span class="k">-&gt;</span> <span class="n">Generated</span> <span class="n">code</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Raw</span> <span class="n">text</span> <span class="k">-&gt;</span> <span class="n">Pattern</span> <span class="n">to</span> <span class="n">Match</span> <span class="k">-&gt;</span> <span class="n">Parsed</span> <span class="n">Sequence</span> <span class="k">-&gt;</span> <span class="n">Pattern</span> <span class="n">to</span> <span class="n">Generate</span> <span class="k">-&gt;</span> <span class="n">Generated</span> <span class="n">code</span>
 </code></pre></div></div>
 
 <p>We can also work with lists of lists, with same restriction: No indexing, only output pattern. [ Clarify how index can be passed, but again with complications]</p>
 
 <p>With this in mind, let me present the final macro:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">macro</span><span class="o">*</span><span class="nd">rules!</span> <span class="n">transition_rules</span> <span class="p">{</span>
-<span class="p">(</span>$<span class="n">tape_machine</span><span class="p">:</span> <span class="n">ident</span><span class="p">,</span> $<span class="n">steps</span><span class="p">:</span> <span class="n">ident</span><span class="p">,</span> $<span class="p">({</span> <span class="p">[</span>$<span class="n">state</span><span class="p">:</span> <span class="n">ident</span><span class="p">],</span> <span class="p">[</span>$<span class="p">(</span>$<span class="n">condition</span><span class="p">:</span> <span class="n">ident</span><span class="p">)|</span><span class="o">+</span><span class="p">],</span> <span class="p">[</span>$<span class="p">(</span>$<span class="n">action</span><span class="p">:</span> <span class="n">expr</span><span class="p">),</span><span class="o">*</span><span class="p">],</span> <span class="p">[</span>$<span class="n">final_state</span><span class="p">:</span> <span class="n">ident</span><span class="p">]</span> <span class="p">}</span> <span class="p">),</span><span class="o">*</span> <span class="p">)</span><span class="k">=&gt;</span> <span class="p">{</span>
-<span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span>$<span class="n">steps</span> <span class="p">{</span>
-            <span class="nd">println!</span><span class="p">(</span>
-                <span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span><span class="n">i</span><span class="p">,</span>
-                $<span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> $<span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span>$<span class="n">tape</span><span class="o">*</span><span class="n">machine</span><span class="py">.index</span><span class="p">]</span>
-<span class="p">);</span>
-<span class="k">match</span><span class="p">(</span>$<span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> $<span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span>$<span class="n">tape_machine</span><span class="py">.index</span><span class="p">])</span> <span class="p">{</span>
-$<span class="p">(</span>
-                    <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span>$<span class="n">state</span><span class="p">,</span>
-$<span class="p">(</span>
-                            <span class="nd">process_action!</span><span class="p">(</span>$<span class="n">condition</span><span class="p">)</span>
-<span class="p">)</span> <span class="p">|</span> <span class="mi">_</span>
-<span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-$<span class="p">(</span>
-$<span class="n">action</span><span class="p">;</span>
-<span class="p">)</span><span class="mi">_</span>
-$<span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span>$<span class="n">final_state</span><span class="p">;</span>
-<span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span>$<span class="n">final_state</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="p">)</span>\<span class="o">*</span>
-<span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="o">**</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-<span class="nd">println!</span><span class="p">(</span>
-<span class="s">"{:?} {:?}"</span><span class="p">,</span>
-$<span class="n">tape_machine</span><span class="py">.state</span><span class="p">,</span> $<span class="n">tape_machine</span><span class="py">.result</span><span class="p">[</span>$<span class="n">tape_machine</span><span class="py">.index</span><span class="p">]</span>
-<span class="p">);</span>
-<span class="nd">panic!</span><span class="p">(</span><span class="s">"Invalid state reached"</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="p">}</span>
-<span class="p">}</span>
-<span class="p">};</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">macro_rules!</span> <span class="n">transition_rules</span> <span class="p">{</span>
+   <span class="p">(</span><span class="nv">$tape_machine</span><span class="p">:</span> <span class="n">ident</span><span class="p">,</span> <span class="nv">$steps</span><span class="p">:</span> <span class="n">ident</span><span class="p">,</span> <span class="nv">$</span><span class="p">({</span> <span class="p">[</span><span class="nv">$state</span><span class="p">:</span> <span class="n">ident</span><span class="p">],</span> <span class="p">[</span><span class="nv">$</span><span class="p">(</span><span class="nv">$condition</span><span class="p">:</span> <span class="n">ident</span><span class="p">)|</span><span class="o">+</span><span class="p">],</span> <span class="p">[</span><span class="nv">$</span><span class="p">(</span><span class="nv">$action</span><span class="p">:</span> <span class="n">expr</span><span class="p">),</span><span class="o">*</span><span class="p">],</span> <span class="p">[</span><span class="nv">$final_state</span><span class="p">:</span> <span class="n">ident</span><span class="p">]</span> <span class="p">}</span> <span class="p">),</span><span class="o">*</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+       <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="nv">$steps</span> <span class="p">{</span>
+           <span class="nd">println!</span><span class="p">(</span>
+               <span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span> 
+               <span class="n">i</span><span class="p">,</span> <span class="nv">$tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="nv">$tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">]</span>
+           <span class="p">);</span>
+           <span class="k">match</span> <span class="p">(</span><span class="nv">$tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="nv">$tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">])</span> <span class="p">{</span>
+               <span class="nv">$</span><span class="p">(</span>
+                   <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="nv">$state</span><span class="p">,</span> 
+                       <span class="nv">$</span><span class="p">(</span>
+                           <span class="nd">process_action!</span><span class="p">(</span><span class="nv">$condition</span><span class="p">)</span>
+                       <span class="p">)|</span><span class="o">*</span> 
+                   <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                       <span class="nv">$</span><span class="p">(</span>
+                           <span class="nv">$action</span><span class="p">;</span>
+                       <span class="p">)</span><span class="o">*</span>
+                       <span class="nv">$tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="nv">$final_state</span><span class="p">;</span>
+                       <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="nv">$final_state</span><span class="p">);</span>
+                   <span class="p">}</span>
+               <span class="p">)</span><span class="o">*</span>
+               <span class="p">(</span><span class="mi">_</span><span class="p">,</span> <span class="mi">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                   <span class="nd">println!</span><span class="p">(</span>
+                       <span class="s">"{:?} {:?}"</span><span class="p">,</span>
+                       <span class="nv">$tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="nv">$tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">]</span>
+                   <span class="p">);</span>
+                   <span class="nd">panic!</span><span class="p">(</span><span class="s">"Invalid state reached"</span><span class="p">);</span>
+               <span class="p">}</span>
+           <span class="p">}</span>
+       <span class="p">}</span>
+   <span class="p">};</span>
 <span class="p">}</span></code></pre></figure>
 
-<p>Notice the two levels of repeatation:</p>
+<p>Notice the two levels of repetition:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$( // First level repations starts
-                    (TapeMachineState::$state,
-$(
-                            process_action!($condition)
-) | _ // Second level repeation 1
-) =&gt; {
-$(
-$action;
-)_ // Second level repeation 2
-$tape_machine.state = &amp;TapeMachineState::$final_state;
-println!("Final State: {:?}", TapeMachineState::$final_state);
-}
-)\* // First level repations ends
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$(                                  // First level repetition starts
+    (TapeMachineState::$state,
+        $(
+            process_action!($condition) 
+        )|*                         // Second level repetition 1
+    ) =&gt; {
+        $(
+            $action;
+        )*                          // Second level repetition 2
+        $tape_machine.state = &amp;TapeMachineState::$final_state;
+        println!("Final State: {:?}", TapeMachineState::$final_state);
+    }
+)*                                  // First level repetition ends
 
 </code></pre></div></div>
 
 <ol>
-  <li>First level repeatations are corresponding to different rules.</li>
-  <li>Second level repeation 1 is for a particular rule, writing
-multiple coditions. e.g. <code class="language-plaintext highlighter-rouge">Symbol1 | Symbol0</code>. Notice that we
+  <li>First level repetitions are corresponding to different rules.</li>
+  <li>Second level repetition 1 is for a particular rule, writing
+multiple conditions. e.g. <code class="language-plaintext highlighter-rouge">Symbol1 | Symbol0</code>. Notice that we 
 have used <code class="language-plaintext highlighter-rouge">|</code> to separate the conditions and used another macro
 <code class="language-plaintext highlighter-rouge">process_action!</code> to process the actions. This macro is defined
 below:</li>
 </ol>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">macro</span><span class="o">*</span><span class="nd">rules!</span> <span class="n">process_action</span> <span class="p">{</span>
-<span class="c">// If the rule states that for any symbol, the action</span>
-<span class="c">// has to be performed then we will use `*`as per</span>
-<span class="c">// rust syntax.</span>
-<span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">macro_rules!</span> <span class="n">process_action</span> <span class="p">{</span>
+    <span class="c">// If the rule states that for any symbol, the action</span>
+    <span class="c">// has to be performed then we will use `*` as per </span>
+    <span class="c">// rust syntax.</span>
+    <span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+        <span class="mi">_</span>
+    <span class="p">};</span>
+    <span class="c">// Otherwise simply use the symbol  </span>
+    <span class="p">(</span><span class="nv">$action</span><span class="p">:</span> <span class="n">ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+        <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="nv">$action</span>
+    <span class="p">};</span>
+<span class="p">}</span></code></pre></figure>
 
-<span class="o">-</span> <span class="p">};</span>
-  <span class="c">// Otherwise simply use the symbol</span>
-  <span class="p">(</span>$<span class="n">action</span><span class="p">:</span> <span class="n">ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-        <span class="nn">TapeMachineSymbol</span><span class="p">::</span>$<span class="n">action</span>
-  <span class="p">};</span>
-  <span class="p">}</span>
-  </code></pre></figure>
-
-<p>In summary all this trouble just to use<code class="language-plaintext highlighter-rouge">**</code> inside the match statement.</p>
+<p>In summary all this trouble just to use <code class="language-plaintext highlighter-rouge">*</code> inside the match statement.</p>
 
 <ol>
-  <li>Second level repeation 2 is for a particular rule, writing
-multiple actions.e.g. <code class="language-plaintext highlighter-rouge">R, P(x), L, L, L</code> will translate to <code class="language-plaintext highlighter-rouge">R, P(x), L, L, L</code>.</li>
+  <li>Second level repetition 2 is for a particular rule, writing
+multiple actions. e.g. <code class="language-plaintext highlighter-rouge">R, P(x), L, L, L</code> will translate to <code class="language-plaintext highlighter-rouge">R, P(x), L, L, L</code>.</li>
 </ol>
 
 <p>But that’s not what we wanted, right? We wanted something like this:</p>
@@ -870,25 +852,25 @@ multiple actions.e.g. <code class="language-plaintext highlighter-rouge">R, P(x)
 <p>These macros can be defined as follows:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">macro_rules!</span> <span class="n">P</span> <span class="p">{</span>
-<span class="p">(</span><span class="nv">$tape_machine</span><span class="p">:</span> <span class="n">ident</span><span class="p">,</span> <span class="nv">$symbol</span><span class="p">:</span> <span class="n">ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+    <span class="p">(</span><span class="nv">$tape_machine:ident</span><span class="p">,</span> <span class="nv">$symbol:ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
         <span class="nf">p</span><span class="p">(</span>
             <span class="o">&amp;</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="nv">$symbol</span><span class="p">,</span>
-<span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">,</span>
-<span class="nv">$tape_machine</span><span class="py">.result</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="p">};</span>
+            <span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">,</span>
+            <span class="nv">$tape_machine</span><span class="py">.result</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">};</span>
 <span class="p">}</span>
 
 <span class="nd">macro_rules!</span> <span class="n">R</span> <span class="p">{</span>
-<span class="p">(</span><span class="nv">$tape_machine</span><span class="p">:</span> <span class="n">ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-<span class="nf">r</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">)</span>
-<span class="p">};</span>
+    <span class="p">(</span><span class="nv">$tape_machine:ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+        <span class="nf">r</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">)</span>
+    <span class="p">};</span>
 <span class="p">}</span>
 
 <span class="nd">macro_rules!</span> <span class="n">L</span> <span class="p">{</span>
-<span class="p">(</span><span class="nv">$tape_machine</span><span class="p">:</span> <span class="n">ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-<span class="nf">l</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">)</span>
-<span class="p">};</span>
+    <span class="p">(</span><span class="nv">$tape_machine:ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+        <span class="nf">l</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">)</span>
+    <span class="p">};</span>  
 <span class="p">}</span></code></pre></figure>
 
 <p>These macros will perform following actions:</p>
@@ -900,9 +882,9 @@ multiple actions.e.g. <code class="language-plaintext highlighter-rouge">R, P(x)
 <p>Where these functions have been defined in the declaration section.</p>
 
 <p>A sidenote:
-We need to pass <code class="language-plaintext highlighter-rouge">tape_machine</code> and <code class="language-plaintext highlighter-rouge">steps</code> in the <code class="language-plaintext highlighter-rouge">transition_rules!</code> macros. Why? Because we cannot just use
+We need to pass <code class="language-plaintext highlighter-rouge">tape_machine</code> and <code class="language-plaintext highlighter-rouge">steps</code> in the <code class="language-plaintext highlighter-rouge">transition_rules!</code> macros. Why? Because we cannot just use 
 arbitrary variables in macros. Macros can use the variables that are
-defined inside the body or the ones that are expicitly passed
+defined inside the body or the ones that are explicitly passed
 to the macro. [Read more about this][link_here]</p>
 
 <p>Alright, now we have all the macros defined, let’s look at the final
@@ -910,53 +892,54 @@ program:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">// Import the macros we defined</span>
 <span class="c">// TODO - Modify the code structure so that macros</span>
-<span class="c">// are defined in a separate file and can be imported</span>
+<span class="c">// are defined in a separate file and can be imported </span>
 <span class="nd">states!</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">O</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
-<span class="nd">symbols!</span><span class="p">((</span><span class="n">Zero</span><span class="p">,</span> <span class="s">"0"</span><span class="p">),</span> <span class="p">(</span><span class="n">One</span><span class="p">,</span> <span class="s">"1"</span><span class="p">),</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s">"x"</span><span class="p">));</span>
+<span class="nd">symbols!</span><span class="p">((</span><span class="n">Zero</span><span class="p">,</span> <span class="s">"0"</span><span class="p">),</span> <span class="p">(</span><span class="n">One</span><span class="p">,</span> <span class="s">"1"</span><span class="p">),</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s">"x"</span><span class="p">));</span>  
 <span class="nd">init_tape!</span><span class="p">();</span>
 
 <span class="c">// To test: rustc +nightly -Zunpretty=expanded src/main.rs</span>
 
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-<span class="k">let</span> <span class="n">max_len</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
-<span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
-<span class="k">let</span> <span class="k">mut</span> <span class="n">result</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;&amp;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="o">&amp;</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">B</span><span class="p">;</span> <span class="n">max_len</span><span class="p">];</span>
-<span class="k">let</span> <span class="k">mut</span> <span class="n">tape_machine</span> <span class="o">=</span> <span class="nn">TapeMachine</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">B</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">result</span><span class="p">);</span>
-<span class="nd">transition_rules!</span><span class="p">(</span>
-<span class="n">tape_machine</span><span class="p">,</span>
-<span class="n">steps</span><span class="p">,</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="p">[</span><span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">E</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">E</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">Zero</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">Zero</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">O</span><span class="p">]</span> <span class="p">},</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">O</span><span class="p">],</span> <span class="p">[</span><span class="n">One</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">X</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">O</span><span class="p">]</span> <span class="p">},</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">O</span><span class="p">],</span> <span class="p">[</span><span class="n">Zero</span><span class="p">],</span> <span class="p">[],</span> <span class="p">[</span><span class="n">Q</span><span class="p">]</span> <span class="p">},</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">Q</span><span class="p">],</span> <span class="p">[</span><span class="n">Zero</span> <span class="p">|</span> <span class="n">One</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">Q</span><span class="p">]</span> <span class="p">},</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">Q</span><span class="p">],</span> <span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">One</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">P</span><span class="p">]</span> <span class="p">},</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="p">[</span><span class="nd">E!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">Q</span><span class="p">]</span> <span class="p">},</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="p">[</span><span class="n">E</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">F</span><span class="p">]</span> <span class="p">},</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">P</span><span class="p">]</span> <span class="p">},</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">F</span><span class="p">],</span> <span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">Zero</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">O</span><span class="p">]</span> <span class="p">},</span>
-<span class="p">{</span> <span class="p">[</span><span class="n">F</span><span class="p">],</span> <span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">F</span><span class="p">]</span> <span class="p">}</span>
-<span class="p">);</span>
-<span class="k">let</span> <span class="n">binary_result</span> <span class="o">=</span> <span class="n">tape_machine</span>
-<span class="py">.result</span>
-<span class="nf">.iter</span><span class="p">()</span>
-<span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span>
-<span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">();</span>
+    <span class="k">let</span> <span class="n">max_len</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">result</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;&amp;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="o">&amp;</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">B</span><span class="p">;</span> <span class="n">max_len</span><span class="p">];</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">tape_machine</span> <span class="o">=</span> <span class="nn">TapeMachine</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">B</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">result</span><span class="p">);</span>
+    <span class="nd">transition_rules!</span><span class="p">(</span>
+        <span class="n">tape_machine</span><span class="p">,</span>
+        <span class="n">steps</span><span class="p">,</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="p">[</span><span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">E</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">E</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">Zero</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">Zero</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">O</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">O</span><span class="p">],</span> <span class="p">[</span><span class="n">One</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">X</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">O</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">O</span><span class="p">],</span> <span class="p">[</span><span class="n">Zero</span><span class="p">],</span> <span class="p">[],</span> <span class="p">[</span><span class="n">Q</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">Q</span><span class="p">],</span> <span class="p">[</span><span class="n">Zero</span> <span class="p">|</span> <span class="n">One</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">Q</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">Q</span><span class="p">],</span> <span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">One</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">P</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="p">[</span><span class="nd">E!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">Q</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="p">[</span><span class="n">E</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">F</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">P</span><span class="p">],</span> <span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">P</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">F</span><span class="p">],</span> <span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">Zero</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">L!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">O</span><span class="p">]</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">[</span><span class="n">F</span><span class="p">],</span> <span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">F</span><span class="p">]</span> <span class="p">}</span>
+    <span class="p">);</span>
+    <span class="k">let</span> <span class="n">binary_result</span> <span class="o">=</span> <span class="n">tape_machine</span>
+        <span class="py">.result</span>
+        <span class="nf">.iter</span><span class="p">()</span>
+        <span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span>
+        <span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">();</span>
 
     <span class="c">// 0010110111011110111110111111011111110111111110111111111</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">binary_result</span><span class="p">);</span>
-
 <span class="p">}</span></code></pre></figure>
 
 <p>Isn’t this pretty concise? For a different state machine:</p>
 
 <table>
-  <tbody>
+  <thead>
     <tr>
-      <td>Current State</td>
-      <td>Required Current Tape Head Content</td>
-      <td>Action</td>
-      <td>Next State</td>
+      <th>Current State</th>
+      <th>Required Current Tape Head Content</th>
+      <th>Action</th>
+      <th>Next State</th>
     </tr>
+  </thead>
+  <tbody>
     <tr>
       <td>a</td>
       <td>None</td>
@@ -986,21 +969,21 @@ program:</p>
 <span class="nd">init_tape!</span><span class="p">();</span>
 
 <span class="c">// Copy paste or import the transition macros</span>
-<span class="c">// [ Need some work, since they cannot be out of oredr]</span>
+<span class="c">// [ Need some work, since they cannot be out of order]</span>
 
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-<span class="k">let</span> <span class="n">max_len</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
-<span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
-<span class="k">let</span> <span class="k">mut</span> <span class="n">result</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;&amp;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="o">&amp;</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">B</span><span class="p">;</span> <span class="n">max_len</span><span class="p">];</span>
-<span class="c">// A is the initial state</span>
-<span class="k">let</span> <span class="k">mut</span> <span class="n">tape_machine</span> <span class="o">=</span> <span class="nn">TapeMachine</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">A</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">result</span><span class="p">);</span>
-<span class="nd">transition_rules!</span><span class="p">(</span>
-<span class="n">tape_machine</span><span class="p">,</span>
-<span class="n">steps</span><span class="p">,</span>
-<span class="p">{[</span><span class="n">A</span><span class="p">],</span> <span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="p">[</span><span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">Zero</span><span class="p">)],[</span><span class="n">B</span><span class="p">]},</span>
-<span class="p">{[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="n">Zero</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">One</span><span class="p">)],</span> <span class="p">[</span><span class="n">B</span><span class="p">]},</span>
-<span class="p">{[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="n">One</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">A</span><span class="p">]}</span>
-<span class="p">);</span>
+    <span class="k">let</span> <span class="n">max_len</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">result</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;&amp;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="o">&amp;</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">B</span><span class="p">;</span> <span class="n">max_len</span><span class="p">];</span>
+    <span class="c">// A is the initial state</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">tape_machine</span> <span class="o">=</span> <span class="nn">TapeMachine</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">A</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">result</span><span class="p">);</span>
+    <span class="nd">transition_rules!</span><span class="p">(</span>
+        <span class="n">tape_machine</span><span class="p">,</span>
+        <span class="n">steps</span><span class="p">,</span>
+        <span class="p">{[</span><span class="n">A</span><span class="p">],</span> <span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="p">[</span><span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">Zero</span><span class="p">)],[</span><span class="n">B</span><span class="p">]},</span>
+        <span class="p">{[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="n">Zero</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">),</span> <span class="nd">P!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">,</span> <span class="n">One</span><span class="p">)],</span> <span class="p">[</span><span class="n">B</span><span class="p">]},</span>
+        <span class="p">{[</span><span class="n">B</span><span class="p">],</span> <span class="p">[</span><span class="n">One</span><span class="p">],</span> <span class="p">[</span><span class="nd">R!</span><span class="p">(</span><span class="n">tape_machine</span><span class="p">)],</span> <span class="p">[</span><span class="n">A</span><span class="p">]}</span>
+    <span class="p">);</span>
 
     <span class="k">let</span> <span class="n">binary_result</span> <span class="o">=</span> <span class="n">tape_machine</span>
         <span class="py">.result</span>
@@ -1008,17 +991,16 @@ program:</p>
         <span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span>
         <span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">();</span>
 
-    <span class="c">// 010101..</span>
+    <span class="c">// 010101..  </span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">binary_result</span><span class="p">);</span>
-
 <span class="p">}</span></code></pre></figure>
 
-<p>Well, now we are in a much better state. Insted of having to
+<p>Well, now we are in a much better state. Instead of having to
 write the same code for a different state machine, we can
 just specify the states, symbols and rules and we are done.</p>
 
 <p>We are done for practical purposes, however the syntax is a little
-bit verbose.
+bit verbose.<br />
 Can we specify the states, symbols and rules in a more concise way?
 How about this:</p>
 
@@ -1040,7 +1022,7 @@ f, X, P(0)-L-L, o
 
 </code></pre></div></div>
 
-<p>This is the most concise we will every get(may replacing L-L-L with 3L, but ignore that for now).</p>
+<p>This is the most concise we will every get (may replacing L-L-L with 3L, but ignore that for now).</p>
 
 <p>Can we parse this and generate the code from scratch?
 That is the topic of the next post.</p>
