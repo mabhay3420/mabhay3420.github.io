@@ -10,7 +10,7 @@ readtime: true
 usemathjax: true
 ---
 
-In the [previous post](../2024-05-05-state-machine-compiler---rust-macros), we decided to work 
+In the [previous post](../2024-05-05-state-machine-compiler-rust-macros), we decided to work 
 with a much concise specification of the state machine.
 
 Here is a specification for the state machine which 
