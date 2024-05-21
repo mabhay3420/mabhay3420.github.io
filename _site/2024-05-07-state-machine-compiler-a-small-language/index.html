@@ -199,7 +199,7 @@
 
 
   
-  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 38 minute read</span>
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 39 minute read</span>
 
 
             
@@ -235,7 +235,7 @@
 
 
   
-  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 38 minute read</span>
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 39 minute read</span>
 
 
             
@@ -260,10 +260,25 @@
       
 
       <article role="main" class="blog-post">
-        <p>In the <a href="../2024-05-05-state-machine-compiler-rust-macros">previous post</a>, we decided to work 
+        <p>In this series of posts, we In this series of posts, we will create a very simple language that can
+be used to specify a state machine. Then we will write a compiler that will
+translate the description to a code that can simulate this state machine.</p>
+
+<p>Here is theHere is the agenda:<br />
+<a href="../2024-05-03-State-Machine-Compiler-Intro">Part 1</a>: What is a state machine? A (Rust) program to simulate state machine.<br />
+<a href="../2024-05-05-state-machine-compiler-rust-macros">Part 2</a>: Writing (Rust) macros to reduce repetition<br />
+<a href="../2024-05-07-state-machine-compiler-a-small-language">Part 3</a>: A small language and convert a description into a high level language(Rust) implementation<br />
+Proposed Part 4: Translating the description into a lower level
+assembly like language(LLVM IR)
+sembly like language(LLVM IR)</p>
+
+<p>This is part 3.</p>
+
+<h2 id="language">Language</h2>
+<p>In the <a href="../2024-05-05-state-machine-compiler-rust-macros">previous post</a>, we decided to work
 with a much concise specification of the state machine.</p>
 
-<p>Here is a specification for the state machine which 
+<p>Here is a specification for the state machine which
 will generate the sequence <code class="language-plaintext highlighter-rouge">001011011101111011111..</code></p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>STATES: [b], o, q, p, f
@@ -310,7 +325,7 @@ the rust code for the above state machine:</p>
     <span class="n">b</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="c">// Symbol declarations, with `X` indicating a empty </span>
+<span class="c">// Symbol declarations, with `X` indicating a empty</span>
 <span class="c">// tape block</span>
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq,</span> <span class="nd">Clone)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
@@ -352,7 +367,7 @@ the rust code for the above state machine:</p>
     <span class="k">fn</span> <span class="nf">p</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">:</span> <span class="n">TapeMachineSymbol</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">self</span><span class="py">.result</span><span class="p">[</span><span class="k">self</span><span class="py">.index</span><span class="p">]</span> <span class="o">=</span> <span class="n">symbol</span><span class="p">;</span>
     <span class="p">}</span>
-    
+
     <span class="c">// Move the head to the right</span>
     <span class="k">fn</span> <span class="nf">r</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">self</span><span class="py">.index</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
@@ -365,7 +380,7 @@ the rust code for the above state machine:</p>
 
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 
-    <span class="c">// Take the number of steps and the length of the </span>
+    <span class="c">// Take the number of steps and the length of the</span>
     <span class="c">// tape as input</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"Enter the number of steps:"</span><span class="p">);</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">steps_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
@@ -376,13 +391,13 @@ the rust code for the above state machine:</p>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">tape_length_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
     <span class="nn">io</span><span class="p">::</span><span class="nf">stdin</span><span class="p">()</span><span class="nf">.read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">tape_length_input</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
     <span class="k">let</span> <span class="n">max_len</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="n">tape_length_input</span><span class="nf">.trim</span><span class="p">()</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
-    
+
 
     <span class="c">// Initialize the tape machine</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">result</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">;</span> <span class="n">max_len</span><span class="p">];</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">tape_machine</span> <span class="o">=</span> <span class="nn">TapeMachine</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">result</span><span class="p">);</span>
 
-    <span class="c">// Run the simulation for the required number of </span>
+    <span class="c">// Run the simulation for the required number of</span>
     <span class="c">// steps</span>
     <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="n">steps</span> <span class="p">{</span>
         <span class="nd">println!</span><span class="p">(</span>
@@ -452,7 +467,7 @@ specification:</p>
     <span class="n">Star</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="c">// A transition step can be either `R`, `L`, </span>
+<span class="c">// A transition step can be either `R`, `L`,</span>
 <span class="c">// `X`(erase the content) or `P(x)` ( print x to</span>
 <span class="c">// the current head)</span>
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
@@ -464,7 +479,7 @@ specification:</p>
 <span class="p">}</span>
 
 
-<span class="c">// A transition </span>
+<span class="c">// A transition</span>
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Transition</span> <span class="p">{</span>
     <span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
@@ -490,7 +505,7 @@ right values in the template.</p>
 
 <ol>
   <li>Lexing: Breaking the text into tokens</li>
-  <li>Parsing: Grouping tokens into recognizable 
+  <li>Parsing: Grouping tokens into recognizable
 structures</li>
 </ol>
 
@@ -549,8 +564,8 @@ outline the interfaces of the lexer:</p>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Lexer</span> <span class="p">{</span>
     <span class="n">source</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">char</span><span class="o">&gt;</span><span class="p">,</span> <span class="c">// The full source code</span>
     <span class="k">pub</span> <span class="n">cur_char</span><span class="p">:</span> <span class="nb">char</span><span class="p">,</span> <span class="c">// The current character</span>
-    <span class="n">cur_pos</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="c">// The current position in </span>
-                    <span class="c">// the source </span>
+    <span class="n">cur_pos</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="c">// The current position in</span>
+                    <span class="c">// the source</span>
     <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Lexer</span> <span class="p">{</span>
@@ -588,7 +603,7 @@ outline the interfaces of the lexer:</p>
         <span class="c">// then the following word can be an identifier</span>
         <span class="c">// or a keyword</span>
 
-        <span class="c">// construct the whole word and check if it is </span>
+        <span class="c">// construct the whole word and check if it is</span>
         <span class="c">// a keyword or an identifier</span>
 
 
@@ -1095,15 +1110,15 @@ make sense of these series of tokens.</p>
   <li>Based on the context, decide whether we expect
 it to be a certain type of token:
  a. The token type is required:
-     i. Is this token present? Consume it and 
-     update the parse tree. 
+     i. Is this token present? Consume it and
+     update the parse tree.
      ii. Otherwise, throw an error.
- b. Is this token type optional? 
+ b. Is this token type optional?
     i. Try to consume it.
     ii. If its not present, then move on.</li>
 </ol>
 
-<p>How do we know which tokens type we expect at any 
+<p>How do we know which tokens type we expect at any
 place?
 A Grammer of our language will
 help:</p>
@@ -1111,7 +1126,7 @@ help:</p>
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">// A program is a series of declarations</span>
 <span class="n">PROGRAM</span><span class="o">=</span> <span class="n">STATES_DECLARATION</span> <span class="n">SYMBOLS_DECLARATION</span> <span class="n">TRANSITIONS_DECLARATION</span>
 
-<span class="c">// A declaration of states is comma separated list of </span>
+<span class="c">// A declaration of states is comma separated list of</span>
 <span class="c">// identifiers</span>
 <span class="n">STATES_DECLARATION</span><span class="p">:</span> <span class="n">STATES</span> <span class="sc">':'</span> <span class="p">[</span><span class="n">STATES_IDENTIFIERS</span> <span class="sc">','</span><span class="p">]</span> <span class="sc">'['</span> <span class="n">STATE_IDENTIFIERS</span> <span class="sc">']'</span>   <span class="p">[</span><span class="n">STATES_IDENTIFIERS</span><span class="p">]</span> <span class="n">NEWLINE</span>
 <span class="n">STATE_IDENTIFIERS</span><span class="p">:</span> <span class="nf">STATE_IDENTIFIER</span> <span class="p">(</span><span class="sc">','</span> <span class="n">STATE_IDENTIFIER</span><span class="p">)</span><span class="o">*</span>
@@ -1121,12 +1136,12 @@ help:</p>
 <span class="n">SYMBOLS_DECLARATION</span><span class="p">:</span> <span class="n">SYMBOLS</span> <span class="sc">':'</span> <span class="sc">'['</span> <span class="n">SYMBOL_IDENTIFIERS</span> <span class="sc">']'</span> <span class="n">NEWLINE</span>
 <span class="n">SYMBOL_IDENTIFIERS</span><span class="p">:</span> <span class="nf">SYMBOL_IDENTIFIER</span> <span class="p">(</span><span class="sc">','</span> <span class="n">SYMBOL_IDENTIFIER</span><span class="p">)</span><span class="o">*</span>
 
-<span class="c">// A declaration of transitions is comma separated </span>
+<span class="c">// A declaration of transitions is comma separated</span>
 <span class="c">// list of transition declarations</span>
-<span class="n">TRANSITIONS_DECLARATION</span><span class="p">:</span> <span class="n">TRANSITIONS</span> <span class="sc">':'</span> <span class="p">(</span><span class="n">NEWLINE</span> <span class="n">TRANSITION_DECLARATION</span><span class="p">)</span><span class="o">*</span> 
+<span class="n">TRANSITIONS_DECLARATION</span><span class="p">:</span> <span class="n">TRANSITIONS</span> <span class="sc">':'</span> <span class="p">(</span><span class="n">NEWLINE</span> <span class="n">TRANSITION_DECLARATION</span><span class="p">)</span><span class="o">*</span>
 
 
-<span class="c">// A transition declaration </span>
+<span class="c">// A transition declaration</span>
 <span class="n">TRANSITION_DECLARATION</span><span class="p">:</span> <span class="n">INITIAL_STATE_IDENTIFIER</span> <span class="sc">','</span> <span class="n">TRANSITION_CONDITIONS</span> <span class="sc">','</span> <span class="n">TRANSITION_STEPS</span><span class="p">,</span> <span class="n">FINAL_STATE_IDENTIFIER</span>
 <span class="n">TRANSITION_CONDITIONS</span><span class="p">:</span> <span class="n">STAR</span> <span class="p">|</span> <span class="nf">SYMBOL_IDENTIFIER</span> <span class="p">(</span> <span class="sc">'|'</span> <span class="n">SYMBOL_IDENTIFIER</span> <span class="p">)</span><span class="o">*</span>
 <span class="n">TRANSITION_STEPS</span><span class="p">:</span> <span class="nb">None</span> <span class="p">|</span> <span class="nf">TRANSITION_STEP</span> <span class="p">(</span><span class="sc">'-'</span> <span class="n">TRANSITION_STEP</span><span class="p">)</span><span class="o">*</span>
@@ -1142,7 +1157,7 @@ what different declarations are.</p>
 
 <p>This grammer says that we expect <code class="language-plaintext highlighter-rouge">SYMBOLS_DECLARATION</code> to come after <code class="language-plaintext highlighter-rouge">STATES_DECLARATION</code>.</p>
 
-<p>In our parsing logic, at any stage, we will be 
+<p>In our parsing logic, at any stage, we will be
 expecting a series of tokens as specified by the
 grammer.
 For example the top level logic will be following:</p>

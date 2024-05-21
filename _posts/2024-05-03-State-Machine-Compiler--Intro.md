@@ -10,36 +10,115 @@ readtime: true
 usemathjax: true
 ---
 
-Today the architecture of a computure seems very natural:
+In this series of posts, we will create a very simple language that can
+be used to specify a state machine. Then we will write a compiler that will
+translate the description to a code that can simulate this state machine.
 
-1. a memory unit: to store the result of computation (Disk, RAM etc.)
-2. a logic unit: which performs computation(CPU, GPU etc.)
+{: .box-note}
+Though the titles say `State Machine`, we are actually talking about a `Turing
+machine`, which is more powerful that finite state machines
 
-This architecture is based on [Von Neuman Model](link_here) of computing, but the
-roots trace back to [Turing's Paper](link_here) on what all numbers are computable.
 
-The paper starts with the setup in which a human computer( A human who is computing)
-computes a certain number via an algorithm. The human has access to a paper and pencil,
-and her own mind. The human is assumed to have finite amount of memory, where one tracks
-the current state of computation.
+Here is the agenda:\
+[Part 1](../2024-05-03-State-Machine-Compiler-Intro): What is a state machine? A (Rust) program to simulate state machine.\
+[Part 2](../2024-05-05-state-machine-compiler-rust-macros): Writing (Rust) macros to reduce repetition\
+[Part 3](../2024-05-07-state-machine-compiler-a-small-language): A small language and convert a description into a high level language(Rust) implementation\
+Proposed Part 4: Translating the description into a lower level
+assembly like language(LLVM IR)
 
-This is then abstracted:
+This is part 1.
 
-1. A tape divided into squares: this can be used as paper
+## Background
+
+Today computers have replaced all kind of devices: Calculator, Music Players, Radio, Video streaming, Chip Design, Physics Simulation etc.
+
+The general approach is to write a software(program) for each of these purposes and run them on a general purpose hardware.
+
+Can a program be written for all kind of application ? A program for self driving cars, a music generation program, a program
+to discover new medicine given the cancer description?
+Is there even a problem/application for which no program is possible?
+
+
+~100 years ago, the situation was even more bleak. There was no computer as we
+know today, rather a "computer" was a person, usually a woman, who will
+perform calculations using pen and paper and maybe take help from mechanical
+calculators.
+
+Mathematicians were posing a more abstract but related problem: Is there
+an algorithm which can prove or disprove a mathematical statement? [1](https://www.wikiwand.com/en/Entscheidungsproblem#History_of_the_problem)
+
+{: .box-note}
+**Note:** What is the relation between a music player program and a mathematical
+statement proving algorithm?
+
+
+
+When working in mathematical logic, one needs to define the terms i.e. what is
+an algorithm?
+
+Two people independently formalised the notion of algorithm: [Alonzo church](https://www.wikiwand.com/en/Alonzo_Church) and [Alan Turing](https://www.wikiwand.com/en/Alan_Turing).
+
+We will focus on Turing's approach.
+
+TODO - Summarize turing's approach in an approachable manner, without going
+into the technical details. [See More](https://www.wikiwand.com/en/Turing%27s_proof)
+
+
+## Simplified Version
+The paper is concerned with an abstract and general problem requiring a lot
+of formalism. However we can tradeoff some formalism with intuitive reasoning.
+
+
+Let's see how a human computer solves a problem using an algorithm.
+The human has access to a paper and pencil, and her own mind.
+
+The person will state the problem on paper using pencil by writing some
+symbols, then having remembered the algorithm description in her memory,
+manipulates the symbols as mandated to reach at the next set of symbols and so
+on, until in the end one has the expected result in terms of symbol.
+
+This problem can be multiplying two numbers, calculating prime factors, or
+a complicated problem like building a music player, if one
+breaks it in terms of subroutines of bit manipulation.
+
+{: .box-note}
+What is a music player in terms of bits in and bits out?
+An encoded music file(mp3 etc) is a stream of bits.
+The output of a music player is the mixture of frequencies, where
+each frequency is a real number represented using bits.
+
+
+{: .box-warning}
+What happens on hardware level to convert these frequencies into
+sound?
+
+Turing gives an abstract version:
+
+1. A tape divided into squares: this can be used as paper. We are used to
+the notion of a two dimensional paper but that is just for our convenience.
 2. A head: the location on tape which can be read and written. The head can move towards any of the two ends of tape.
 3. Internal state logic: The logic of algorithm can be encoded in this device. This will
-   control the state transition and the tape head movement
+   control the state transition and the tape head movement. This is like having
+   remembered the multiplication algorithm and then manipulating symbols by
+   moving pencil here and there.
+
+![A turing machine model](https://wikiwandv2-19431.kxcdn.com/_next/image?url=https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Turing_Machine_Model_Davey_2012.jpg/1500px-Turing_Machine_Model_Davey_2012.jpg&w=1200&q=50){: .mx-auto.d-block :}
 
 A number is said to be computable if one can construct a state machine that will output
-the number on the tape in finite number of steps. [ Why finite?]
+the number on the tape in finite number of steps. Since one can write any number
+in a bit format (i.e. in base 2), computing sequences of 0 and 1s is similar in
+spirit to computing numbers.
 
-Let's take an example. Suppose we want to calculate a number of the form (01)^n, i.e.
+{: box-warning}
+Are all rational numbers computable? What about irrational numbers?
+
+Let's take an example. Suppose we want to calculate a number of the form:
 
 ```
 0101010101...
 ```
 
-Here is a description of state(tape) machine will:
+Here is the description of state(tape) machine that will print this sequence:
 
 1. Start with state a.
 2. If the state is a, irrespective of content of tape, write 0 on current head and change internal state to b.
@@ -66,7 +145,7 @@ Step 2:
 {% highlight rust linenos %}
 Internal state: b
 Tape: |0| | | | |...
-Head: ^
+Head:  ^
 Logic: Move right and write 1
 {%endhighlight %}
 
@@ -75,7 +154,7 @@ Step 3:
 {% highlight rust linenos %}
 Internal state: b
 Tape: |0|1| | | |...
-Head: ^
+Head:    ^
 Logic: Move right and transition to a
 {%endhighlight %}
 
@@ -84,7 +163,7 @@ Step 4:
 {% highlight rust linenos %}
 Internal state: a
 Tape: |0|1| | | |...
-Head: ^
+Head:      ^
 Logic: Write 0 and transition to b
 {%endhighlight %}
 
@@ -93,7 +172,7 @@ Step 5:
 {% highlight rust linenos %}
 Internal state: b
 Tape: |0|1|0| | |...
-Head: ^
+Head:      ^
 Logic: Move right and write 1
 {%endhighlight %}
 
@@ -106,14 +185,14 @@ You get the idea. Here is more concise way of writing the same logic:
 |b| 0 | R-P(1)|b|
 |b| 1 | R | a|
 
+
+## Problem Motivation
+
 The paper presents another intereseting sequence that one can calculate by this setup:
 
 ```
 0 01 011 0111 0111 ...
 ```
-
-i.e. sequence[clarify sequence vs numbers] of the form: ?? . There is no simple formula
-for this sequence unlike the previous one((01)^n). [ why? proof?]
 
 Here is the table for that:
 

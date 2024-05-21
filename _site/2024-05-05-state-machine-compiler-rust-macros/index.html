@@ -199,7 +199,7 @@
 
 
   
-  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 12 minute read</span>
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 13 minute read</span>
 
 
             
@@ -235,7 +235,7 @@
 
 
   
-  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 12 minute read</span>
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 13 minute read</span>
 
 
             
@@ -260,7 +260,23 @@
       
 
       <article role="main" class="blog-post">
-        <p>In the <a href="../2024-05-03-State-Machine-Compiler-Intro">previous post</a>,
+        <p>In thisIn this series of posts, we will create a very simple language that can
+be used to specify a state machine. Then we will write a compiler that will
+translate the description to a code that can simulate this state machine.</p>
+
+<p>Here is the agenda:<br />
+<a href="../2024-05-03-State-Machine-Compiler-Intro">Part 1</a>: What is a state machine? A (Rust) program to simulate state machine.<br />
+<a href="../2024-05-05-state-machine-compiler-rust-macros">Part 2</a>: Writing (Rust) macros to reduce repetition<br />
+<a href="../2024-05-07-state-machine-compiler-a-small-language">Part 3</a>: A small language and convert a description into a high level language(Rust) implementation<br />
+Proposed Part 4: Translating the description into a lower level
+assembly like language(LLVM IR)
+sembly like language(LLVM IR)</p>
+
+<p>This is part 2.</p>
+
+<h2 id="background">Background</h2>
+
+<p>In the <a href="../2024-05-03-State-Machine-Compiler-Intro">previous post</a>,
 we ended up with a rust implementation of state machine simulation.
 We also concluded that in order to test different state machine, we
 would like a better way, as writing full code involves a lot of
@@ -269,6 +285,7 @@ boilerplate.</p>
 <p><a href="link_here">Rust Macros</a> allow us to generate rust code by
 parsing patterns and using them at appropriate places.</p>
 
+<h2 id="structure">Structure</h2>
 <p>Our code can be divided into two parts:</p>
 
 <ol>
@@ -307,7 +324,7 @@ say with states, a, b, c, d, then we will write:</p>
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
     <span class="n">a</span><span class="p">,</span>
-    <span class="n">b</span><span class="p">,</span> 
+    <span class="n">b</span><span class="p">,</span>
     <span class="n">c</span><span class="p">,</span>
     <span class="n">d</span><span class="p">,</span>
 <span class="p">}</span></code></pre></figure>
@@ -400,7 +417,7 @@ with <code class="language-plaintext highlighter-rouge">,</code> and then output
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">symbols!</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">X</span><span class="p">);</span>
 
-<span class="c">// Generates the following code: </span>
+<span class="c">// Generates the following code:</span>
 <span class="c">// FIXME: this generates `SymbolZero` not `Symbol0`</span>
 <span class="c">// #[derive(Debug, PartialEq, Eq, Clone)]</span>
 <span class="c">// enum TapeMachineSymbol {</span>
@@ -419,7 +436,7 @@ with <code class="language-plaintext highlighter-rouge">,</code> and then output
  <span class="p">(</span> <span class="nv">$</span><span class="p">(</span> <span class="nv">$x:ident</span> <span class="p">),</span><span class="o">*</span> <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
      <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq,</span> <span class="nd">Clone)]</span>
      <span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-         <span class="nv">$</span><span class="p">(</span> 
+         <span class="nv">$</span><span class="p">(</span>
              <span class="n">Symbol</span><span class="nv">$x</span><span class="p">,</span>
          <span class="p">)</span><span class="o">*</span>
          <span class="n">B</span><span class="p">,</span>
@@ -632,7 +649,7 @@ tape machine implementation:</p>
             <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-            <span class="c">// X means do nothing  </span>
+            <span class="c">// X means do nothing</span>
             <span class="n">tape_machine</span><span class="py">.state</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">;</span>
             <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">q</span><span class="p">);</span>
         <span class="p">}</span>
@@ -656,7 +673,7 @@ the current symbol.</li>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">,</span> <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
     <span class="n">tape_machine</span><span class="nf">.r</span><span class="p">();</span>
-    <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span><span class="p">);</span> 
+    <span class="n">tape_machine</span><span class="nf">.p</span><span class="p">(</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbolx</span><span class="p">);</span>
     <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
     <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
     <span class="n">tape_machine</span><span class="nf">.l</span><span class="p">();</span>
@@ -664,7 +681,7 @@ the current symbol.</li>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"Final State: {:?}"</span><span class="p">,</span> <span class="nn">TapeMachineState</span><span class="p">::</span><span class="n">o</span><span class="p">);</span>
 <span class="p">}</span></code></pre></figure>
 
-<p>then we can just do <code class="language-plaintext highlighter-rouge">$(code generation logic for one rule)*</code> in our 
+<p>then we can just do <code class="language-plaintext highlighter-rouge">$(code generation logic for one rule)*</code> in our
 macro.</p>
 
 <p>Let’s focus on a single rule for now. Here are the things we need:</p>
@@ -757,15 +774,15 @@ output sequence.</p>
    <span class="p">(</span><span class="nv">$tape_machine</span><span class="p">:</span> <span class="n">ident</span><span class="p">,</span> <span class="nv">$steps</span><span class="p">:</span> <span class="n">ident</span><span class="p">,</span> <span class="nv">$</span><span class="p">({</span> <span class="p">[</span><span class="nv">$state</span><span class="p">:</span> <span class="n">ident</span><span class="p">],</span> <span class="p">[</span><span class="nv">$</span><span class="p">(</span><span class="nv">$condition</span><span class="p">:</span> <span class="n">ident</span><span class="p">)|</span><span class="o">+</span><span class="p">],</span> <span class="p">[</span><span class="nv">$</span><span class="p">(</span><span class="nv">$action</span><span class="p">:</span> <span class="n">expr</span><span class="p">),</span><span class="o">*</span><span class="p">],</span> <span class="p">[</span><span class="nv">$final_state</span><span class="p">:</span> <span class="n">ident</span><span class="p">]</span> <span class="p">}</span> <span class="p">),</span><span class="o">*</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
        <span class="k">for</span> <span class="n">i</span> <span class="n">in</span> <span class="mi">0</span><span class="o">..</span><span class="nv">$steps</span> <span class="p">{</span>
            <span class="nd">println!</span><span class="p">(</span>
-               <span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span> 
+               <span class="s">"Step: {} State: {:?} Symbol: {:?}"</span><span class="p">,</span>
                <span class="n">i</span><span class="p">,</span> <span class="nv">$tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="nv">$tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">]</span>
            <span class="p">);</span>
            <span class="k">match</span> <span class="p">(</span><span class="nv">$tape_machine</span><span class="py">.state</span><span class="p">,</span> <span class="nv">$tape_machine</span><span class="py">.result</span><span class="p">[</span><span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">])</span> <span class="p">{</span>
                <span class="nv">$</span><span class="p">(</span>
-                   <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="nv">$state</span><span class="p">,</span> 
+                   <span class="p">(</span><span class="nn">TapeMachineState</span><span class="p">::</span><span class="nv">$state</span><span class="p">,</span>
                        <span class="nv">$</span><span class="p">(</span>
                            <span class="nd">process_action!</span><span class="p">(</span><span class="nv">$condition</span><span class="p">)</span>
-                       <span class="p">)|</span><span class="o">*</span> 
+                       <span class="p">)|</span><span class="o">*</span>
                    <span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
                        <span class="nv">$</span><span class="p">(</span>
                            <span class="nv">$action</span><span class="p">;</span>
@@ -791,7 +808,7 @@ output sequence.</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$(                                  // First level repetition starts
     (TapeMachineState::$state,
         $(
-            process_action!($condition) 
+            process_action!($condition)
         )|*                         // Second level repetition 1
     ) =&gt; {
         $(
@@ -807,7 +824,7 @@ output sequence.</p>
 <ol>
   <li>First level repetitions are corresponding to different rules.</li>
   <li>Second level repetition 1 is for a particular rule, writing
-multiple conditions. e.g. <code class="language-plaintext highlighter-rouge">Symbol1 | Symbol0</code>. Notice that we 
+multiple conditions. e.g. <code class="language-plaintext highlighter-rouge">Symbol1 | Symbol0</code>. Notice that we
 have used <code class="language-plaintext highlighter-rouge">|</code> to separate the conditions and used another macro
 <code class="language-plaintext highlighter-rouge">process_action!</code> to process the actions. This macro is defined
 below:</li>
@@ -815,12 +832,12 @@ below:</li>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">macro_rules!</span> <span class="n">process_action</span> <span class="p">{</span>
     <span class="c">// If the rule states that for any symbol, the action</span>
-    <span class="c">// has to be performed then we will use `*` as per </span>
+    <span class="c">// has to be performed then we will use `*` as per</span>
     <span class="c">// rust syntax.</span>
     <span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
         <span class="mi">_</span>
     <span class="p">};</span>
-    <span class="c">// Otherwise simply use the symbol  </span>
+    <span class="c">// Otherwise simply use the symbol</span>
     <span class="p">(</span><span class="nv">$action</span><span class="p">:</span> <span class="n">ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
         <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="nv">$action</span>
     <span class="p">};</span>
@@ -870,7 +887,7 @@ multiple actions. e.g. <code class="language-plaintext highlighter-rouge">R, P(x
 <span class="nd">macro_rules!</span> <span class="n">L</span> <span class="p">{</span>
     <span class="p">(</span><span class="nv">$tape_machine:ident</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
         <span class="nf">l</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="nv">$tape_machine</span><span class="py">.index</span><span class="p">)</span>
-    <span class="p">};</span>  
+    <span class="p">};</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>These macros will perform following actions:</p>
@@ -882,7 +899,7 @@ multiple actions. e.g. <code class="language-plaintext highlighter-rouge">R, P(x
 <p>Where these functions have been defined in the declaration section.</p>
 
 <p>A sidenote:
-We need to pass <code class="language-plaintext highlighter-rouge">tape_machine</code> and <code class="language-plaintext highlighter-rouge">steps</code> in the <code class="language-plaintext highlighter-rouge">transition_rules!</code> macros. Why? Because we cannot just use 
+We need to pass <code class="language-plaintext highlighter-rouge">tape_machine</code> and <code class="language-plaintext highlighter-rouge">steps</code> in the <code class="language-plaintext highlighter-rouge">transition_rules!</code> macros. Why? Because we cannot just use
 arbitrary variables in macros. Macros can use the variables that are
 defined inside the body or the ones that are explicitly passed
 to the macro. [Read more about this][link_here]</p>
@@ -892,9 +909,9 @@ program:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">// Import the macros we defined</span>
 <span class="c">// TODO - Modify the code structure so that macros</span>
-<span class="c">// are defined in a separate file and can be imported </span>
+<span class="c">// are defined in a separate file and can be imported</span>
 <span class="nd">states!</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">O</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
-<span class="nd">symbols!</span><span class="p">((</span><span class="n">Zero</span><span class="p">,</span> <span class="s">"0"</span><span class="p">),</span> <span class="p">(</span><span class="n">One</span><span class="p">,</span> <span class="s">"1"</span><span class="p">),</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s">"x"</span><span class="p">));</span>  
+<span class="nd">symbols!</span><span class="p">((</span><span class="n">Zero</span><span class="p">,</span> <span class="s">"0"</span><span class="p">),</span> <span class="p">(</span><span class="n">One</span><span class="p">,</span> <span class="s">"1"</span><span class="p">),</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s">"x"</span><span class="p">));</span>
 <span class="nd">init_tape!</span><span class="p">();</span>
 
 <span class="c">// To test: rustc +nightly -Zunpretty=expanded src/main.rs</span>
@@ -991,7 +1008,7 @@ program:</p>
         <span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span>
         <span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">();</span>
 
-    <span class="c">// 010101..  </span>
+    <span class="c">// 010101..</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">binary_result</span><span class="p">);</span>
 <span class="p">}</span></code></pre></figure>
 
@@ -1000,7 +1017,7 @@ write the same code for a different state machine, we can
 just specify the states, symbols and rules and we are done.</p>
 
 <p>We are done for practical purposes, however the syntax is a little
-bit verbose.<br />
+bit verbose.
 Can we specify the states, symbols and rules in a more concise way?
 How about this:</p>
 

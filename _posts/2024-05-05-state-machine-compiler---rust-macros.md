@@ -10,6 +10,23 @@ readtime: true
 usemathjax: true
 ---
 
+In thisIn this series of posts, we will create a very simple language that can
+be used to specify a state machine. Then we will write a compiler that will
+translate the description to a code that can simulate this state machine.
+
+Here is the agenda:\
+[Part 1](../2024-05-03-State-Machine-Compiler-Intro): What is a state machine? A (Rust) program to simulate state machine.\
+[Part 2](../2024-05-05-state-machine-compiler-rust-macros): Writing (Rust) macros to reduce repetition\
+[Part 3](../2024-05-07-state-machine-compiler-a-small-language): A small language and convert a description into a high level language(Rust) implementation\
+Proposed Part 4: Translating the description into a lower level
+assembly like language(LLVM IR)
+sembly like language(LLVM IR)
+
+This is part 2.
+
+
+## Background
+
 In the [previous post](../2024-05-03-State-Machine-Compiler-Intro),
 we ended up with a rust implementation of state machine simulation.
 We also concluded that in order to test different state machine, we
@@ -19,6 +36,8 @@ boilerplate.
 [Rust Macros](link_here) allow us to generate rust code by
 parsing patterns and using them at appropriate places.
 
+
+## Structure
 Our code can be divided into two parts:
 
 1. Declarations
@@ -57,7 +76,7 @@ say with states, a, b, c, d, then we will write:
 #[derive(Debug, PartialEq, Eq)]
 enum TapeMachineState {
     a,
-    b, 
+    b,
     c,
     d,
 }
@@ -160,7 +179,7 @@ We will want a macro like this:
 
 symbols!(0, 1, e, x, X);
 
-// Generates the following code: 
+// Generates the following code:
 // FIXME: this generates `SymbolZero` not `Symbol0`
 // #[derive(Debug, PartialEq, Eq, Clone)]
 // enum TapeMachineSymbol {
@@ -181,7 +200,7 @@ macro_rules! symbols {
  ( $( $x:ident ),* ) => {
      #[derive(Debug, PartialEq, Eq, Clone)]
      enum TapeMachineSymbol {
-         $( 
+         $(
              Symbol$x,
          )*
          B,
@@ -375,7 +394,7 @@ init_tape!();
 
 To summarize, If we have following tape machine:
 
-1. States: a, b, c, d 
+1. States: a, b, c, d
 2. Symbols: 0, 1, 2, 3, 4
 
 We can generate the declarations using the following code:
@@ -410,7 +429,7 @@ for i in 0..steps {
             println!("Final State: {:?}", TapeMachineState::o);
         }
         (TapeMachineState::o, TapeMachineSymbol::Symbol0) => {
-            // X means do nothing  
+            // X means do nothing
             tape_machine.state = &TapeMachineState::q;
             println!("Final State: {:?}", TapeMachineState::q);
         }
@@ -421,7 +440,7 @@ for i in 0..steps {
 
 Let's break down the structure:
 
-1. `for i in 0..steps` is the loop that will run for required 
+1. `for i in 0..steps` is the loop that will run for required
 2. `println!` is the print statement
 3. Match statement is simply conditioning on the current state and
    the current symbol.
@@ -434,7 +453,7 @@ If we can generate the code for one branch like this:
 {% highlight rust %}
 (TapeMachineState::o, TapeMachineSymbol::Symbol1) => {
     tape_machine.r();
-    tape_machine.p(TapeMachineSymbol::Symbolx); 
+    tape_machine.p(TapeMachineSymbol::Symbolx);
     tape_machine.l();
     tape_machine.l();
     tape_machine.l();
@@ -443,13 +462,13 @@ If we can generate the code for one branch like this:
 }
 {% endhighlight %}
 
-then we can just do `$(code generation logic for one rule)*` in our 
-macro. 
+then we can just do `$(code generation logic for one rule)*` in our
+macro.
 
 Let's focus on a single rule for now. Here are the things we need:
 
 1. The state
-2. The symbol 
+2. The symbol
 3. The actions in order. If its a print statement then value to be
    printed is the symbol.
 4. The next state
@@ -472,7 +491,7 @@ Let's break it down:
 
 1. States: `[$state: ident]`
 2. Symbols: `[$($condition: ident)|+]` : One or more coditions
-3. Actions: `[$($action: expr),*]` : One or more actions 
+3. Actions: `[$($action: expr),*]` : One or more actions
 4. Final state: `[$final_state: ident]`
 
 All of them comma separated.
@@ -488,7 +507,7 @@ $([$state: ident], [$($condition: ident)|+], [$($action: expr),*], [$final_state
 ```
 
 However there is a slight problem with this. There is no way to know
-when a rule ends and when another rule starts. [ Clarify why we can't just use `;` ]. 
+when a rule ends and when another rule starts. [ Clarify why we can't just use `;` ].
 
 Let's settle on specifying multiple rules like this:
 
@@ -542,15 +561,15 @@ macro_rules! transition_rules {
    ($tape_machine: ident, $steps: ident, $({ [$state: ident], [$($condition: ident)|+], [$($action: expr),*], [$final_state: ident] } ),*) => {
        for i in 0..$steps {
            println!(
-               "Step: {} State: {:?} Symbol: {:?}", 
+               "Step: {} State: {:?} Symbol: {:?}",
                i, $tape_machine.state, $tape_machine.result[$tape_machine.index]
            );
            match ($tape_machine.state, $tape_machine.result[$tape_machine.index]) {
                $(
-                   (TapeMachineState::$state, 
+                   (TapeMachineState::$state,
                        $(
                            process_action!($condition)
-                       )|* 
+                       )|*
                    ) => {
                        $(
                            $action;
@@ -578,7 +597,7 @@ Notice the two levels of repetition:
 $(                                  // First level repetition starts
     (TapeMachineState::$state,
         $(
-            process_action!($condition) 
+            process_action!($condition)
         )|*                         // Second level repetition 1
     ) => {
         $(
@@ -593,7 +612,7 @@ $(                                  // First level repetition starts
 
 1. First level repetitions are corresponding to different rules.
 2. Second level repetition 1 is for a particular rule, writing
-   multiple conditions. e.g. `Symbol1 | Symbol0`. Notice that we 
+   multiple conditions. e.g. `Symbol1 | Symbol0`. Notice that we
    have used `|` to separate the conditions and used another macro
    `process_action!` to process the actions. This macro is defined
    below:
@@ -601,18 +620,18 @@ $(                                  // First level repetition starts
 {% highlight rust %}
 macro_rules! process_action {
     // If the rule states that for any symbol, the action
-    // has to be performed then we will use `*` as per 
+    // has to be performed then we will use `*` as per
     // rust syntax.
     (A) => {
         _
     };
-    // Otherwise simply use the symbol  
+    // Otherwise simply use the symbol
     ($action: ident) => {
         TapeMachineSymbol::$action
     };
 }
 {% endhighlight %}
-   
+
 In summary all this trouble just to use `*` inside the match statement.
 
 3. Second level repetition 2 is for a particular rule, writing
@@ -660,7 +679,7 @@ macro_rules! R {
 macro_rules! L {
     ($tape_machine:ident) => {
         l(&mut $tape_machine.index)
-    };  
+    };
 }
 {% endhighlight %}
 
@@ -675,7 +694,7 @@ R!(tape_machine); -> r(&mut tape_machine.index);
 Where these functions have been defined in the declaration section.
 
 A sidenote:
-We need to pass `tape_machine` and `steps` in the `transition_rules!` macros. Why? Because we cannot just use 
+We need to pass `tape_machine` and `steps` in the `transition_rules!` macros. Why? Because we cannot just use
 arbitrary variables in macros. Macros can use the variables that are
 defined inside the body or the ones that are explicitly passed
 to the macro. [Read more about this][link_here]
@@ -686,9 +705,9 @@ program:
 {% highlight rust %}
 // Import the macros we defined
 // TODO - Modify the code structure so that macros
-// are defined in a separate file and can be imported 
+// are defined in a separate file and can be imported
 states!(B, O, Q, P, F);
-symbols!((Zero, "0"), (One, "1"), (X, "x"));  
+symbols!((Zero, "0"), (One, "1"), (X, "x"));
 init_tape!();
 
 // To test: rustc +nightly -Zunpretty=expanded src/main.rs
@@ -762,7 +781,7 @@ fn main() {
         .map(|x| x.as_str())
         .collect::<String>();
 
-    // 010101..  
+    // 010101..
     println!("{}", binary_result);
 }
 {% endhighlight %}
@@ -772,7 +791,7 @@ write the same code for a different state machine, we can
 just specify the states, symbols and rules and we are done.
 
 We are done for practical purposes, however the syntax is a little
-bit verbose.  
+bit verbose.
 Can we specify the states, symbols and rules in a more concise way?
 How about this:
 

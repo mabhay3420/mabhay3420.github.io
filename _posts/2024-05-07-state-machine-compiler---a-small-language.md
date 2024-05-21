@@ -10,10 +10,26 @@ readtime: true
 usemathjax: true
 ---
 
-In the [previous post](../2024-05-05-state-machine-compiler-rust-macros), we decided to work 
+In this series of posts, we In this series of posts, we will create a very simple language that can
+be used to specify a state machine. Then we will write a compiler that will
+translate the description to a code that can simulate this state machine.
+
+Here is theHere is the agenda:\
+[Part 1](../2024-05-03-State-Machine-Compiler-Intro): What is a state machine? A (Rust) program to simulate state machine.\
+[Part 2](../2024-05-05-state-machine-compiler-rust-macros): Writing (Rust) macros to reduce repetition\
+[Part 3](../2024-05-07-state-machine-compiler-a-small-language): A small language and convert a description into a high level language(Rust) implementation\
+Proposed Part 4: Translating the description into a lower level
+assembly like language(LLVM IR)
+sembly like language(LLVM IR)
+
+This is part 3.
+
+
+## Language
+In the [previous post](../2024-05-05-state-machine-compiler-rust-macros), we decided to work
 with a much concise specification of the state machine.
 
-Here is a specification for the state machine which 
+Here is a specification for the state machine which
 will generate the sequence `001011011101111011111..`
 
 ```
@@ -63,7 +79,7 @@ enum TapeMachineState {
     b,
 }
 
-// Symbol declarations, with `X` indicating a empty 
+// Symbol declarations, with `X` indicating a empty
 // tape block
 #[derive(Debug, PartialEq, Eq, Clone)]
 enum TapeMachineSymbol {
@@ -105,7 +121,7 @@ impl<'a> TapeMachine<'a> {
     fn p(&mut self, symbol: TapeMachineSymbol) {
         self.result[self.index] = symbol;
     }
-    
+
     // Move the head to the right
     fn r(&mut self) {
         self.index += 1;
@@ -118,7 +134,7 @@ impl<'a> TapeMachine<'a> {
 
 fn main() {
 
-    // Take the number of steps and the length of the 
+    // Take the number of steps and the length of the
     // tape as input
     println!("Enter the number of steps:");
     let mut steps_input = String::new();
@@ -129,13 +145,13 @@ fn main() {
     let mut tape_length_input = String::new();
     io::stdin().read_line(&mut tape_length_input).unwrap();
     let max_len: usize = tape_length_input.trim().parse().unwrap();
-    
+
 
     // Initialize the tape machine
     let mut result = vec![TapeMachineSymbol::SymbolX; max_len];
     let mut tape_machine = TapeMachine::new(&TapeMachineState::a, &mut result);
 
-    // Run the simulation for the required number of 
+    // Run the simulation for the required number of
     // steps
     for i in 0..steps {
         println!(
@@ -208,7 +224,7 @@ pub enum Condition {
     Star,
 }
 
-// A transition step can be either `R`, `L`, 
+// A transition step can be either `R`, `L`,
 // `X`(erase the content) or `P(x)` ( print x to
 // the current head)
 #[derive(Debug, PartialEq, Clone)]
@@ -220,7 +236,7 @@ pub enum TransitionStep {
 }
 
 
-// A transition 
+// A transition
 #[derive(Debug, PartialEq, Clone)]
 pub struct Transition {
     pub initial_state: String,
@@ -247,7 +263,7 @@ right values in the template.
 Parsing a text is typically broken into two steps:
 
 1. Lexing: Breaking the text into tokens
-2. Parsing: Grouping tokens into recognizable 
+2. Parsing: Grouping tokens into recognizable
 structures
 
 We will be following [this tutorial][link_here] closely.
@@ -310,8 +326,8 @@ pub struct Token {
 pub struct Lexer {
     source: Vec<char>, // The full source code
     pub cur_char: char, // The current character
-    cur_pos: usize, // The current position in 
-                    // the source 
+    cur_pos: usize, // The current position in
+                    // the source
     }
 
 impl Lexer {
@@ -349,7 +365,7 @@ impl Lexer {
         // then the following word can be an identifier
         // or a keyword
 
-        // construct the whole word and check if it is 
+        // construct the whole word and check if it is
         // a keyword or an identifier
 
 
@@ -860,15 +876,15 @@ In order to parse we will follow this general approach:
 2. Based on the context, decide whether we expect
    it to be a certain type of token:
     a. The token type is required:
-        i. Is this token present? Consume it and 
-        update the parse tree. 
+        i. Is this token present? Consume it and
+        update the parse tree.
         ii. Otherwise, throw an error.
-    b. Is this token type optional? 
+    b. Is this token type optional?
        i. Try to consume it.
        ii. If its not present, then move on.
 
 
-How do we know which tokens type we expect at any 
+How do we know which tokens type we expect at any
 place?
 A Grammer of our language will
 help:
@@ -877,7 +893,7 @@ help:
 // A program is a series of declarations
 PROGRAM= STATES_DECLARATION SYMBOLS_DECLARATION TRANSITIONS_DECLARATION
 
-// A declaration of states is comma separated list of 
+// A declaration of states is comma separated list of
 // identifiers
 STATES_DECLARATION: STATES ':' [STATES_IDENTIFIERS ','] '[' STATE_IDENTIFIERS ']'   [STATES_IDENTIFIERS] NEWLINE
 STATE_IDENTIFIERS: STATE_IDENTIFIER (',' STATE_IDENTIFIER)*
@@ -887,12 +903,12 @@ STATE_IDENTIFIERS: STATE_IDENTIFIER (',' STATE_IDENTIFIER)*
 SYMBOLS_DECLARATION: SYMBOLS ':' '[' SYMBOL_IDENTIFIERS ']' NEWLINE
 SYMBOL_IDENTIFIERS: SYMBOL_IDENTIFIER (',' SYMBOL_IDENTIFIER)*
 
-// A declaration of transitions is comma separated 
+// A declaration of transitions is comma separated
 // list of transition declarations
-TRANSITIONS_DECLARATION: TRANSITIONS ':' (NEWLINE TRANSITION_DECLARATION)* 
+TRANSITIONS_DECLARATION: TRANSITIONS ':' (NEWLINE TRANSITION_DECLARATION)*
 
 
-// A transition declaration 
+// A transition declaration
 TRANSITION_DECLARATION: INITIAL_STATE_IDENTIFIER ',' TRANSITION_CONDITIONS ',' TRANSITION_STEPS, FINAL_STATE_IDENTIFIER
 TRANSITION_CONDITIONS: STAR | SYMBOL_IDENTIFIER ( '|' SYMBOL_IDENTIFIER )*
 TRANSITION_STEPS: None | TRANSITION_STEP ('-' TRANSITION_STEP)*
@@ -910,7 +926,7 @@ what different declarations are.
 
 This grammer says that we expect `SYMBOLS_DECLARATION` to come after `STATES_DECLARATION`.
 
-In our parsing logic, at any stage, we will be 
+In our parsing logic, at any stage, we will be
 expecting a series of tokens as specified by the
 grammer.
 For example the top level logic will be following:

@@ -13,7 +13,7 @@
         <title>State Machine Compiler - A Small Language</title>
         <description>
           Generating Rust code from minimal specification - 
-          In the previous post, we decided to work with a much concise specification of the state machine. Here is a specification for the state machine which will generate the sequence 001011011101111011111.. STATES: [b], o, q, p, f SYMBOLS: 0, 1, e, x TRANSITIONS: b, *, P(e)-R-P(e)-R-P(0)-R-R-P(0)-L-L, o o, 1, R-P(x)-L-L-L,...
+          In this series of posts, we In this series of posts, we will create a very simple language that can be used to specify a state machine. Then we will write a compiler that will translate the description to a code that can simulate this state machine. Here is theHere...
         </description>
         <pubDate>Tue, 07 May 2024 00:00:00 +0530</pubDate>
         <link>http://localhost:4000/2024-05-07-state-machine-compiler-a-small-language/</link>
@@ -24,7 +24,7 @@
         <title>State Machine Compiler - Rust Macros</title>
         <description>
           Generating code via macros - 
-          In the previous post, we ended up with a rust implementation of state machine simulation. We also concluded that in order to test different state machine, we would like a better way, as writing full code involves a lot of boilerplate. Rust Macros allow us to generate rust code by...
+          In thisIn this series of posts, we will create a very simple language that can be used to specify a state machine. Then we will write a compiler that will translate the description to a code that can simulate this state machine. Here is the agenda: Part 1: What is...
         </description>
         <pubDate>Sun, 05 May 2024 00:00:00 +0530</pubDate>
         <link>http://localhost:4000/2024-05-05-state-machine-compiler-rust-macros/</link>
@@ -35,7 +35,7 @@
         <title>State Machine Compiler - Intro</title>
         <description>
           Computing numbers - 
-          Today the architecture of a computure seems very natural: a memory unit: to store the result of computation (Disk, RAM etc.) a logic unit: which performs computation(CPU, GPU etc.) This architecture is based on Von Neuman Model of computing, but the roots trace back to Turing’s Paper on what all...
+          In this series of posts, we will create a very simple language that can be used to specify a state machine. Then we will write a compiler that will translate the description to a code that can simulate this state machine. Though the titles say State Machine, we are actually...
         </description>
         <pubDate>Fri, 03 May 2024 00:00:00 +0530</pubDate>
         <link>http://localhost:4000/2024-05-03-State-Machine-Compiler-Intro/</link>
