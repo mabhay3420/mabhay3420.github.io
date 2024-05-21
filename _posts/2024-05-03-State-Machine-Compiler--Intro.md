@@ -462,13 +462,13 @@ If we ignore the first `e` , we are actually on track to get this sequence.
 <details>
 <summary> Instructions to run the code</summary>
 
-{% highlight bash %}
+{% highlight rust %}
 Assuming the code is saved in state_machine.rs
 
 1. rustc state_machine.rs
 2. ./state_machine
 3. Enter the number of steps and tape length.
-   As a rule of thumb, Tape length >= 10 \* Number of steps, but this obviously depends on the logic.
+   As a rule of thumb, Tape length >= 10 * Number of steps, but this obviously depends on the logic.
 
 {% endhighlight %}
 
@@ -479,5 +479,5 @@ with different states and rules. We will have to rewrite the code again, which i
 a time taking process. The table description is pretty succinct. Can we generate
 simulation code with minimal description of state machine?
 
-[Rust Macros](link_here) can generate code by matching patterns. Can we use them to
+[Rust Macros](https://doc.rust-lang.org/book/ch19-06-macros.html) can generate code by matching patterns. Can we use them to
 generate the code for us? We do it in the next post.

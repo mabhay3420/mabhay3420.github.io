@@ -24,8 +24,8 @@ sembly like language(LLVM IR)
 
 This is part 3.
 
-
 ## Language
+
 In the [previous post](../2024-05-05-state-machine-compiler-rust-macros), we decided to work
 with a much concise specification of the state machine.
 
@@ -72,50 +72,46 @@ the rust code for the above state machine:
 use std::fmt;
 use std::io;
 
-// State declarations
-#[derive(Debug, PartialEq, Eq)]
+// State declarations #[derive(Debug, PartialEq, Eq)]
 enum TapeMachineState {
-    a,
-    b,
+	a,
+	b,
 }
 
 // Symbol declarations, with `X` indicating a empty
-// tape block
-#[derive(Debug, PartialEq, Eq, Clone)]
+// tape block #[derive(Debug, PartialEq, Eq, Clone)]
 enum TapeMachineSymbol {
-    Symbol0,
-    Symbol1,
-    SymbolX,
+	Symbol0,
+	Symbol1,
+	SymbolX,
 }
 
 // For printing the symbols
 impl TapeMachineSymbol {
-    fn as_str(&self) -> &'static str {
-        match self {
-            TapeMachineSymbol::Symbol0 => "0",
-            TapeMachineSymbol::Symbol1 => "1",
-            TapeMachineSymbol::SymbolX => "X",
-        }
-    }
+fn as_str(&self) -> &'static str {
+match self {
+TapeMachineSymbol::Symbol0 => "0",
+TapeMachineSymbol::Symbol1 => "1",
+TapeMachineSymbol::SymbolX => "X",
+}
+}
 }
 
 // Tape machine constituents
 struct TapeMachine<'a> {
-    state: &'a TapeMachineState,
-    result: &'a mut Vec<TapeMachineSymbol>,
-    index: usize,
+state: &'a TapeMachineState,
+result: &'a mut Vec<TapeMachineSymbol>,
+index: usize,
 }
 
-
 impl<'a> TapeMachine<'a> {
-    pub fn new(state: &'a TapeMachineState, result: &'a mut Vec<TapeMachineSymbol>) -> Self {
-        Self {
-            state,
-            result,
-            index: 0,
-        }
-    }
-
+pub fn new(state: &'a TapeMachineState, result: &'a mut Vec<TapeMachineSymbol>) -> Self {
+Self {
+state,
+result,
+index: 0,
+}
+}
 
     // Print
     fn p(&mut self, symbol: TapeMachineSymbol) {
@@ -130,6 +126,7 @@ impl<'a> TapeMachine<'a> {
     fn l(&mut self) {
         self.index -= 1;
     }
+
 }
 
 fn main() {
@@ -205,6 +202,7 @@ fn main() {
         .collect();
     println!("=========\n");
     println!("{}", clean_result);
+
 }
 {% endhighlight %}
 
@@ -220,38 +218,34 @@ specification:
 // A Trnasition condition can be either `*`
 // or `A | B | C | ...`
 pub enum Condition {
-    OR(Vec<String>),
-    Star,
+OR(Vec<String>),
+Star,
 }
 
 // A transition step can be either `R`, `L`,
 // `X`(erase the content) or `P(x)` ( print x to
-// the current head)
-#[derive(Debug, PartialEq, Clone)]
+// the current head) #[derive(Debug, PartialEq, Clone)]
 pub enum TransitionStep {
-    R,
-    L,
-    X,
-    P(String), // A function call
+R,
+L,
+X,
+P(String), // A function call
 }
 
-
-// A transition
-#[derive(Debug, PartialEq, Clone)]
+// A transition #[derive(Debug, PartialEq, Clone)]
 pub struct Transition {
-    pub initial_state: String,
-    pub condition: Condition,
-    pub steps: Vec<TransitionStep>,
-    pub final_state: String,
+pub initial_state: String,
+pub condition: Condition,
+pub steps: Vec<TransitionStep>,
+pub final_state: String,
 }
-
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ParseTree {
-    pub states: Vec<String>,
-    pub initial_state: String,
-    pub symbols: Vec<String>,
-    pub transitions: Vec<Transition>,
+pub states: Vec<String>,
+pub initial_state: String,
+pub symbols: Vec<String>,
+pub transitions: Vec<Transition>,
 }
 
 {% endhighlight %}
@@ -264,9 +258,9 @@ Parsing a text is typically broken into two steps:
 
 1. Lexing: Breaking the text into tokens
 2. Parsing: Grouping tokens into recognizable
-structures
+   structures
 
-We will be following [this tutorial][link_here] closely.
+We will be following [this tutorial](https://austinhenley.com/blog/teenytinycompiler1.html) closely.
 
 ## Lexing
 
@@ -277,9 +271,9 @@ we can expect the following types of tokens:
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum TokenType {
-    // Special
-    EOF = -1,
-    NEWLINE = 0,
+// Special
+EOF = -1,
+NEWLINE = 0,
 
     // Keywords
     STATES = 201,
@@ -304,6 +298,7 @@ pub enum TokenType {
     RightParen = 14,
     STAR = 15,
     COLON = 16,
+
 }
 
 {% endhighlight %}
@@ -312,23 +307,22 @@ Lexer will simply go over the text separated by
 whitespaces and return a token or thrown an error
 in case of an invalid value.
 
-As the [tutorial][link_here] suggests, let's first
+As the [tutorial](https://austinhenley.com/blog/teenytinycompiler1.html) suggests, let's first
 outline the interfaces of the lexer:
 
-{% highlight rust %}
-#[derive(Debug, PartialEq, Clone)]
+{% highlight rust %} #[derive(Debug, PartialEq, Clone)]
 pub struct Token {
-    pub text: String,
-    pub kind: TokenType,
+pub text: String,
+pub kind: TokenType,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Lexer {
-    source: Vec<char>, // The full source code
-    pub cur_char: char, // The current character
-    cur_pos: usize, // The current position in
-                    // the source
-    }
+source: Vec<char>, // The full source code
+pub cur_char: char, // The current character
+cur_pos: usize, // The current position in
+// the source
+}
 
 impl Lexer {
 
@@ -372,6 +366,7 @@ impl Lexer {
         // Throw an error if the current character if
         // not a valid token
     }
+
 }
 
 {% endhighlight %}
@@ -389,9 +384,9 @@ use std::str::FromStr;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum TokenType {
-    // Special
-    EOF = -1,
-    NEWLINE = 0,
+// Special
+EOF = -1,
+NEWLINE = 0,
 
     // Keywords
     STATES = 201,
@@ -416,70 +411,71 @@ pub enum TokenType {
     RightParen = 14,
     STAR = 15,
     COLON = 16,
+
 }
 
 impl FromStr for TokenType {
-    type Err = String;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "EOF" => Ok(TokenType::EOF),
-            "NEWLINE" => Ok(TokenType::NEWLINE),
-            "STATES" => Ok(TokenType::STATES),
-            "SYMBOLS" => Ok(TokenType::SYMBOLS),
-            "TRANSITIONS" => Ok(TokenType::TRANSITIONS),
-            "R" => Ok(TokenType::R),
-            "L" => Ok(TokenType::L),
-            "P" => Ok(TokenType::P),
-            "X" => Ok(TokenType::X),
-            "IDENT" => Ok(TokenType::IDENT),
-            "OR" => Ok(TokenType::OR),
-            "LEFT_BRACKET" => Ok(TokenType::LeftBracket),
-            "RIGHT_BRACKET" => Ok(TokenType::RightBracket),
-            "COMMA" => Ok(TokenType::COMMA),
-            "DASH" => Ok(TokenType::DASH),
-            "LEFT_PAREN" => Ok(TokenType::LeftParen),
-            "RIGHT_PAREN" => Ok(TokenType::RightParen),
-            "STAR" => Ok(TokenType::STAR),
-            "COLON" => Ok(TokenType::COLON),
-            _ => Err(format!("Unknown token type: {}", s)),
-        }
-    }
+type Err = String;
+fn from*str(s: &str) -> Result<Self, Self::Err> {
+match s {
+"EOF" => Ok(TokenType::EOF),
+"NEWLINE" => Ok(TokenType::NEWLINE),
+"STATES" => Ok(TokenType::STATES),
+"SYMBOLS" => Ok(TokenType::SYMBOLS),
+"TRANSITIONS" => Ok(TokenType::TRANSITIONS),
+"R" => Ok(TokenType::R),
+"L" => Ok(TokenType::L),
+"P" => Ok(TokenType::P),
+"X" => Ok(TokenType::X),
+"IDENT" => Ok(TokenType::IDENT),
+"OR" => Ok(TokenType::OR),
+"LEFT_BRACKET" => Ok(TokenType::LeftBracket),
+"RIGHT_BRACKET" => Ok(TokenType::RightBracket),
+"COMMA" => Ok(TokenType::COMMA),
+"DASH" => Ok(TokenType::DASH),
+"LEFT_PAREN" => Ok(TokenType::LeftParen),
+"RIGHT_PAREN" => Ok(TokenType::RightParen),
+"STAR" => Ok(TokenType::STAR),
+"COLON" => Ok(TokenType::COLON),
+* => Err(format!("Unknown token type: {}", s)),
+}
+}
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Token {
-    pub text: String,
-    pub kind: TokenType,
+pub text: String,
+pub kind: TokenType,
 }
 
 impl Token {
-    fn check_if_keyword(token_text: &str) -> Option<TokenType> {
-        let token_type = TokenType::from_str(token_text);
-        match token_type {
-            Ok(t) => {
-                if t as i32 > 100 {
-                    Some(t)
-                } else {
-                    None
-                }
-            }
-            Err(_s) => None,
-        }
-    }
+fn check_if_keyword(token_text: &str) -> Option<TokenType> {
+let token_type = TokenType::from_str(token_text);
+match token_type {
+Ok(t) => {
+if t as i32 > 100 {
+Some(t)
+} else {
+None
+}
+}
+Err(\_s) => None,
+}
+}
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Lexer {
-    source: Vec<char>,
-    pub cur_char: char,
-    cur_pos: usize,
+source: Vec<char>,
+pub cur_char: char,
+cur_pos: usize,
 }
 
 impl Lexer {
-    pub fn new(source: &str) -> Self {
-        info!("Initializing Lexer");
-        let mut source_chars = source.chars().collect::<Vec<_>>();
-        source_chars.push('\n');
+pub fn new(source: &str) -> Self {
+info!("Initializing Lexer");
+let mut source*chars = source.chars().collect::<Vec<*>>();
+source_chars.push('\n');
 
         let cur_char = if source_chars.len() > 1 {
             source_chars[0]
@@ -609,12 +605,12 @@ impl Lexer {
         self.next_char();
         token
     }
+
 }
 
 {% endhighlight %}
 
 </details>
-
 
 To test the lexer, take a look at the following code:
 
@@ -623,242 +619,242 @@ To test the lexer, take a look at the following code:
 
 {% highlight rust %}
 fn test_keywords_and_identifiers() {
-    let code = "
-        STATES: [A], B, C1
-        SYMBOLS: [0 , 1, X, R]
-        TRANSITIONS: [A, 0 | 1, L-R-P(X), B], [B, * , L , C1]
-    ";
-    let expected = vec![
-        Token {
-            text: "\n".to_string(),
-            kind: TokenType::NEWLINE,
-        },
-        Token {
-            text: "STATES".to_string(),
-            kind: TokenType::STATES,
-        },
-        Token {
-            text: ":".to_string(),
-            kind: TokenType::COLON,
-        },
-        Token {
-            text: "[".to_string(),
-            kind: TokenType::LeftBracket,
-        },
-        Token {
-            text: "A".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: "]".to_string(),
-            kind: TokenType::RightBracket,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "B".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "C1".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: "\n".to_string(),
-            kind: TokenType::NEWLINE,
-        },
-        Token {
-            text: "SYMBOLS".to_string(),
-            kind: TokenType::SYMBOLS,
-        },
-        Token {
-            text: ":".to_string(),
-            kind: TokenType::COLON,
-        },
-        Token {
-            text: "[".to_string(),
-            kind: TokenType::LeftBracket,
-        },
-        Token {
-            text: "0".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "1".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "X".to_string(),
-            kind: TokenType::X,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "R".to_string(),
-            kind: TokenType::R,
-        },
-        Token {
-            text: "]".to_string(),
-            kind: TokenType::RightBracket,
-        },
-        Token {
-            text: "\n".to_string(),
-            kind: TokenType::NEWLINE,
-        },
-        Token {
-            text: "TRANSITIONS".to_string(),
-            kind: TokenType::TRANSITIONS,
-        },
-        Token {
-            text: ":".to_string(),
-            kind: TokenType::COLON,
-        },
-        Token {
-            text: "[".to_string(),
-            kind: TokenType::LeftBracket,
-        },
-        Token {
-            text: "A".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "0".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: "|".to_string(),
-            kind: TokenType::OR,
-        },
-        Token {
-            text: "1".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "L".to_string(),
-            kind: TokenType::L,
-        },
-        Token {
-            text: "-".to_string(),
-            kind: TokenType::DASH,
-        },
-        Token {
-            text: "R".to_string(),
-            kind: TokenType::R,
-        },
-        Token {
-            text: "-".to_string(),
-            kind: TokenType::DASH,
-        },
-        Token {
-            text: "P".to_string(),
-            kind: TokenType::P,
-        },
-        Token {
-            text: "(".to_string(),
-            kind: TokenType::LeftParen,
-        },
-        Token {
-            text: "X".to_string(),
-            kind: TokenType::X,
-        },
-        Token {
-            text: ")".to_string(),
-            kind: TokenType::RightParen,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "B".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: "]".to_string(),
-            kind: TokenType::RightBracket,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "[".to_string(),
-            kind: TokenType::LeftBracket,
-        },
-        Token {
-            text: "B".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "*".to_string(),
-            kind: TokenType::STAR,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "L".to_string(),
-            kind: TokenType::L,
-        },
-        Token {
-            text: ",".to_string(),
-            kind: TokenType::COMMA,
-        },
-        Token {
-            text: "C1".to_string(),
-            kind: TokenType::IDENT,
-        },
-        Token {
-            text: "]".to_string(),
-            kind: TokenType::RightBracket,
-        },
-        Token {
-            text: "\n".to_string(),
-            kind: TokenType::NEWLINE,
-        },
-        Token {
-            text: "\n".to_string(),
-            kind: TokenType::NEWLINE,
-        },
-    ];
-    let mut lexer = Lexer::new(code);
-    let mut result = Vec::new();
-    while let Some(token) = lexer.get_token() {
-        if token.kind == TokenType::EOF {
-            break;
-        }
-        result.push(token);
-    }
-    assert_eq!(result, expected);
+let code = "
+STATES: [A], B, C1
+SYMBOLS: [0 , 1, X, R]
+TRANSITIONS: [A, 0 | 1, L-R-P(X), B], [B, * , L , C1]
+";
+let expected = vec![
+Token {
+text: "\n".to_string(),
+kind: TokenType::NEWLINE,
+},
+Token {
+text: "STATES".to_string(),
+kind: TokenType::STATES,
+},
+Token {
+text: ":".to_string(),
+kind: TokenType::COLON,
+},
+Token {
+text: "[".to_string(),
+kind: TokenType::LeftBracket,
+},
+Token {
+text: "A".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: "]".to_string(),
+kind: TokenType::RightBracket,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "B".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "C1".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: "\n".to_string(),
+kind: TokenType::NEWLINE,
+},
+Token {
+text: "SYMBOLS".to_string(),
+kind: TokenType::SYMBOLS,
+},
+Token {
+text: ":".to_string(),
+kind: TokenType::COLON,
+},
+Token {
+text: "[".to_string(),
+kind: TokenType::LeftBracket,
+},
+Token {
+text: "0".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "1".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "X".to_string(),
+kind: TokenType::X,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "R".to_string(),
+kind: TokenType::R,
+},
+Token {
+text: "]".to_string(),
+kind: TokenType::RightBracket,
+},
+Token {
+text: "\n".to_string(),
+kind: TokenType::NEWLINE,
+},
+Token {
+text: "TRANSITIONS".to_string(),
+kind: TokenType::TRANSITIONS,
+},
+Token {
+text: ":".to_string(),
+kind: TokenType::COLON,
+},
+Token {
+text: "[".to_string(),
+kind: TokenType::LeftBracket,
+},
+Token {
+text: "A".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "0".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: "|".to_string(),
+kind: TokenType::OR,
+},
+Token {
+text: "1".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "L".to_string(),
+kind: TokenType::L,
+},
+Token {
+text: "-".to_string(),
+kind: TokenType::DASH,
+},
+Token {
+text: "R".to_string(),
+kind: TokenType::R,
+},
+Token {
+text: "-".to_string(),
+kind: TokenType::DASH,
+},
+Token {
+text: "P".to_string(),
+kind: TokenType::P,
+},
+Token {
+text: "(".to_string(),
+kind: TokenType::LeftParen,
+},
+Token {
+text: "X".to_string(),
+kind: TokenType::X,
+},
+Token {
+text: ")".to_string(),
+kind: TokenType::RightParen,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "B".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: "]".to_string(),
+kind: TokenType::RightBracket,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "[".to_string(),
+kind: TokenType::LeftBracket,
+},
+Token {
+text: "B".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "*".to_string(),
+kind: TokenType::STAR,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "L".to_string(),
+kind: TokenType::L,
+},
+Token {
+text: ",".to_string(),
+kind: TokenType::COMMA,
+},
+Token {
+text: "C1".to_string(),
+kind: TokenType::IDENT,
+},
+Token {
+text: "]".to_string(),
+kind: TokenType::RightBracket,
+},
+Token {
+text: "\n".to_string(),
+kind: TokenType::NEWLINE,
+},
+Token {
+text: "\n".to_string(),
+kind: TokenType::NEWLINE,
+},
+];
+let mut lexer = Lexer::new(code);
+let mut result = Vec::new();
+while let Some(token) = lexer.get_token() {
+if token.kind == TokenType::EOF {
+break;
+}
+result.push(token);
+}
+assert_eq!(result, expected);
 }
 
 {% endhighlight %}
@@ -875,14 +871,13 @@ In order to parse we will follow this general approach:
 1. Take a look at the current token
 2. Based on the context, decide whether we expect
    it to be a certain type of token:
-    a. The token type is required:
-        i. Is this token present? Consume it and
-        update the parse tree.
-        ii. Otherwise, throw an error.
-    b. Is this token type optional?
-       i. Try to consume it.
-       ii. If its not present, then move on.
-
+   a. The token type is required:
+   i. Is this token present? Consume it and
+   update the parse tree.
+   ii. Otherwise, throw an error.
+   b. Is this token type optional?
+   i. Try to consume it.
+   ii. If its not present, then move on.
 
 How do we know which tokens type we expect at any
 place?
@@ -895,23 +890,22 @@ PROGRAM= STATES_DECLARATION SYMBOLS_DECLARATION TRANSITIONS_DECLARATION
 
 // A declaration of states is comma separated list of
 // identifiers
-STATES_DECLARATION: STATES ':' [STATES_IDENTIFIERS ','] '[' STATE_IDENTIFIERS ']'   [STATES_IDENTIFIERS] NEWLINE
-STATE_IDENTIFIERS: STATE_IDENTIFIER (',' STATE_IDENTIFIER)*
+STATES_DECLARATION: STATES ':' [STATES_IDENTIFIERS ','] '[' STATE_IDENTIFIERS ']' [STATES_IDENTIFIERS] NEWLINE
+STATE_IDENTIFIERS: STATE_IDENTIFIER (',' STATE_IDENTIFIER)\*
 
 // A declaration of symbols is comma separated list of
 // identifiers
 SYMBOLS_DECLARATION: SYMBOLS ':' '[' SYMBOL_IDENTIFIERS ']' NEWLINE
-SYMBOL_IDENTIFIERS: SYMBOL_IDENTIFIER (',' SYMBOL_IDENTIFIER)*
+SYMBOL_IDENTIFIERS: SYMBOL_IDENTIFIER (',' SYMBOL_IDENTIFIER)\*
 
 // A declaration of transitions is comma separated
 // list of transition declarations
-TRANSITIONS_DECLARATION: TRANSITIONS ':' (NEWLINE TRANSITION_DECLARATION)*
-
+TRANSITIONS_DECLARATION: TRANSITIONS ':' (NEWLINE TRANSITION_DECLARATION)\*
 
 // A transition declaration
 TRANSITION_DECLARATION: INITIAL_STATE_IDENTIFIER ',' TRANSITION_CONDITIONS ',' TRANSITION_STEPS, FINAL_STATE_IDENTIFIER
-TRANSITION_CONDITIONS: STAR | SYMBOL_IDENTIFIER ( '|' SYMBOL_IDENTIFIER )*
-TRANSITION_STEPS: None | TRANSITION_STEP ('-' TRANSITION_STEP)*
+TRANSITION_CONDITIONS: STAR | SYMBOL_IDENTIFIER ( '|' SYMBOL_IDENTIFIER )_
+TRANSITION_STEPS: None | TRANSITION_STEP ('-' TRANSITION_STEP)_
 TRANSITION_STEP: R | L | P '(' SYMBOL_IDENTIFIER ')'
 
 STATE_IDENTIFIER: IDENTIFIER
@@ -932,13 +926,13 @@ grammer.
 For example the top level logic will be following:
 
 {% highlight rust %}
-    // Parse the entire program:
-    // NEWLINE? states_declaration symbols_declaration transitions_declaration NEWLINE? EOF
-    pub fn program(&mut self) {
-        // Consume newlines
-        while self.try_consume(TokenType::NEWLINE, None::<fn(&Token)>) {}
-        // Parse the states declaration
-        self.states_declaration();
+// Parse the entire program:
+// NEWLINE? states_declaration symbols_declaration transitions_declaration NEWLINE? EOF
+pub fn program(&mut self) {
+// Consume newlines
+while self.try_consume(TokenType::NEWLINE, None::<fn(&Token)>) {}
+// Parse the states declaration
+self.states_declaration();
 
         // Parse the symbols declaration
         self.symbols_declaration();
@@ -959,33 +953,33 @@ For example the top level logic will be following:
 The `states_declaration` will be defined as follows:
 
 {% highlight rust %}
-    // Parse a states declaration: STATES ':' state_identifier_list NEWLINE
-    fn states_declaration(&mut self) {
-        self.consume(TokenType::STATES, None::<fn(&Token)>);
-        self.consume(TokenType::COLON, None::<fn(&Token)>);
-        self.state_identifier_list();
-        self.consume(TokenType::NEWLINE, None::<fn(&Token)>);
-        debug!("STATES_DECLARATION");
-    }
+// Parse a states declaration: STATES ':' state_identifier_list NEWLINE
+fn states_declaration(&mut self) {
+self.consume(TokenType::STATES, None::<fn(&Token)>);
+self.consume(TokenType::COLON, None::<fn(&Token)>);
+self.state_identifier_list();
+self.consume(TokenType::NEWLINE, None::<fn(&Token)>);
+debug!("STATES_DECLARATION");
+}
 
 {% endhighlight %}
 
 Let's focus on the `consume` function:
 
 {% highlight rust %}
-    // Consume the current token if it matches the expected token type
-    // If not, abort with an error message
-    // Execute the optional action if provided
-    fn consume<F>(&mut self, expected: TokenType, action: Option<F>)
+// Consume the current token if it matches the expected token type
+// If not, abort with an error message
+// Execute the optional action if provided
+fn consume<F>(&mut self, expected: TokenType, action: Option<F>)
 {% endhighlight %}
 
 There is another variant of `consume` which is `try_consume`:
 
 {% highlight rust %}
-    // Try to consume the current token if it matches the expected token type
-    // If successful, print the token type and text (if available) and execute the optional action
-    // Return true if the token was consumed, false otherwise
-    fn try_consume<F>(&mut self, kind: TokenType, action: Option<F>) -> bool
+// Try to consume the current token if it matches the expected token type
+// If successful, print the token type and text (if available) and execute the optional action
+// Return true if the token was consumed, false otherwise
+fn try_consume<F>(&mut self, kind: TokenType, action: Option<F>) -> bool
 
 {% endhighlight %}
 
@@ -993,12 +987,12 @@ Let's look at what an `action` might look like, in case we happen to be
 matching a initial state identifier:
 
 {% highlight rust %}
-    // Parse an initial state identifier: [IDENT]
-    fn initial_state_identifier(&mut self) {
-        self.consume(TokenType::LeftBracket, None::<fn(&Token)>);
-        let mut initial_state = String::new();
-        self.consume(
-            TokenType::IDENT,
+// Parse an initial state identifier: [IDENT]
+fn initial_state_identifier(&mut self) {
+self.consume(TokenType::LeftBracket, None::<fn(&Token)>);
+let mut initial_state = String::new();
+self.consume(
+TokenType::IDENT,
 
             // action: Push the text of the token to the initial state
             Some(|token: &Token| {
@@ -1023,24 +1017,24 @@ matching a initial state identifier:
 An example where we are using `try_consume`:
 
 {% highlight rust %}
-    fn transition_steps(&mut self) {
-        self.transition_step();
-        // There might or might not be a dash, if there is a dash
-        // then we expect another transition step
-        while self.try_consume(TokenType::DASH, None::<fn(&Token)>) {
-            self.transition_step();
-        }
-        debug!("TRANSITION_STEPS");
-    }
+fn transition_steps(&mut self) {
+self.transition_step();
+// There might or might not be a dash, if there is a dash
+// then we expect another transition step
+while self.try_consume(TokenType::DASH, None::<fn(&Token)>) {
+self.transition_step();
+}
+debug!("TRANSITION_STEPS");
+}
 {% endhighlight %}
 
 To summarise, let's right down the interfaces of parser:
 
 {% highlight rust %}
 impl Parser {
-    pub fn new(lexer: Lexer) -> Self {
-        // Initialize the Parser
-    }
+pub fn new(lexer: Lexer) -> Self {
+// Initialize the Parser
+}
 
     // Check if the current token matches the expected token type
     fn check_token(&self, kind: TokenType) -> bool;
@@ -1105,6 +1099,7 @@ impl Parser {
     // Parse the entire program:
     // NEWLINE? states_declaration symbols_declaration transitions_declaration NEWLINE? EOF
     pub fn program(&mut self);
+
 }
 
 {% endhighlight %}
@@ -1121,94 +1116,93 @@ use log::{debug, error, info};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Condition {
-    OR(Vec<String>),
-    Star,
+OR(Vec<String>),
+Star,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum TransitionStep {
-    R,
-    L,
-    X,
-    P(String), // A function call
+R,
+L,
+X,
+P(String), // A function call
 }
 
 trait FromTokenAndValue {
-    fn from_token_and_value(token: &Token, value: Option<String>) -> Self;
+fn from_token_and_value(token: &Token, value: Option<String>) -> Self;
 }
 
 impl FromTokenAndValue for TransitionStep {
-    fn from_token_and_value(token: &Token, value: Option<String>) -> Self {
-        match token.kind {
-            TokenType::R => TransitionStep::R,
-            TokenType::L => TransitionStep::L,
-            TokenType::X => TransitionStep::X,
-            TokenType::P => TransitionStep::P(value.unwrap()),
-            _ => panic!("Invalid token type for TransitionStep"),
-        }
-    }
+fn from*token_and_value(token: &Token, value: Option<String>) -> Self {
+match token.kind {
+TokenType::R => TransitionStep::R,
+TokenType::L => TransitionStep::L,
+TokenType::X => TransitionStep::X,
+TokenType::P => TransitionStep::P(value.unwrap()),
+* => panic!("Invalid token type for TransitionStep"),
+}
+}
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Transition {
-    pub initial_state: String,
-    pub condition: Condition,
-    pub steps: Vec<TransitionStep>,
-    pub final_state: String,
+pub initial_state: String,
+pub condition: Condition,
+pub steps: Vec<TransitionStep>,
+pub final_state: String,
 }
 
 impl Transition {
-    pub fn new() -> Self {
-        Transition {
-            initial_state: String::new(),
-            condition: Condition::OR(Vec::new()),
-            steps: Vec::new(),
-            final_state: String::new(),
-        }
-    }
+pub fn new() -> Self {
+Transition {
+initial_state: String::new(),
+condition: Condition::OR(Vec::new()),
+steps: Vec::new(),
+final_state: String::new(),
+}
+}
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ParseTree {
-    pub states: Vec<String>,
-    pub initial_state: String,
-    pub symbols: Vec<String>,
-    pub transitions: Vec<Transition>,
+pub states: Vec<String>,
+pub initial_state: String,
+pub symbols: Vec<String>,
+pub transitions: Vec<Transition>,
 }
-
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Parser {
-    lexer: Lexer,
-    cur_token: Token,
-    peek_token: Token,
-    pub tree: ParseTree,
+lexer: Lexer,
+cur_token: Token,
+peek_token: Token,
+pub tree: ParseTree,
 }
 
 impl Parser {
-    pub fn new(lexer: Lexer) -> Self {
-        info!("Initializing Parser");
-        let mut parser = Parser {
-            lexer,
-            cur_token: Token {
-                text: "\0".to_string(),
-                kind: TokenType::EOF,
-            },
-            peek_token: Token {
-                text: "\0".to_string(),
-                kind: TokenType::EOF,
-            },
-            tree: ParseTree {
-                states: Vec::new(),
-                initial_state: "".to_string(),
-                symbols: Vec::new(),
-                transitions: Vec::new(),
-            },
-        };
-        parser.next_token(); // Initialize peek_token
-        parser.next_token(); // Initialize cur_token
-        parser
-    }
+pub fn new(lexer: Lexer) -> Self {
+info!("Initializing Parser");
+let mut parser = Parser {
+lexer,
+cur_token: Token {
+text: "\0".to_string(),
+kind: TokenType::EOF,
+},
+peek_token: Token {
+text: "\0".to_string(),
+kind: TokenType::EOF,
+},
+tree: ParseTree {
+states: Vec::new(),
+initial_state: "".to_string(),
+symbols: Vec::new(),
+transitions: Vec::new(),
+},
+};
+parser.next_token(); // Initialize peek_token
+parser.next_token(); // Initialize cur_token
+parser
+}
 
     // Check if the current token matches the expected token type
     fn check_token(&self, kind: TokenType) -> bool {
@@ -1591,6 +1585,7 @@ impl Parser {
         self.consume(TokenType::EOF, None::<fn(&Token)>);
         debug!("PROGRAM");
     }
+
 }
 
 {% endhighlight %}
@@ -1609,36 +1604,36 @@ use std::io;
 
 #[derive(Debug, PartialEq, Eq)]
 enum TapeMachineState {
-    // FILL IN THE STATES FROM THE PARSE TREE
+// FILL IN THE STATES FROM THE PARSE TREE
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 enum TapeMachineSymbol {
-    // FILL IN THE SYMBOLS FROM THE PARSE TREE
+// FILL IN THE SYMBOLS FROM THE PARSE TREE
 }
 
 impl TapeMachineSymbol {
-    fn as_str(&self) -> &'static str {
-        match self {
-            // FILL IN THE MATCH ARMS FOR EACH SYMBOL
-        }
-    }
+fn as_str(&self) -> &'static str {
+match self {
+// FILL IN THE MATCH ARMS FOR EACH SYMBOL
+}
+}
 }
 
 struct TapeMachine<'a> {
-    state: &'a TapeMachineState,
-    result: &'a mut Vec<TapeMachineSymbol>,
-    index: usize,
+state: &'a TapeMachineState,
+result: &'a mut Vec<TapeMachineSymbol>,
+index: usize,
 }
 
 impl<'a> TapeMachine<'a> {
-    pub fn new(state: &'a TapeMachineState, result: &'a mut Vec<TapeMachineSymbol>) -> Self {
-        Self {
-            state,
-            result,
-            index: 0,
-        }
-    }
+pub fn new(state: &'a TapeMachineState, result: &'a mut Vec<TapeMachineSymbol>) -> Self {
+Self {
+state,
+result,
+index: 0,
+}
+}
 
     fn p(&mut self, symbol: TapeMachineSymbol) {
         self.result[self.index] = symbol;
@@ -1651,13 +1646,14 @@ impl<'a> TapeMachine<'a> {
     fn l(&mut self) {
         self.index -= 1;
     }
+
 }
 
 fn main() {
-    println!("Enter the number of steps:");
-    let mut steps_input = String::new();
-    io::stdin().read_line(&mut steps_input).unwrap();
-    let steps: usize = steps_input.trim().parse().unwrap();
+println!("Enter the number of steps:");
+let mut steps_input = String::new();
+io::stdin().read_line(&mut steps_input).unwrap();
+let steps: usize = steps_input.trim().parse().unwrap();
 
     println!("Enter the total tape length:");
     let mut tape_length_input = String::new();
@@ -1687,6 +1683,7 @@ fn main() {
     let clean_result: String = tape_machine.result.iter().filter(|&x| x != &TapeMachineSymbol::SymbolX).map(|x| x.as_str()).collect();
     println!("=========\n");
     println!("{}", clean_result);
+
 }
 
 {% endhighlight %}
@@ -1699,8 +1696,8 @@ The code to do this is pretty straightforward, take a look below:
 {% highlight rust %}
 
 impl ParseTree {
-    pub fn to_rust_code(&self) -> String {
-        let mut code = String::new();
+pub fn to_rust_code(&self) -> String {
+let mut code = String::new();
 
         // Generate the TapeMachineState enum
         code.push_str(
@@ -1871,6 +1868,7 @@ impl ParseTree {
 
         code
     }
+
 }
 
 {% endhighlight %}
@@ -1890,64 +1888,64 @@ use log::{debug, error, info};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Condition {
-    OR(Vec<String>),
-    Star,
+OR(Vec<String>),
+Star,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum TransitionStep {
-    R,
-    L,
-    X,
-    P(String), // A function call
+R,
+L,
+X,
+P(String), // A function call
 }
 
 trait FromTokenAndValue {
-    fn from_token_and_value(token: &Token, value: Option<String>) -> Self;
+fn from_token_and_value(token: &Token, value: Option<String>) -> Self;
 }
 
 impl FromTokenAndValue for TransitionStep {
-    fn from_token_and_value(token: &Token, value: Option<String>) -> Self {
-        match token.kind {
-            TokenType::R => TransitionStep::R,
-            TokenType::L => TransitionStep::L,
-            TokenType::X => TransitionStep::X,
-            TokenType::P => TransitionStep::P(value.unwrap()),
-            _ => panic!("Invalid token type for TransitionStep"),
-        }
-    }
+fn from*token_and_value(token: &Token, value: Option<String>) -> Self {
+match token.kind {
+TokenType::R => TransitionStep::R,
+TokenType::L => TransitionStep::L,
+TokenType::X => TransitionStep::X,
+TokenType::P => TransitionStep::P(value.unwrap()),
+* => panic!("Invalid token type for TransitionStep"),
+}
+}
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Transition {
-    pub initial_state: String,
-    pub condition: Condition,
-    pub steps: Vec<TransitionStep>,
-    pub final_state: String,
+pub initial_state: String,
+pub condition: Condition,
+pub steps: Vec<TransitionStep>,
+pub final_state: String,
 }
 
 impl Transition {
-    pub fn new() -> Self {
-        Transition {
-            initial_state: String::new(),
-            condition: Condition::OR(Vec::new()),
-            steps: Vec::new(),
-            final_state: String::new(),
-        }
-    }
+pub fn new() -> Self {
+Transition {
+initial_state: String::new(),
+condition: Condition::OR(Vec::new()),
+steps: Vec::new(),
+final_state: String::new(),
+}
+}
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ParseTree {
-    pub states: Vec<String>,
-    pub initial_state: String,
-    pub symbols: Vec<String>,
-    pub transitions: Vec<Transition>,
+pub states: Vec<String>,
+pub initial_state: String,
+pub symbols: Vec<String>,
+pub transitions: Vec<Transition>,
 }
 
 impl ParseTree {
-    pub fn to_rust_code(&self) -> String {
-        let mut code = String::new();
+pub fn to_rust_code(&self) -> String {
+let mut code = String::new();
 
         // Generate the TapeMachineState enum
         code.push_str(
@@ -2118,21 +2116,22 @@ impl ParseTree {
 
         code
     }
+
 }
 pub trait ToDot {
-    fn to_dot(&self) -> String;
+fn to_dot(&self) -> String;
 }
 
 impl ToDot for ParseTree {
-    fn to_dot(&self) -> String {
-        let mut dot = String::from(
-            "digraph {
-                rankdir=LR;
-                labelloc=\"t\";
-                node [shape=circle, style=filled, fillcolor=lightblue, fontname=\"Arial\"];
-                edge [fontcolor=blue, fontname=\"Arial\"];
-                ",
-        );
+fn to_dot(&self) -> String {
+let mut dot = String::from(
+"digraph {
+rankdir=LR;
+labelloc=\"t\";
+node [shape=circle, style=filled, fillcolor=lightblue, fontname=\"Arial\"];
+edge [fontcolor=blue, fontname=\"Arial\"];
+",
+);
 
         // Define states
         for state in &self.states {
@@ -2182,48 +2181,50 @@ impl ToDot for ParseTree {
             let color = "black";
             dot.push_str(&format!(
                 "  \"{}\" -> \"{}\" [label=\"{}\", color={}];
+
 ",
-                transition.initial_state, transition.final_state, label, color
-            ));
-        }
+transition.initial_state, transition.final_state, label, color
+));
+}
 
         dot.push_str(" } ");
         dot
     }
+
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Parser {
-    lexer: Lexer,
-    cur_token: Token,
-    peek_token: Token,
-    pub tree: ParseTree,
+lexer: Lexer,
+cur_token: Token,
+peek_token: Token,
+pub tree: ParseTree,
 }
 
 impl Parser {
-    pub fn new(lexer: Lexer) -> Self {
-        info!("Initializing Parser");
-        let mut parser = Parser {
-            lexer,
-            cur_token: Token {
-                text: "\0".to_string(),
-                kind: TokenType::EOF,
-            },
-            peek_token: Token {
-                text: "\0".to_string(),
-                kind: TokenType::EOF,
-            },
-            tree: ParseTree {
-                states: Vec::new(),
-                initial_state: "".to_string(),
-                symbols: Vec::new(),
-                transitions: Vec::new(),
-            },
-        };
-        parser.next_token(); // Initialize peek_token
-        parser.next_token(); // Initialize cur_token
-        parser
-    }
+pub fn new(lexer: Lexer) -> Self {
+info!("Initializing Parser");
+let mut parser = Parser {
+lexer,
+cur_token: Token {
+text: "\0".to_string(),
+kind: TokenType::EOF,
+},
+peek_token: Token {
+text: "\0".to_string(),
+kind: TokenType::EOF,
+},
+tree: ParseTree {
+states: Vec::new(),
+initial_state: "".to_string(),
+symbols: Vec::new(),
+transitions: Vec::new(),
+},
+};
+parser.next_token(); // Initialize peek_token
+parser.next_token(); // Initialize cur_token
+parser
+}
 
     // Check if the current token matches the expected token type
     fn check_token(&self, kind: TokenType) -> bool {
@@ -2606,12 +2607,12 @@ impl Parser {
         self.consume(TokenType::EOF, None::<fn(&Token)>);
         debug!("PROGRAM");
     }
+
 }
 
 {% endhighlight %}
 
 </details>
-
 
 ## Conclusion
 
@@ -2620,6 +2621,7 @@ very minimal specification. You can find the full code and instructions to run [
 
 One thing still bugs me: at the end of the day, we just substituted the parsed
 values within the program. Can we actually construct the program as in:
+
 1. Creating a module
 2. Defining functions inside it
 3. Writing the logic using these functions.
@@ -2627,4 +2629,4 @@ values within the program. Can we actually construct the program as in:
 We can go a level deeper and work with LLVM IR. We won't try to have all bells
 and whistles, but just simulate the state machine and print the result.
 
-That is the content of the [next post][link_here].
+That is the content of the [next post](link_here) [Proposed].

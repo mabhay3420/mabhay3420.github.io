@@ -1025,12 +1025,12 @@ Full Code
 <summary> Instructions to run the code</summary>
 
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash">Assuming the code is saved <span class="k">in </span>state_machine.rs
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="n">Assuming</span> <span class="n">the</span> <span class="n">code</span> <span class="n">is</span> <span class="n">saved</span> <span class="n">in</span> <span class="n">state_machine</span><span class="py">.rs</span>
 
-1. rustc state_machine.rs
-2. ./state_machine
-3. Enter the number of steps and tape length.
-   As a rule of thumb, Tape length <span class="o">&gt;=</span> 10 <span class="se">\*</span> Number of steps, but this obviously depends on the logic.</code></pre></figure>
+<span class="mi">1</span><span class="py">. rustc</span> <span class="n">state_machine</span><span class="py">.rs</span>
+<span class="mi">2</span><span class="err">.</span> <span class="err">.</span><span class="o">/</span><span class="n">state_machine</span>
+<span class="mi">3</span><span class="py">. Enter</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">steps</span> <span class="n">and</span> <span class="n">tape</span> <span class="n">length</span><span class="py">.
+   As</span> <span class="n">a</span> <span class="n">rule</span> <span class="n">of</span> <span class="n">thumb</span><span class="p">,</span> <span class="n">Tape</span> <span class="n">length</span> <span class="o">&gt;=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">Number</span> <span class="n">of</span> <span class="n">steps</span><span class="p">,</span> <span class="n">but</span> <span class="n">this</span> <span class="n">obviously</span> <span class="n">depends</span> <span class="n">on</span> <span class="n">the</span> <span class="n">logic</span><span class="err">.</span></code></pre></figure>
 
 
 </details>
@@ -1040,7 +1040,7 @@ with different states and rules. We will have to rewrite the code again, which i
 a time taking process. The table description is pretty succinct. Can we generate
 simulation code with minimal description of state machine?</p>
 
-<p><a href="link_here">Rust Macros</a> can generate code by matching patterns. Can we use them to
+<p><a href="https://doc.rust-lang.org/book/ch19-06-macros.html">Rust Macros</a> can generate code by matching patterns. Can we use them to
 generate the code for us? We do it in the next post.</p>
 
       </article>

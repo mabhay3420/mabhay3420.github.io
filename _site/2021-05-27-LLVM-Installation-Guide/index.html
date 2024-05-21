@@ -248,10 +248,10 @@ LLVM core is a big piece of software and when combined with additional packages 
 <h2 id="get-the-source-code">Get the Source Code</h2>
 <p>This fetches complete source code, You may want to fetch only a particular version, for that refer llvm docs.</p>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
-</pre></td><td class="code"><pre>user@user:~<span class="nv">$ </span>git clone https://github.com/llvm/ llvm-project.git
-user@user:~<span class="nv">$ </span><span class="nb">cd </span>llvm-project
+</pre></td><td class="code"><pre><span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="c">//github.com/llvm/ llvm-project.git</span>
+<span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">cd</span> <span class="n">llvm</span><span class="o">-</span><span class="n">project</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <h2 id="setup-build-directory-and-build-tool">Setup Build directory and build tool</h2>
@@ -263,52 +263,52 @@ We will need a <code class="language-plaintext highlighter-rouge">Makefile</code
 
 <p>Using <code class="language-plaintext highlighter-rouge">ninja</code> is recommended. Install these tools if not already installed with.</p>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
-</pre></td><td class="code"><pre>user@user:~<span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install </span>ninja-build
-user@user:~<span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install </span>cmake
+</pre></td><td class="code"><pre><span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">ninja</span><span class="o">-</span><span class="n">build</span>
+<span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">cmake</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <p>Then generate build.ninja Files using <code class="language-plaintext highlighter-rouge">cmake</code> with proper flags:</p>
 
 <p class="box-note"><strong>Note:</strong> Flags are case sensitive. Files are generated for Release version with proper flags to make a good substitue of Slow and Big Debug Version. Make Sure they match your needs.</p>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
 3
-</pre></td><td class="code"><pre>user@user:~/llvm-project<span class="nv">$ </span><span class="nb">mkdir </span>build
-user@user:~/llvm-project<span class="nv">$ </span><span class="nb">cd </span>build
-user@user:~/llvm-project/build<span class="nv">$ </span>cmake <span class="nt">-G</span> <span class="s2">"Ninja"</span> <span class="nt">-DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s2">"clang"</span> <span class="nt">-DLLVM_USE_LINKER</span><span class="o">=</span>gold <span class="nt">-DCMAKE_BUILD_TYPE</span><span class="o">=</span>Release <span class="nt">-DLLVM_ENABLE_ASSERTIONS</span><span class="o">=</span>ON <span class="nt">-LLVM_CCACHE_BUILD</span><span class="o">=</span>ON ../llvm
+</pre></td><td class="code"><pre><span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="err">$</span> <span class="n">mkdir</span> <span class="n">build</span>
+<span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="err">$</span> <span class="n">cd</span> <span class="n">build</span>
+<span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">build</span><span class="err">$</span> <span class="n">cmake</span> <span class="o">-</span><span class="n">G</span> <span class="s">"Ninja"</span> <span class="o">-</span><span class="n">DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s">"clang"</span> <span class="o">-</span><span class="n">DLLVM_USE_LINKER</span><span class="o">=</span><span class="n">gold</span> <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> <span class="o">-</span><span class="n">DLLVM_ENABLE_ASSERTIONS</span><span class="o">=</span><span class="n">ON</span> <span class="o">-</span><span class="n">LLVM_CCACHE_BUILD</span><span class="o">=</span><span class="n">ON</span> <span class="o">../</span><span class="n">llvm</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <h2 id="build-and-run-test">Build And Run Test</h2>
 
 <p class="box-note"><strong>Tips:</strong> These Steps are probably going to take somewhere between \(1\) to \(1\frac{1}{2}\) hours, And your system will become slow ( By default <code class="language-plaintext highlighter-rouge">ninja</code> uses all cores to complete jobs in parallel.) .Plug in your charger And find yourself something else to do.</p>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
-</pre></td><td class="code"><pre>user@user:~/llvm-project/build<span class="nv">$ </span>ninja
-user@user:~/llvm-project/build<span class="nv">$ </span>ninja check-clang
+</pre></td><td class="code"><pre><span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">build</span><span class="err">$</span> <span class="n">ninja</span>
+<span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">build</span><span class="err">$</span> <span class="n">ninja</span> <span class="n">check</span><span class="o">-</span><span class="n">clang</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <h2 id="update-path">Update PATH</h2>
 <p>Add following lines to start using llvm tools</p>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
 3
 4
-</pre></td><td class="code"><pre>user@user:~/llvm-project/build<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"export PATH="</span><span class="nv">$PATH</span>:~/llvm-project/build/bin<span class="s2">""</span> <span class="o">&gt;&gt;</span> ~/.bashrc
-user@user:~/llvm-project/build<span class="nv">$ </span><span class="nb">source</span> ~/.bashrc
-<span class="c"># Start Using Clang or any of the tools available</span>
-user@user:~<span class="nv">$ </span>clang++ hello.cpp <span class="nt">-o</span> hello.o
+</pre></td><td class="code"><pre><span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">build</span><span class="err">$</span> <span class="n">echo</span> <span class="s">"export PATH="</span><span class="err">$</span><span class="n">PATH</span><span class="p">:</span><span class="o">~/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">build</span><span class="o">/</span><span class="n">bin</span><span class="s">""</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="py">.bashrc</span>
+<span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">build</span><span class="err">$</span> <span class="n">source</span> <span class="o">~/</span><span class="py">.bashrc</span>
+<span class="cs"># Start Using Clang or any of the tools available</span>
+<span class="n">user</span><span class="o">@</span><span class="n">user</span><span class="p">:</span><span class="o">~</span><span class="err">$</span> <span class="n">clang</span><span class="o">++</span> <span class="n">hello</span><span class="py">.cpp</span> <span class="o">-</span><span class="n">o</span> <span class="n">hello</span><span class="py">.o</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <h2 id="complete-bash-script">Complete Bash Script</h2>
 
 <p class="box-warning"><strong>Warning:</strong> Before Using the script Make Sure you understand the steps and Change File Paths in the scrept when required.</p>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -322,20 +322,20 @@ user@user:~<span class="nv">$ </span>clang++ hello.cpp <span class="nt">-o</span
 12
 13
 14
-</pre></td><td class="code"><pre><span class="c">#!/bin/bash</span>
-<span class="c"># Installing in home directory</span>
-<span class="nb">cd
-</span>git clone https://github.com/llvm/ llvm-project.git
-<span class="nb">cd </span>llvm-project
-<span class="nb">sudo </span>apt-get <span class="nb">install </span>ninja-build
-<span class="nb">sudo </span>apt-get <span class="nb">install </span>cmake
-<span class="nb">mkdir </span>build
-<span class="nb">cd </span>build
-cmake <span class="nt">-G</span> <span class="s2">"Ninja"</span> <span class="nt">-DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s2">"clang"</span> <span class="nt">-DLLVM_USE_LINKER</span><span class="o">=</span>gold <span class="nt">-DCMAKE_BUILD_TYPE</span><span class="o">=</span>Release <span class="nt">-DLLVM_ENABLE_ASSERTIONS</span><span class="o">=</span>ON <span class="nt">-LLVM_CCACHE_BUILD</span><span class="o">=</span>ON ../llvm
-ninja
-ninja check-clang
-<span class="nb">echo</span> <span class="s2">"export PATH="</span><span class="nv">$PATH</span>:~/llvm-project/build/bin<span class="s2">""</span> <span class="o">&gt;&gt;</span> ~/.bashrc
-<span class="nb">source</span> ~/.bashrc
+</pre></td><td class="code"><pre><span class="err">#</span><span class="o">!/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>
+<span class="cs"># Installing in home directory</span>
+<span class="n">cd</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="c">//github.com/llvm/ llvm-project.git</span>
+<span class="n">cd</span> <span class="n">llvm</span><span class="o">-</span><span class="n">project</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">ninja</span><span class="o">-</span><span class="n">build</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">cmake</span>
+<span class="n">mkdir</span> <span class="n">build</span>
+<span class="n">cd</span> <span class="n">build</span>
+<span class="n">cmake</span> <span class="o">-</span><span class="n">G</span> <span class="s">"Ninja"</span> <span class="o">-</span><span class="n">DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s">"clang"</span> <span class="o">-</span><span class="n">DLLVM_USE_LINKER</span><span class="o">=</span><span class="n">gold</span> <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> <span class="o">-</span><span class="n">DLLVM_ENABLE_ASSERTIONS</span><span class="o">=</span><span class="n">ON</span> <span class="o">-</span><span class="n">LLVM_CCACHE_BUILD</span><span class="o">=</span><span class="n">ON</span> <span class="o">../</span><span class="n">llvm</span>
+<span class="n">ninja</span>
+<span class="n">ninja</span> <span class="n">check</span><span class="o">-</span><span class="n">clang</span>
+<span class="n">echo</span> <span class="s">"export PATH="</span><span class="err">$</span><span class="n">PATH</span><span class="p">:</span><span class="o">~/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">build</span><span class="o">/</span><span class="n">bin</span><span class="s">""</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="py">.bashrc</span>
+<span class="n">source</span> <span class="o">~/</span><span class="py">.bashrc</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <h3 id="why-use-ninja">Why Use Ninja</h3>
@@ -357,7 +357,6 @@ Suppose you wrote a new source file using llvm source files and want to build an
 <p>If you don’t change the source code and try to build <code class="language-plaintext highlighter-rouge">ninja</code> will say “No work to do” while <code class="language-plaintext highlighter-rouge">make</code> builds and links some “.inc” files.</p>
 
 <p class="box-success"><strong>Success:</strong> LLVM (And other tools in llvm-project) are great piece of software. The design and modularity not only makes various parts reusable, it also makes it easy to understand a particular part of software without worrying too much about the bigger picture. I am currently exploring Optimization part of Compiler (The llvm Core) and excited to learn more along the way.</p>
-
 
       </article>
 

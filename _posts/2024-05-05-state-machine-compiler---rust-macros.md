@@ -33,7 +33,7 @@ We also concluded that in order to test different state machine, we
 would like a better way, as writing full code involves a lot of
 boilerplate.
 
-[Rust Macros](link_here) allow us to generate rust code by
+[Rust Macros](https://doc.rust-lang.org/book/ch19-06-macros.html) allow us to generate rust code by
 parsing patterns and using them at appropriate places.
 
 
@@ -697,7 +697,7 @@ A sidenote:
 We need to pass `tape_machine` and `steps` in the `transition_rules!` macros. Why? Because we cannot just use
 arbitrary variables in macros. Macros can use the variables that are
 defined inside the body or the ones that are explicitly passed
-to the macro. [Read more about this][link_here]
+to the macro. [Read more about this](https://veykril.github.io/tlborm/decl-macros/minutiae/hygiene.html)
 
 Alright, now we have all the macros defined, let's look at the final
 program:

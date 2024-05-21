@@ -20,10 +20,12 @@ I spent whole day installing it and the result was super slow and 70GB Build. Af
 I will present here the minimum steps needed to get `llvm-project` source code and then build it efficiently.
 ## Get the Source Code
 This fetches complete source code, You may want to fetch only a particular version, for that refer llvm docs.
-{% highlight bash linenos %}
+
+{% highlight rust linenos %}
 user@user:~$ git clone https://github.com/llvm/ llvm-project.git
 user@user:~$ cd llvm-project
 {% endhighlight %}
+
 ## Setup Build directory and build tool
 
 Build tools automate the compilation of source files. Most popular of these is `make` and  `ninja` build system.
@@ -32,7 +34,7 @@ We will need a `Makefile` or `build.ninja` files for specifying compilation rule
 `cmake` can generate these files for build system by using a `CMakefile`, Which are already present in the directory.
 
 Using `ninja` is recommended. Install these tools if not already installed with.
-{% highlight bash linenos %}
+{% highlight rust linenos %}
 user@user:~$ sudo apt-get install ninja-build
 user@user:~$ sudo apt-get install cmake
 {% endhighlight %}
@@ -42,7 +44,7 @@ Then generate build.ninja Files using `cmake` with proper flags:
 {: .box-note}
 **Note:** Flags are case sensitive. Files are generated for Release version with proper flags to make a good substitue of Slow and Big Debug Version. Make Sure they match your needs.
 
-{% highlight bash linenos %}
+{% highlight rust linenos %}
 user@user:~/llvm-project$ mkdir build
 user@user:~/llvm-project$ cd build
 user@user:~/llvm-project/build$ cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_USE_LINKER=gold -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON -LLVM_CCACHE_BUILD=ON ../llvm
@@ -53,14 +55,14 @@ user@user:~/llvm-project/build$ cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="clang" 
 {: .box-note}
 **Tips:** These Steps are probably going to take somewhere between $$1$$ to $$1\frac{1}{2}$$ hours, And your system will become slow ( By default `ninja` uses all cores to complete jobs in parallel.) .Plug in your charger And find yourself something else to do.
 
-{% highlight bash linenos %}
+{% highlight rust linenos %}
 user@user:~/llvm-project/build$ ninja
 user@user:~/llvm-project/build$ ninja check-clang
 {% endhighlight %}
 
 ## Update PATH
 Add following lines to start using llvm tools
-{% highlight bash linenos %}
+{% highlight rust linenos %}
 user@user:~/llvm-project/build$ echo "export PATH="$PATH:~/llvm-project/build/bin"" >> ~/.bashrc
 user@user:~/llvm-project/build$ source ~/.bashrc
 # Start Using Clang or any of the tools available
@@ -73,7 +75,7 @@ user@user:~$ clang++ hello.cpp -o hello.o
 
 {: .box-warning}
 **Warning:** Before Using the script Make Sure you understand the steps and Change File Paths in the scrept when required.
-{% highlight bash linenos %}
+{% highlight rust linenos %}
 #!/bin/bash
 # Installing in home directory
 cd
@@ -99,10 +101,9 @@ Suppose you wrote a new source file using llvm source files and want to build an
 
 Now because CMake Files of source code are obviously better than ours ( Well tested and with proper flags ) Choosing 2nd options seems logical.
 
-But that required building whole source again.When prompted to build, Both `make` and `ninja` check which files are needed to build again and build only them.Here `ninja` does a better job than `make`. `make` builds some files (other than those changed ) again,I don't know why . Other than that it seems like `make` inspects every file one by one making build time approx 4-5 minutes, While `ninja` takes **<1 min**. 
+But that required building whole source again.When prompted to build, Both `make` and `ninja` check which files are needed to build again and build only them.Here `ninja` does a better job than `make`. `make` builds some files (other than those changed ) again,I don't know why . Other than that it seems like `make` inspects every file one by one making build time approx 4-5 minutes, While `ninja` takes **<1 min**.
 
 If you don't change the source code and try to build `ninja` will say "No work to do" while `make` builds and links some ".inc" files.
 
 {: .box-success}
 **Success:** LLVM (And other tools in llvm-project) are great piece of software. The design and modularity not only makes various parts reusable, it also makes it easy to understand a particular part of software without worrying too much about the bigger picture. I am currently exploring Optimization part of Compiler (The llvm Core) and excited to learn more along the way.
-

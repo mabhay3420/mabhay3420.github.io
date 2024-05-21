@@ -275,6 +275,7 @@ sembly like language(LLVM IR)</p>
 <p>This is part 3.</p>
 
 <h2 id="language">Language</h2>
+
 <p>In the <a href="../2024-05-05-state-machine-compiler-rust-macros">previous post</a>, we decided to work
 with a much concise specification of the state machine.</p>
 
@@ -318,50 +319,46 @@ the rust code for the above state machine:</p>
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="n">fmt</span><span class="p">;</span>
 <span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="n">io</span><span class="p">;</span>
 
-<span class="c">// State declarations</span>
-<span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq)]</span>
+<span class="c">// State declarations #[derive(Debug, PartialEq, Eq)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
-    <span class="n">a</span><span class="p">,</span>
-    <span class="n">b</span><span class="p">,</span>
+	<span class="n">a</span><span class="p">,</span>
+	<span class="n">b</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="c">// Symbol declarations, with `X` indicating a empty</span>
-<span class="c">// tape block</span>
-<span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq,</span> <span class="nd">Clone)]</span>
+<span class="c">// tape block #[derive(Debug, PartialEq, Eq, Clone)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-    <span class="n">Symbol0</span><span class="p">,</span>
-    <span class="n">Symbol1</span><span class="p">,</span>
-    <span class="n">SymbolX</span><span class="p">,</span>
+	<span class="n">Symbol0</span><span class="p">,</span>
+	<span class="n">Symbol1</span><span class="p">,</span>
+	<span class="n">SymbolX</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="c">// For printing the symbols</span>
 <span class="k">impl</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
-        <span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
-            <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="k">=&gt;</span> <span class="s">"0"</span><span class="p">,</span>
-            <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span> <span class="k">=&gt;</span> <span class="s">"1"</span><span class="p">,</span>
-            <span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span> <span class="k">=&gt;</span> <span class="s">"X"</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
+<span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
+<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol0</span> <span class="k">=&gt;</span> <span class="s">"0"</span><span class="p">,</span>
+<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">Symbol1</span> <span class="k">=&gt;</span> <span class="s">"1"</span><span class="p">,</span>
+<span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span> <span class="k">=&gt;</span> <span class="s">"X"</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="c">// Tape machine constituents</span>
 <span class="k">struct</span> <span class="n">TapeMachine</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span>
-    <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="n">index</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+<span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span>
+<span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="n">index</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
 <span class="p">}</span>
 
-
 <span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="n">TapeMachine</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="n">Self</span> <span class="p">{</span>
-            <span class="n">state</span><span class="p">,</span>
-            <span class="n">result</span><span class="p">,</span>
-            <span class="n">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="n">Self</span> <span class="p">{</span>
+<span class="n">state</span><span class="p">,</span>
+<span class="n">result</span><span class="p">,</span>
+<span class="n">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="p">}</span>
 
     <span class="c">// Print</span>
     <span class="k">fn</span> <span class="nf">p</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">:</span> <span class="n">TapeMachineSymbol</span><span class="p">)</span> <span class="p">{</span>
@@ -376,6 +373,7 @@ the rust code for the above state machine:</p>
     <span class="k">fn</span> <span class="nf">l</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">self</span><span class="py">.index</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">}</span>
+
 <span class="p">}</span>
 
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
@@ -451,6 +449,7 @@ the rust code for the above state machine:</p>
         <span class="nf">.collect</span><span class="p">();</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"=========</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">clean_result</span><span class="p">);</span>
+
 <span class="p">}</span></code></pre></figure>
 
 <p>In order to generate this code directly from the
@@ -463,38 +462,34 @@ specification:</p>
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">// A Trnasition condition can be either `*`</span>
 <span class="c">// or `A | B | C | ...`</span>
 <span class="k">pub</span> <span class="k">enum</span> <span class="n">Condition</span> <span class="p">{</span>
-    <span class="nf">OR</span><span class="p">(</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">),</span>
-    <span class="n">Star</span><span class="p">,</span>
+<span class="nf">OR</span><span class="p">(</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">),</span>
+<span class="n">Star</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="c">// A transition step can be either `R`, `L`,</span>
 <span class="c">// `X`(erase the content) or `P(x)` ( print x to</span>
-<span class="c">// the current head)</span>
-<span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
+<span class="c">// the current head) #[derive(Debug, PartialEq, Clone)]</span>
 <span class="k">pub</span> <span class="k">enum</span> <span class="n">TransitionStep</span> <span class="p">{</span>
-    <span class="n">R</span><span class="p">,</span>
-    <span class="n">L</span><span class="p">,</span>
-    <span class="n">X</span><span class="p">,</span>
-    <span class="nf">P</span><span class="p">(</span><span class="nb">String</span><span class="p">),</span> <span class="c">// A function call</span>
+<span class="n">R</span><span class="p">,</span>
+<span class="n">L</span><span class="p">,</span>
+<span class="n">X</span><span class="p">,</span>
+<span class="nf">P</span><span class="p">(</span><span class="nb">String</span><span class="p">),</span> <span class="c">// A function call</span>
 <span class="p">}</span>
 
-
-<span class="c">// A transition</span>
-<span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
+<span class="c">// A transition #[derive(Debug, PartialEq, Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Transition</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TransitionStep</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">final_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TransitionStep</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">final_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
 <span class="p">}</span>
-
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">ParseTree</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="n">states</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">symbols</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">transitions</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Transition</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">states</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">symbols</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">transitions</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Transition</span><span class="o">&gt;</span><span class="p">,</span>
 <span class="p">}</span></code></pre></figure>
 
 <p>Once we have parsed the specification, generating
@@ -509,7 +504,7 @@ right values in the template.</p>
 structures</li>
 </ol>
 
-<p>We will be following [this tutorial][link_here] closely.</p>
+<p>We will be following <a href="https://austinhenley.com/blog/teenytinycompiler1.html">this tutorial</a> closely.</p>
 
 <h2 id="lexing">Lexing</h2>
 
@@ -518,9 +513,9 @@ we can expect the following types of tokens:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone,</span> <span class="nd">Copy)]</span>
 <span class="k">pub</span> <span class="k">enum</span> <span class="n">TokenType</span> <span class="p">{</span>
-    <span class="c">// Special</span>
-    <span class="n">EOF</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">NEWLINE</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="c">// Special</span>
+<span class="n">EOF</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+<span class="n">NEWLINE</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 
     <span class="c">// Keywords</span>
     <span class="n">STATES</span> <span class="o">=</span> <span class="mi">201</span><span class="p">,</span>
@@ -545,28 +540,29 @@ we can expect the following types of tokens:</p>
     <span class="n">RightParen</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span>
     <span class="n">STAR</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
     <span class="n">COLON</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+
 <span class="p">}</span></code></pre></figure>
 
 <p>Lexer will simply go over the text separated by
 whitespaces and return a token or thrown an error
 in case of an invalid value.</p>
 
-<p>As the [tutorial][link_here] suggests, let’s first
+<p>As the <a href="https://austinhenley.com/blog/teenytinycompiler1.html">tutorial</a> suggests, let’s first
 outline the interfaces of the lexer:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"> <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Token</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="n">text</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">kind</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">text</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">kind</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Lexer</span> <span class="p">{</span>
-    <span class="n">source</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">char</span><span class="o">&gt;</span><span class="p">,</span> <span class="c">// The full source code</span>
-    <span class="k">pub</span> <span class="n">cur_char</span><span class="p">:</span> <span class="nb">char</span><span class="p">,</span> <span class="c">// The current character</span>
-    <span class="n">cur_pos</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="c">// The current position in</span>
-                    <span class="c">// the source</span>
-    <span class="p">}</span>
+<span class="n">source</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">char</span><span class="o">&gt;</span><span class="p">,</span> <span class="c">// The full source code</span>
+<span class="k">pub</span> <span class="n">cur_char</span><span class="p">:</span> <span class="nb">char</span><span class="p">,</span> <span class="c">// The current character</span>
+<span class="n">cur_pos</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="c">// The current position in</span>
+<span class="c">// the source</span>
+<span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Lexer</span> <span class="p">{</span>
 
@@ -610,6 +606,7 @@ outline the interfaces of the lexer:</p>
         <span class="c">// Throw an error if the current character if</span>
         <span class="c">// not a valid token</span>
     <span class="p">}</span>
+
 <span class="p">}</span></code></pre></figure>
 
 <p>I’ve outlined the interfaces, since the implementation
@@ -625,9 +622,9 @@ line by line.</p>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone,</span> <span class="nd">Copy)]</span>
 <span class="k">pub</span> <span class="k">enum</span> <span class="n">TokenType</span> <span class="p">{</span>
-    <span class="c">// Special</span>
-    <span class="n">EOF</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">NEWLINE</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="c">// Special</span>
+<span class="n">EOF</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+<span class="n">NEWLINE</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 
     <span class="c">// Keywords</span>
     <span class="n">STATES</span> <span class="o">=</span> <span class="mi">201</span><span class="p">,</span>
@@ -652,70 +649,71 @@ line by line.</p>
     <span class="n">RightParen</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span>
     <span class="n">STAR</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
     <span class="n">COLON</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">FromStr</span> <span class="k">for</span> <span class="n">TokenType</span> <span class="p">{</span>
-    <span class="k">type</span> <span class="nb">Err</span> <span class="o">=</span> <span class="nb">String</span><span class="p">;</span>
-    <span class="k">fn</span> <span class="nf">from_str</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="nn">Self</span><span class="p">::</span><span class="nb">Err</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">match</span> <span class="n">s</span> <span class="p">{</span>
-            <span class="s">"EOF"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">),</span>
-            <span class="s">"NEWLINE"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">),</span>
-            <span class="s">"STATES"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">STATES</span><span class="p">),</span>
-            <span class="s">"SYMBOLS"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">SYMBOLS</span><span class="p">),</span>
-            <span class="s">"TRANSITIONS"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">TRANSITIONS</span><span class="p">),</span>
-            <span class="s">"R"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span><span class="p">),</span>
-            <span class="s">"L"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span><span class="p">),</span>
-            <span class="s">"P"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">P</span><span class="p">),</span>
-            <span class="s">"X"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span><span class="p">),</span>
-            <span class="s">"IDENT"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">),</span>
-            <span class="s">"OR"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">OR</span><span class="p">),</span>
-            <span class="s">"LEFT_BRACKET"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">),</span>
-            <span class="s">"RIGHT_BRACKET"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">),</span>
-            <span class="s">"COMMA"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">),</span>
-            <span class="s">"DASH"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">DASH</span><span class="p">),</span>
-            <span class="s">"LEFT_PAREN"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftParen</span><span class="p">),</span>
-            <span class="s">"RIGHT_PAREN"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">RightParen</span><span class="p">),</span>
-            <span class="s">"STAR"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">STAR</span><span class="p">),</span>
-            <span class="s">"COLON"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">),</span>
-            <span class="mi">_</span> <span class="k">=&gt;</span> <span class="nf">Err</span><span class="p">(</span><span class="nd">format!</span><span class="p">(</span><span class="s">"Unknown token type: {}"</span><span class="p">,</span> <span class="n">s</span><span class="p">)),</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="k">type</span> <span class="nb">Err</span> <span class="o">=</span> <span class="nb">String</span><span class="p">;</span>
+<span class="k">fn</span> <span class="n">from</span><span class="o">*</span><span class="nf">str</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Self</span><span class="p">,</span> <span class="nn">Self</span><span class="p">::</span><span class="nb">Err</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">match</span> <span class="n">s</span> <span class="p">{</span>
+<span class="s">"EOF"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">),</span>
+<span class="s">"NEWLINE"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">),</span>
+<span class="s">"STATES"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">STATES</span><span class="p">),</span>
+<span class="s">"SYMBOLS"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">SYMBOLS</span><span class="p">),</span>
+<span class="s">"TRANSITIONS"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">TRANSITIONS</span><span class="p">),</span>
+<span class="s">"R"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span><span class="p">),</span>
+<span class="s">"L"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span><span class="p">),</span>
+<span class="s">"P"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">P</span><span class="p">),</span>
+<span class="s">"X"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span><span class="p">),</span>
+<span class="s">"IDENT"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">),</span>
+<span class="s">"OR"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">OR</span><span class="p">),</span>
+<span class="s">"LEFT_BRACKET"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">),</span>
+<span class="s">"RIGHT_BRACKET"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">),</span>
+<span class="s">"COMMA"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">),</span>
+<span class="s">"DASH"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">DASH</span><span class="p">),</span>
+<span class="s">"LEFT_PAREN"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftParen</span><span class="p">),</span>
+<span class="s">"RIGHT_PAREN"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">RightParen</span><span class="p">),</span>
+<span class="s">"STAR"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">STAR</span><span class="p">),</span>
+<span class="s">"COLON"</span> <span class="k">=&gt;</span> <span class="nf">Ok</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">),</span>
+<span class="o">*</span> <span class="k">=&gt;</span> <span class="nf">Err</span><span class="p">(</span><span class="nd">format!</span><span class="p">(</span><span class="s">"Unknown token type: {}"</span><span class="p">,</span> <span class="n">s</span><span class="p">)),</span>
+<span class="p">}</span>
+<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Token</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="n">text</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">kind</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">text</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">kind</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Token</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">check_if_keyword</span><span class="p">(</span><span class="n">token_text</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="n">TokenType</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">let</span> <span class="n">token_type</span> <span class="o">=</span> <span class="nn">TokenType</span><span class="p">::</span><span class="nf">from_str</span><span class="p">(</span><span class="n">token_text</span><span class="p">);</span>
-        <span class="k">match</span> <span class="n">token_type</span> <span class="p">{</span>
-            <span class="nf">Ok</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="n">t</span> <span class="k">as</span> <span class="nb">i32</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
-                    <span class="nf">Some</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nb">None</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="nf">Err</span><span class="p">(</span><span class="mi">_</span><span class="n">s</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nb">None</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="k">fn</span> <span class="nf">check_if_keyword</span><span class="p">(</span><span class="n">token_text</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="n">TokenType</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">let</span> <span class="n">token_type</span> <span class="o">=</span> <span class="nn">TokenType</span><span class="p">::</span><span class="nf">from_str</span><span class="p">(</span><span class="n">token_text</span><span class="p">);</span>
+<span class="k">match</span> <span class="n">token_type</span> <span class="p">{</span>
+<span class="nf">Ok</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+<span class="k">if</span> <span class="n">t</span> <span class="k">as</span> <span class="nb">i32</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="p">{</span>
+<span class="nf">Some</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+<span class="nb">None</span>
+<span class="p">}</span>
+<span class="p">}</span>
+<span class="nf">Err</span><span class="p">(</span><span class="err">\</span><span class="mi">_</span><span class="n">s</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="nb">None</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Lexer</span> <span class="p">{</span>
-    <span class="n">source</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">char</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">cur_char</span><span class="p">:</span> <span class="nb">char</span><span class="p">,</span>
-    <span class="n">cur_pos</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+<span class="n">source</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">char</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">cur_char</span><span class="p">:</span> <span class="nb">char</span><span class="p">,</span>
+<span class="n">cur_pos</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Lexer</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="nd">info!</span><span class="p">(</span><span class="s">"Initializing Lexer"</span><span class="p">);</span>
-        <span class="k">let</span> <span class="k">mut</span> <span class="n">source_chars</span> <span class="o">=</span> <span class="n">source</span><span class="nf">.chars</span><span class="p">()</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="mi">_</span><span class="o">&gt;&gt;</span><span class="p">();</span>
-        <span class="n">source_chars</span><span class="nf">.push</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="nd">info!</span><span class="p">(</span><span class="s">"Initializing Lexer"</span><span class="p">);</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">source</span><span class="o">*</span><span class="n">chars</span> <span class="o">=</span> <span class="n">source</span><span class="nf">.chars</span><span class="p">()</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;*&gt;&gt;</span><span class="p">();</span>
+<span class="n">source_chars</span><span class="nf">.push</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
 
         <span class="k">let</span> <span class="n">cur_char</span> <span class="o">=</span> <span class="k">if</span> <span class="n">source_chars</span><span class="nf">.len</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">{</span>
             <span class="n">source_chars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -845,6 +843,7 @@ line by line.</p>
         <span class="k">self</span><span class="nf">.next_char</span><span class="p">();</span>
         <span class="n">token</span>
     <span class="p">}</span>
+
 <span class="p">}</span></code></pre></figure>
 
 
@@ -857,242 +856,242 @@ line by line.</p>
 
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">test_keywords_and_identifiers</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">let</span> <span class="n">code</span> <span class="o">=</span> <span class="s">"
-        STATES: [A], B, C1
-        SYMBOLS: [0 , 1, X, R]
-        TRANSITIONS: [A, 0 | 1, L-R-P(X), B], [B, * , L , C1]
-    "</span><span class="p">;</span>
-    <span class="k">let</span> <span class="n">expected</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"STATES"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">STATES</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">":"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"["</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"A"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"]"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"B"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"C1"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"SYMBOLS"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">SYMBOLS</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">":"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"["</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"0"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"1"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"X"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"R"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"]"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"TRANSITIONS"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">TRANSITIONS</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">":"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"["</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"A"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"0"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"|"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">OR</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"1"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"L"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"-"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">DASH</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"R"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"-"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">DASH</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"P"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">P</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"("</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftParen</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"X"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">")"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightParen</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"B"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"]"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"["</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"B"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"*"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">STAR</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"L"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"C1"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"]"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">Token</span> <span class="p">{</span>
-            <span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
-            <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
-        <span class="p">},</span>
-    <span class="p">];</span>
-    <span class="k">let</span> <span class="k">mut</span> <span class="n">lexer</span> <span class="o">=</span> <span class="nn">Lexer</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">code</span><span class="p">);</span>
-    <span class="k">let</span> <span class="k">mut</span> <span class="n">result</span> <span class="o">=</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
-    <span class="k">while</span> <span class="k">let</span> <span class="nf">Some</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">=</span> <span class="n">lexer</span><span class="nf">.get_token</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="n">token</span><span class="py">.kind</span> <span class="o">==</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span> <span class="p">{</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="n">result</span><span class="nf">.push</span><span class="p">(</span><span class="n">token</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">expected</span><span class="p">);</span>
+<span class="k">let</span> <span class="n">code</span> <span class="o">=</span> <span class="s">"
+STATES: [A], B, C1
+SYMBOLS: [0 , 1, X, R]
+TRANSITIONS: [A, 0 | 1, L-R-P(X), B], [B, * , L , C1]
+"</span><span class="p">;</span>
+<span class="k">let</span> <span class="n">expected</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"STATES"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">STATES</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">":"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"["</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"A"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"]"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"B"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"C1"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"SYMBOLS"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">SYMBOLS</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">":"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"["</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"0"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"1"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"X"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"R"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"]"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"TRANSITIONS"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">TRANSITIONS</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">":"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"["</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"A"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"0"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"|"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">OR</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"1"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"L"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"-"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">DASH</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"R"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"-"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">DASH</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"P"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">P</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"("</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftParen</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"X"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">")"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightParen</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"B"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"]"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"["</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"B"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"*"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">STAR</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"L"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">","</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">COMMA</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"C1"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"]"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">RightBracket</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="p">];</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">lexer</span> <span class="o">=</span> <span class="nn">Lexer</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">code</span><span class="p">);</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">result</span> <span class="o">=</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+<span class="k">while</span> <span class="k">let</span> <span class="nf">Some</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">=</span> <span class="n">lexer</span><span class="nf">.get_token</span><span class="p">()</span> <span class="p">{</span>
+<span class="k">if</span> <span class="n">token</span><span class="py">.kind</span> <span class="o">==</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span> <span class="p">{</span>
+<span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">result</span><span class="nf">.push</span><span class="p">(</span><span class="n">token</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nd">assert_eq!</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">expected</span><span class="p">);</span>
 <span class="p">}</span></code></pre></figure>
 
 
@@ -1109,13 +1108,13 @@ make sense of these series of tokens.</p>
   <li>Take a look at the current token</li>
   <li>Based on the context, decide whether we expect
 it to be a certain type of token:
- a. The token type is required:
-     i. Is this token present? Consume it and
-     update the parse tree.
-     ii. Otherwise, throw an error.
- b. Is this token type optional?
-    i. Try to consume it.
-    ii. If its not present, then move on.</li>
+a. The token type is required:
+i. Is this token present? Consume it and
+update the parse tree.
+ii. Otherwise, throw an error.
+b. Is this token type optional?
+i. Try to consume it.
+ii. If its not present, then move on.</li>
 </ol>
 
 <p>How do we know which tokens type we expect at any
@@ -1128,23 +1127,22 @@ help:</p>
 
 <span class="c">// A declaration of states is comma separated list of</span>
 <span class="c">// identifiers</span>
-<span class="n">STATES_DECLARATION</span><span class="p">:</span> <span class="n">STATES</span> <span class="sc">':'</span> <span class="p">[</span><span class="n">STATES_IDENTIFIERS</span> <span class="sc">','</span><span class="p">]</span> <span class="sc">'['</span> <span class="n">STATE_IDENTIFIERS</span> <span class="sc">']'</span>   <span class="p">[</span><span class="n">STATES_IDENTIFIERS</span><span class="p">]</span> <span class="n">NEWLINE</span>
-<span class="n">STATE_IDENTIFIERS</span><span class="p">:</span> <span class="nf">STATE_IDENTIFIER</span> <span class="p">(</span><span class="sc">','</span> <span class="n">STATE_IDENTIFIER</span><span class="p">)</span><span class="o">*</span>
+<span class="n">STATES_DECLARATION</span><span class="p">:</span> <span class="n">STATES</span> <span class="sc">':'</span> <span class="p">[</span><span class="n">STATES_IDENTIFIERS</span> <span class="sc">','</span><span class="p">]</span> <span class="sc">'['</span> <span class="n">STATE_IDENTIFIERS</span> <span class="sc">']'</span> <span class="p">[</span><span class="n">STATES_IDENTIFIERS</span><span class="p">]</span> <span class="n">NEWLINE</span>
+<span class="n">STATE_IDENTIFIERS</span><span class="p">:</span> <span class="nf">STATE_IDENTIFIER</span> <span class="p">(</span><span class="sc">','</span> <span class="n">STATE_IDENTIFIER</span><span class="p">)</span><span class="err">\</span><span class="o">*</span>
 
 <span class="c">// A declaration of symbols is comma separated list of</span>
 <span class="c">// identifiers</span>
 <span class="n">SYMBOLS_DECLARATION</span><span class="p">:</span> <span class="n">SYMBOLS</span> <span class="sc">':'</span> <span class="sc">'['</span> <span class="n">SYMBOL_IDENTIFIERS</span> <span class="sc">']'</span> <span class="n">NEWLINE</span>
-<span class="n">SYMBOL_IDENTIFIERS</span><span class="p">:</span> <span class="nf">SYMBOL_IDENTIFIER</span> <span class="p">(</span><span class="sc">','</span> <span class="n">SYMBOL_IDENTIFIER</span><span class="p">)</span><span class="o">*</span>
+<span class="n">SYMBOL_IDENTIFIERS</span><span class="p">:</span> <span class="nf">SYMBOL_IDENTIFIER</span> <span class="p">(</span><span class="sc">','</span> <span class="n">SYMBOL_IDENTIFIER</span><span class="p">)</span><span class="err">\</span><span class="o">*</span>
 
 <span class="c">// A declaration of transitions is comma separated</span>
 <span class="c">// list of transition declarations</span>
-<span class="n">TRANSITIONS_DECLARATION</span><span class="p">:</span> <span class="n">TRANSITIONS</span> <span class="sc">':'</span> <span class="p">(</span><span class="n">NEWLINE</span> <span class="n">TRANSITION_DECLARATION</span><span class="p">)</span><span class="o">*</span>
-
+<span class="n">TRANSITIONS_DECLARATION</span><span class="p">:</span> <span class="n">TRANSITIONS</span> <span class="sc">':'</span> <span class="p">(</span><span class="n">NEWLINE</span> <span class="n">TRANSITION_DECLARATION</span><span class="p">)</span><span class="err">\</span><span class="o">*</span>
 
 <span class="c">// A transition declaration</span>
 <span class="n">TRANSITION_DECLARATION</span><span class="p">:</span> <span class="n">INITIAL_STATE_IDENTIFIER</span> <span class="sc">','</span> <span class="n">TRANSITION_CONDITIONS</span> <span class="sc">','</span> <span class="n">TRANSITION_STEPS</span><span class="p">,</span> <span class="n">FINAL_STATE_IDENTIFIER</span>
-<span class="n">TRANSITION_CONDITIONS</span><span class="p">:</span> <span class="n">STAR</span> <span class="p">|</span> <span class="nf">SYMBOL_IDENTIFIER</span> <span class="p">(</span> <span class="sc">'|'</span> <span class="n">SYMBOL_IDENTIFIER</span> <span class="p">)</span><span class="o">*</span>
-<span class="n">TRANSITION_STEPS</span><span class="p">:</span> <span class="nb">None</span> <span class="p">|</span> <span class="nf">TRANSITION_STEP</span> <span class="p">(</span><span class="sc">'-'</span> <span class="n">TRANSITION_STEP</span><span class="p">)</span><span class="o">*</span>
+<span class="n">TRANSITION_CONDITIONS</span><span class="p">:</span> <span class="n">STAR</span> <span class="p">|</span> <span class="nf">SYMBOL_IDENTIFIER</span> <span class="p">(</span> <span class="sc">'|'</span> <span class="n">SYMBOL_IDENTIFIER</span> <span class="p">)</span><span class="mi">_</span>
+<span class="n">TRANSITION_STEPS</span><span class="p">:</span> <span class="nb">None</span> <span class="p">|</span> <span class="nf">TRANSITION_STEP</span> <span class="p">(</span><span class="sc">'-'</span> <span class="n">TRANSITION_STEP</span><span class="p">)</span><span class="mi">_</span>
 <span class="n">TRANSITION_STEP</span><span class="p">:</span> <span class="n">R</span> <span class="p">|</span> <span class="n">L</span> <span class="p">|</span> <span class="n">P</span> <span class="sc">'('</span> <span class="n">SYMBOL_IDENTIFIER</span> <span class="sc">')'</span>
 
 <span class="n">STATE_IDENTIFIER</span><span class="p">:</span> <span class="n">IDENTIFIER</span>
@@ -1162,13 +1160,13 @@ expecting a series of tokens as specified by the
 grammer.
 For example the top level logic will be following:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust">    <span class="c">// Parse the entire program:</span>
-    <span class="c">// NEWLINE? states_declaration symbols_declaration transitions_declaration NEWLINE? EOF</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">program</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c">// Consume newlines</span>
-        <span class="k">while</span> <span class="k">self</span><span class="nf">.try_consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{}</span>
-        <span class="c">// Parse the states declaration</span>
-        <span class="k">self</span><span class="nf">.states_declaration</span><span class="p">();</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">// Parse the entire program:</span>
+<span class="c">// NEWLINE? states_declaration symbols_declaration transitions_declaration NEWLINE? EOF</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">program</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+<span class="c">// Consume newlines</span>
+<span class="k">while</span> <span class="k">self</span><span class="nf">.try_consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{}</span>
+<span class="c">// Parse the states declaration</span>
+<span class="k">self</span><span class="nf">.states_declaration</span><span class="p">();</span>
 
         <span class="c">// Parse the symbols declaration</span>
         <span class="k">self</span><span class="nf">.symbols_declaration</span><span class="p">();</span>
@@ -1186,38 +1184,38 @@ For example the top level logic will be following:</p>
 
 <p>The <code class="language-plaintext highlighter-rouge">states_declaration</code> will be defined as follows:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust">    <span class="c">// Parse a states declaration: STATES ':' state_identifier_list NEWLINE</span>
-    <span class="k">fn</span> <span class="nf">states_declaration</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">STATES</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
-        <span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
-        <span class="k">self</span><span class="nf">.state_identifier_list</span><span class="p">();</span>
-        <span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
-        <span class="nd">debug!</span><span class="p">(</span><span class="s">"STATES_DECLARATION"</span><span class="p">);</span>
-    <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">// Parse a states declaration: STATES ':' state_identifier_list NEWLINE</span>
+<span class="k">fn</span> <span class="nf">states_declaration</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">STATES</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
+<span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">COLON</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
+<span class="k">self</span><span class="nf">.state_identifier_list</span><span class="p">();</span>
+<span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">NEWLINE</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
+<span class="nd">debug!</span><span class="p">(</span><span class="s">"STATES_DECLARATION"</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>Let’s focus on the <code class="language-plaintext highlighter-rouge">consume</code> function:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust">    <span class="c">// Consume the current token if it matches the expected token type</span>
-    <span class="c">// If not, abort with an error message</span>
-    <span class="c">// Execute the optional action if provided</span>
-    <span class="k">fn</span> <span class="n">consume</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">// Consume the current token if it matches the expected token type</span>
+<span class="c">// If not, abort with an error message</span>
+<span class="c">// Execute the optional action if provided</span>
+<span class="k">fn</span> <span class="n">consume</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">)</span></code></pre></figure>
 
 <p>There is another variant of <code class="language-plaintext highlighter-rouge">consume</code> which is <code class="language-plaintext highlighter-rouge">try_consume</code>:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust">    <span class="c">// Try to consume the current token if it matches the expected token type</span>
-    <span class="c">// If successful, print the token type and text (if available) and execute the optional action</span>
-    <span class="c">// Return true if the token was consumed, false otherwise</span>
-    <span class="k">fn</span> <span class="n">try_consume</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">bool</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">// Try to consume the current token if it matches the expected token type</span>
+<span class="c">// If successful, print the token type and text (if available) and execute the optional action</span>
+<span class="c">// Return true if the token was consumed, false otherwise</span>
+<span class="k">fn</span> <span class="n">try_consume</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">bool</span></code></pre></figure>
 
 <p>Let’s look at what an <code class="language-plaintext highlighter-rouge">action</code> might look like, in case we happen to be
 matching a initial state identifier:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust">    <span class="c">// Parse an initial state identifier: [IDENT]</span>
-    <span class="k">fn</span> <span class="nf">initial_state_identifier</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
-        <span class="k">let</span> <span class="k">mut</span> <span class="n">initial_state</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
-        <span class="k">self</span><span class="nf">.consume</span><span class="p">(</span>
-            <span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="c">// Parse an initial state identifier: [IDENT]</span>
+<span class="k">fn</span> <span class="nf">initial_state_identifier</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">LeftBracket</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">initial_state</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+<span class="k">self</span><span class="nf">.consume</span><span class="p">(</span>
+<span class="nn">TokenType</span><span class="p">::</span><span class="n">IDENT</span><span class="p">,</span>
 
             <span class="c">// action: Push the text of the token to the initial state</span>
             <span class="nf">Some</span><span class="p">(|</span><span class="n">token</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Token</span><span class="p">|</span> <span class="p">{</span>
@@ -1239,22 +1237,22 @@ matching a initial state identifier:</p>
 
 <p>An example where we are using <code class="language-plaintext highlighter-rouge">try_consume</code>:</p>
 
-<figure class="highlight"><pre><code class="language-rust" data-lang="rust">    <span class="k">fn</span> <span class="nf">transition_steps</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">self</span><span class="nf">.transition_step</span><span class="p">();</span>
-        <span class="c">// There might or might not be a dash, if there is a dash</span>
-        <span class="c">// then we expect another transition step</span>
-        <span class="k">while</span> <span class="k">self</span><span class="nf">.try_consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">DASH</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">self</span><span class="nf">.transition_step</span><span class="p">();</span>
-        <span class="p">}</span>
-        <span class="nd">debug!</span><span class="p">(</span><span class="s">"TRANSITION_STEPS"</span><span class="p">);</span>
-    <span class="p">}</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">transition_steps</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">self</span><span class="nf">.transition_step</span><span class="p">();</span>
+<span class="c">// There might or might not be a dash, if there is a dash</span>
+<span class="c">// then we expect another transition step</span>
+<span class="k">while</span> <span class="k">self</span><span class="nf">.try_consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">DASH</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">self</span><span class="nf">.transition_step</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="nd">debug!</span><span class="p">(</span><span class="s">"TRANSITION_STEPS"</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>To summarise, let’s right down the interfaces of parser:</p>
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">impl</span> <span class="n">Parser</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="c">// Initialize the Parser</span>
-    <span class="p">}</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="c">// Initialize the Parser</span>
+<span class="p">}</span>
 
     <span class="c">// Check if the current token matches the expected token type</span>
     <span class="k">fn</span> <span class="nf">check_token</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">bool</span><span class="p">;</span>
@@ -1319,6 +1317,7 @@ matching a initial state identifier:</p>
     <span class="c">// Parse the entire program:</span>
     <span class="c">// NEWLINE? states_declaration symbols_declaration transitions_declaration NEWLINE? EOF</span>
     <span class="k">pub</span> <span class="k">fn</span> <span class="nf">program</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">);</span>
+
 <span class="p">}</span></code></pre></figure>
 
 <p>Each of the functions, trying to parse a certain rule, when successful, will
@@ -1333,94 +1332,93 @@ update the <code class="language-plaintext highlighter-rouge">ParseTree</code> w
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">enum</span> <span class="n">Condition</span> <span class="p">{</span>
-    <span class="nf">OR</span><span class="p">(</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">),</span>
-    <span class="n">Star</span><span class="p">,</span>
+<span class="nf">OR</span><span class="p">(</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">),</span>
+<span class="n">Star</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">enum</span> <span class="n">TransitionStep</span> <span class="p">{</span>
-    <span class="n">R</span><span class="p">,</span>
-    <span class="n">L</span><span class="p">,</span>
-    <span class="n">X</span><span class="p">,</span>
-    <span class="nf">P</span><span class="p">(</span><span class="nb">String</span><span class="p">),</span> <span class="c">// A function call</span>
+<span class="n">R</span><span class="p">,</span>
+<span class="n">L</span><span class="p">,</span>
+<span class="n">X</span><span class="p">,</span>
+<span class="nf">P</span><span class="p">(</span><span class="nb">String</span><span class="p">),</span> <span class="c">// A function call</span>
 <span class="p">}</span>
 
 <span class="k">trait</span> <span class="n">FromTokenAndValue</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">from_token_and_value</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Token</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span><span class="p">;</span>
+<span class="k">fn</span> <span class="nf">from_token_and_value</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Token</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">FromTokenAndValue</span> <span class="k">for</span> <span class="n">TransitionStep</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">from_token_and_value</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Token</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="k">match</span> <span class="n">token</span><span class="py">.kind</span> <span class="p">{</span>
-            <span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">R</span><span class="p">,</span>
-            <span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">L</span><span class="p">,</span>
-            <span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">X</span><span class="p">,</span>
-            <span class="nn">TokenType</span><span class="p">::</span><span class="n">P</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="nf">P</span><span class="p">(</span><span class="n">value</span><span class="nf">.unwrap</span><span class="p">()),</span>
-            <span class="mi">_</span> <span class="k">=&gt;</span> <span class="nd">panic!</span><span class="p">(</span><span class="s">"Invalid token type for TransitionStep"</span><span class="p">),</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="k">fn</span> <span class="n">from</span><span class="o">*</span><span class="nf">token_and_value</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Token</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="k">match</span> <span class="n">token</span><span class="py">.kind</span> <span class="p">{</span>
+<span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">R</span><span class="p">,</span>
+<span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">L</span><span class="p">,</span>
+<span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">X</span><span class="p">,</span>
+<span class="nn">TokenType</span><span class="p">::</span><span class="n">P</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="nf">P</span><span class="p">(</span><span class="n">value</span><span class="nf">.unwrap</span><span class="p">()),</span>
+<span class="o">*</span> <span class="k">=&gt;</span> <span class="nd">panic!</span><span class="p">(</span><span class="s">"Invalid token type for TransitionStep"</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Transition</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TransitionStep</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">final_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TransitionStep</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">final_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Transition</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="n">Transition</span> <span class="p">{</span>
-            <span class="n">initial_state</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-            <span class="n">condition</span><span class="p">:</span> <span class="nn">Condition</span><span class="p">::</span><span class="nf">OR</span><span class="p">(</span><span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">()),</span>
-            <span class="n">steps</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-            <span class="n">final_state</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="n">Transition</span> <span class="p">{</span>
+<span class="n">initial_state</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="n">condition</span><span class="p">:</span> <span class="nn">Condition</span><span class="p">::</span><span class="nf">OR</span><span class="p">(</span><span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">()),</span>
+<span class="n">steps</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="n">final_state</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">ParseTree</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="n">states</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">symbols</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">transitions</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Transition</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">states</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">symbols</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">transitions</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Transition</span><span class="o">&gt;</span><span class="p">,</span>
 <span class="p">}</span>
-
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Parser</span> <span class="p">{</span>
-    <span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">,</span>
-    <span class="n">cur_token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span>
-    <span class="n">peek_token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">tree</span><span class="p">:</span> <span class="n">ParseTree</span><span class="p">,</span>
+<span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">,</span>
+<span class="n">cur_token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span>
+<span class="n">peek_token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">tree</span><span class="p">:</span> <span class="n">ParseTree</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Parser</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="nd">info!</span><span class="p">(</span><span class="s">"Initializing Parser"</span><span class="p">);</span>
-        <span class="k">let</span> <span class="k">mut</span> <span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span> <span class="p">{</span>
-            <span class="n">lexer</span><span class="p">,</span>
-            <span class="n">cur_token</span><span class="p">:</span> <span class="n">Token</span> <span class="p">{</span>
-                <span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
-                <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="n">peek_token</span><span class="p">:</span> <span class="n">Token</span> <span class="p">{</span>
-                <span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
-                <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="n">tree</span><span class="p">:</span> <span class="n">ParseTree</span> <span class="p">{</span>
-                <span class="n">states</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-                <span class="n">initial_state</span><span class="p">:</span> <span class="s">""</span><span class="nf">.to_string</span><span class="p">(),</span>
-                <span class="n">symbols</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-                <span class="n">transitions</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-            <span class="p">},</span>
-        <span class="p">};</span>
-        <span class="n">parser</span><span class="nf">.next_token</span><span class="p">();</span> <span class="c">// Initialize peek_token</span>
-        <span class="n">parser</span><span class="nf">.next_token</span><span class="p">();</span> <span class="c">// Initialize cur_token</span>
-        <span class="n">parser</span>
-    <span class="p">}</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="nd">info!</span><span class="p">(</span><span class="s">"Initializing Parser"</span><span class="p">);</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span> <span class="p">{</span>
+<span class="n">lexer</span><span class="p">,</span>
+<span class="n">cur_token</span><span class="p">:</span> <span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">peek_token</span><span class="p">:</span> <span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">tree</span><span class="p">:</span> <span class="n">ParseTree</span> <span class="p">{</span>
+<span class="n">states</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="n">initial_state</span><span class="p">:</span> <span class="s">""</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">symbols</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="n">transitions</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="p">},</span>
+<span class="p">};</span>
+<span class="n">parser</span><span class="nf">.next_token</span><span class="p">();</span> <span class="c">// Initialize peek_token</span>
+<span class="n">parser</span><span class="nf">.next_token</span><span class="p">();</span> <span class="c">// Initialize cur_token</span>
+<span class="n">parser</span>
+<span class="p">}</span>
 
     <span class="c">// Check if the current token matches the expected token type</span>
     <span class="k">fn</span> <span class="nf">check_token</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">bool</span> <span class="p">{</span>
@@ -1803,6 +1801,7 @@ update the <code class="language-plaintext highlighter-rouge">ParseTree</code> w
         <span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
         <span class="nd">debug!</span><span class="p">(</span><span class="s">"PROGRAM"</span><span class="p">);</span>
     <span class="p">}</span>
+
 <span class="p">}</span></code></pre></figure>
 
 
@@ -1819,36 +1818,36 @@ update the <code class="language-plaintext highlighter-rouge">ParseTree</code> w
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineState</span> <span class="p">{</span>
-    <span class="c">// FILL IN THE STATES FROM THE PARSE TREE</span>
+<span class="c">// FILL IN THE STATES FROM THE PARSE TREE</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Eq,</span> <span class="nd">Clone)]</span>
 <span class="k">enum</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-    <span class="c">// FILL IN THE SYMBOLS FROM THE PARSE TREE</span>
+<span class="c">// FILL IN THE SYMBOLS FROM THE PARSE TREE</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">TapeMachineSymbol</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
-        <span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
-            <span class="c">// FILL IN THE MATCH ARMS FOR EACH SYMBOL</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="k">fn</span> <span class="nf">as_str</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="o">&amp;</span><span class="nv">'static</span> <span class="nb">str</span> <span class="p">{</span>
+<span class="k">match</span> <span class="k">self</span> <span class="p">{</span>
+<span class="c">// FILL IN THE MATCH ARMS FOR EACH SYMBOL</span>
+<span class="p">}</span>
+<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="k">struct</span> <span class="n">TapeMachine</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span>
-    <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="n">index</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+<span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span>
+<span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="n">index</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">impl</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="n">TapeMachine</span><span class="o">&lt;</span><span class="nv">'a</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="n">Self</span> <span class="p">{</span>
-            <span class="n">state</span><span class="p">,</span>
-            <span class="n">result</span><span class="p">,</span>
-            <span class="n">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="n">TapeMachineState</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="o">&amp;</span><span class="nv">'a</span> <span class="k">mut</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TapeMachineSymbol</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="n">Self</span> <span class="p">{</span>
+<span class="n">state</span><span class="p">,</span>
+<span class="n">result</span><span class="p">,</span>
+<span class="n">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="p">}</span>
 
     <span class="k">fn</span> <span class="nf">p</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">:</span> <span class="n">TapeMachineSymbol</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">self</span><span class="py">.result</span><span class="p">[</span><span class="k">self</span><span class="py">.index</span><span class="p">]</span> <span class="o">=</span> <span class="n">symbol</span><span class="p">;</span>
@@ -1861,13 +1860,14 @@ update the <code class="language-plaintext highlighter-rouge">ParseTree</code> w
     <span class="k">fn</span> <span class="nf">l</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">self</span><span class="py">.index</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="p">}</span>
+
 <span class="p">}</span>
 
 <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nd">println!</span><span class="p">(</span><span class="s">"Enter the number of steps:"</span><span class="p">);</span>
-    <span class="k">let</span> <span class="k">mut</span> <span class="n">steps_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
-    <span class="nn">io</span><span class="p">::</span><span class="nf">stdin</span><span class="p">()</span><span class="nf">.read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">steps_input</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
-    <span class="k">let</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="n">steps_input</span><span class="nf">.trim</span><span class="p">()</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"Enter the number of steps:"</span><span class="p">);</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">steps_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+<span class="nn">io</span><span class="p">::</span><span class="nf">stdin</span><span class="p">()</span><span class="nf">.read_line</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">steps_input</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
+<span class="k">let</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">usize</span> <span class="o">=</span> <span class="n">steps_input</span><span class="nf">.trim</span><span class="p">()</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">();</span>
 
     <span class="nd">println!</span><span class="p">(</span><span class="s">"Enter the total tape length:"</span><span class="p">);</span>
     <span class="k">let</span> <span class="k">mut</span> <span class="n">tape_length_input</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
@@ -1897,6 +1897,7 @@ update the <code class="language-plaintext highlighter-rouge">ParseTree</code> w
     <span class="k">let</span> <span class="n">clean_result</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="n">tape_machine</span><span class="py">.result</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.filter</span><span class="p">(|</span><span class="o">&amp;</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="nn">TapeMachineSymbol</span><span class="p">::</span><span class="n">SymbolX</span><span class="p">)</span><span class="nf">.map</span><span class="p">(|</span><span class="n">x</span><span class="p">|</span> <span class="n">x</span><span class="nf">.as_str</span><span class="p">())</span><span class="nf">.collect</span><span class="p">();</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"=========</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
     <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">clean_result</span><span class="p">);</span>
+
 <span class="p">}</span></code></pre></figure>
 
 <p>The code to do this is pretty straightforward, take a look below:</p>
@@ -1906,8 +1907,8 @@ update the <code class="language-plaintext highlighter-rouge">ParseTree</code> w
 
 
 <figure class="highlight"><pre><code class="language-rust" data-lang="rust"><span class="k">impl</span> <span class="n">ParseTree</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">to_rust_code</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span> <span class="p">{</span>
-        <span class="k">let</span> <span class="k">mut</span> <span class="n">code</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">to_rust_code</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span> <span class="p">{</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">code</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
 
         <span class="c">// Generate the TapeMachineState enum</span>
         <span class="n">code</span><span class="nf">.push_str</span><span class="p">(</span>
@@ -2078,6 +2079,7 @@ update the <code class="language-plaintext highlighter-rouge">ParseTree</code> w
 
         <span class="n">code</span>
     <span class="p">}</span>
+
 <span class="p">}</span></code></pre></figure>
 
 
@@ -2813,69 +2815,73 @@ etc.</p>
 720
 721
 722
+723
+724
+725
+726
 </pre></td><td class="code"><pre><span class="k">use</span> <span class="nn">crate</span><span class="p">::</span><span class="nn">lexer</span><span class="p">::{</span><span class="n">Lexer</span><span class="p">,</span> <span class="n">Token</span><span class="p">,</span> <span class="n">TokenType</span><span class="p">};</span>
 <span class="k">use</span> <span class="k">log</span><span class="p">::{</span><span class="n">debug</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">info</span><span class="p">};</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">enum</span> <span class="n">Condition</span> <span class="p">{</span>
-    <span class="nf">OR</span><span class="p">(</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">),</span>
-    <span class="n">Star</span><span class="p">,</span>
+<span class="nf">OR</span><span class="p">(</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">),</span>
+<span class="n">Star</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">enum</span> <span class="n">TransitionStep</span> <span class="p">{</span>
-    <span class="n">R</span><span class="p">,</span>
-    <span class="n">L</span><span class="p">,</span>
-    <span class="n">X</span><span class="p">,</span>
-    <span class="nf">P</span><span class="p">(</span><span class="nb">String</span><span class="p">),</span> <span class="c">// A function call</span>
+<span class="n">R</span><span class="p">,</span>
+<span class="n">L</span><span class="p">,</span>
+<span class="n">X</span><span class="p">,</span>
+<span class="nf">P</span><span class="p">(</span><span class="nb">String</span><span class="p">),</span> <span class="c">// A function call</span>
 <span class="p">}</span>
 
 <span class="k">trait</span> <span class="n">FromTokenAndValue</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">from_token_and_value</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Token</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span><span class="p">;</span>
+<span class="k">fn</span> <span class="nf">from_token_and_value</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Token</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">FromTokenAndValue</span> <span class="k">for</span> <span class="n">TransitionStep</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">from_token_and_value</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Token</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="k">match</span> <span class="n">token</span><span class="py">.kind</span> <span class="p">{</span>
-            <span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">R</span><span class="p">,</span>
-            <span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">L</span><span class="p">,</span>
-            <span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">X</span><span class="p">,</span>
-            <span class="nn">TokenType</span><span class="p">::</span><span class="n">P</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="nf">P</span><span class="p">(</span><span class="n">value</span><span class="nf">.unwrap</span><span class="p">()),</span>
-            <span class="mi">_</span> <span class="k">=&gt;</span> <span class="nd">panic!</span><span class="p">(</span><span class="s">"Invalid token type for TransitionStep"</span><span class="p">),</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="k">fn</span> <span class="n">from</span><span class="o">*</span><span class="nf">token_and_value</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Token</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="k">match</span> <span class="n">token</span><span class="py">.kind</span> <span class="p">{</span>
+<span class="nn">TokenType</span><span class="p">::</span><span class="n">R</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">R</span><span class="p">,</span>
+<span class="nn">TokenType</span><span class="p">::</span><span class="n">L</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">L</span><span class="p">,</span>
+<span class="nn">TokenType</span><span class="p">::</span><span class="n">X</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="n">X</span><span class="p">,</span>
+<span class="nn">TokenType</span><span class="p">::</span><span class="n">P</span> <span class="k">=&gt;</span> <span class="nn">TransitionStep</span><span class="p">::</span><span class="nf">P</span><span class="p">(</span><span class="n">value</span><span class="nf">.unwrap</span><span class="p">()),</span>
+<span class="o">*</span> <span class="k">=&gt;</span> <span class="nd">panic!</span><span class="p">(</span><span class="s">"Invalid token type for TransitionStep"</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Transition</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TransitionStep</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">final_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Condition</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">TransitionStep</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">final_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Transition</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="n">Transition</span> <span class="p">{</span>
-            <span class="n">initial_state</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-            <span class="n">condition</span><span class="p">:</span> <span class="nn">Condition</span><span class="p">::</span><span class="nf">OR</span><span class="p">(</span><span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">()),</span>
-            <span class="n">steps</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-            <span class="n">final_state</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="n">Transition</span> <span class="p">{</span>
+<span class="n">initial_state</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="n">condition</span><span class="p">:</span> <span class="nn">Condition</span><span class="p">::</span><span class="nf">OR</span><span class="p">(</span><span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">()),</span>
+<span class="n">steps</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="n">final_state</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="p">}</span>
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">ParseTree</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="n">states</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">symbols</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">transitions</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Transition</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">states</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">symbols</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">transitions</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Transition</span><span class="o">&gt;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">ParseTree</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">to_rust_code</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span> <span class="p">{</span>
-        <span class="k">let</span> <span class="k">mut</span> <span class="n">code</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">to_rust_code</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span> <span class="p">{</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">code</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
 
         <span class="c">// Generate the TapeMachineState enum</span>
         <span class="n">code</span><span class="nf">.push_str</span><span class="p">(</span>
@@ -3046,21 +3052,22 @@ etc.</p>
 
         <span class="n">code</span>
     <span class="p">}</span>
+
 <span class="p">}</span>
 <span class="k">pub</span> <span class="k">trait</span> <span class="n">ToDot</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">to_dot</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span><span class="p">;</span>
+<span class="k">fn</span> <span class="nf">to_dot</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">ToDot</span> <span class="k">for</span> <span class="n">ParseTree</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">to_dot</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span> <span class="p">{</span>
-        <span class="k">let</span> <span class="k">mut</span> <span class="n">dot</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span>
-            <span class="s">"digraph {
-                rankdir=LR;
-                labelloc=</span><span class="se">\"</span><span class="s">t</span><span class="se">\"</span><span class="s">;
-                node [shape=circle, style=filled, fillcolor=lightblue, fontname=</span><span class="se">\"</span><span class="s">Arial</span><span class="se">\"</span><span class="s">];
-                edge [fontcolor=blue, fontname=</span><span class="se">\"</span><span class="s">Arial</span><span class="se">\"</span><span class="s">];
-                "</span><span class="p">,</span>
-        <span class="p">);</span>
+<span class="k">fn</span> <span class="nf">to_dot</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">String</span> <span class="p">{</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">dot</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span>
+<span class="s">"digraph {
+rankdir=LR;
+labelloc=</span><span class="se">\"</span><span class="s">t</span><span class="se">\"</span><span class="s">;
+node [shape=circle, style=filled, fillcolor=lightblue, fontname=</span><span class="se">\"</span><span class="s">Arial</span><span class="se">\"</span><span class="s">];
+edge [fontcolor=blue, fontname=</span><span class="se">\"</span><span class="s">Arial</span><span class="se">\"</span><span class="s">];
+"</span><span class="p">,</span>
+<span class="p">);</span>
 
         <span class="c">// Define states</span>
         <span class="k">for</span> <span class="n">state</span> <span class="n">in</span> <span class="o">&amp;</span><span class="k">self</span><span class="py">.states</span> <span class="p">{</span>
@@ -3110,48 +3117,50 @@ etc.</p>
             <span class="k">let</span> <span class="n">color</span> <span class="o">=</span> <span class="s">"black"</span><span class="p">;</span>
             <span class="n">dot</span><span class="nf">.push_str</span><span class="p">(</span><span class="o">&amp;</span><span class="nd">format!</span><span class="p">(</span>
                 <span class="s">"  </span><span class="se">\"</span><span class="s">{}</span><span class="se">\"</span><span class="s"> -&gt; </span><span class="se">\"</span><span class="s">{}</span><span class="se">\"</span><span class="s"> [label=</span><span class="se">\"</span><span class="s">{}</span><span class="se">\"</span><span class="s">, color={}];
+
 "</span><span class="p">,</span>
-                <span class="n">transition</span><span class="py">.initial_state</span><span class="p">,</span> <span class="n">transition</span><span class="py">.final_state</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span>
-            <span class="p">));</span>
-        <span class="p">}</span>
+<span class="n">transition</span><span class="py">.initial_state</span><span class="p">,</span> <span class="n">transition</span><span class="py">.final_state</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span>
+<span class="p">));</span>
+<span class="p">}</span>
 
         <span class="n">dot</span><span class="nf">.push_str</span><span class="p">(</span><span class="s">" } "</span><span class="p">);</span>
         <span class="n">dot</span>
     <span class="p">}</span>
+
 <span class="p">}</span>
 
 <span class="nd">#[derive(Debug,</span> <span class="nd">PartialEq,</span> <span class="nd">Clone)]</span>
 <span class="k">pub</span> <span class="k">struct</span> <span class="n">Parser</span> <span class="p">{</span>
-    <span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">,</span>
-    <span class="n">cur_token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span>
-    <span class="n">peek_token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span>
-    <span class="k">pub</span> <span class="n">tree</span><span class="p">:</span> <span class="n">ParseTree</span><span class="p">,</span>
+<span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">,</span>
+<span class="n">cur_token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span>
+<span class="n">peek_token</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span>
+<span class="k">pub</span> <span class="n">tree</span><span class="p">:</span> <span class="n">ParseTree</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">impl</span> <span class="n">Parser</span> <span class="p">{</span>
-    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="nd">info!</span><span class="p">(</span><span class="s">"Initializing Parser"</span><span class="p">);</span>
-        <span class="k">let</span> <span class="k">mut</span> <span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span> <span class="p">{</span>
-            <span class="n">lexer</span><span class="p">,</span>
-            <span class="n">cur_token</span><span class="p">:</span> <span class="n">Token</span> <span class="p">{</span>
-                <span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
-                <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="n">peek_token</span><span class="p">:</span> <span class="n">Token</span> <span class="p">{</span>
-                <span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
-                <span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="n">tree</span><span class="p">:</span> <span class="n">ParseTree</span> <span class="p">{</span>
-                <span class="n">states</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-                <span class="n">initial_state</span><span class="p">:</span> <span class="s">""</span><span class="nf">.to_string</span><span class="p">(),</span>
-                <span class="n">symbols</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-                <span class="n">transitions</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
-            <span class="p">},</span>
-        <span class="p">};</span>
-        <span class="n">parser</span><span class="nf">.next_token</span><span class="p">();</span> <span class="c">// Initialize peek_token</span>
-        <span class="n">parser</span><span class="nf">.next_token</span><span class="p">();</span> <span class="c">// Initialize cur_token</span>
-        <span class="n">parser</span>
-    <span class="p">}</span>
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">lexer</span><span class="p">:</span> <span class="n">Lexer</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<span class="nd">info!</span><span class="p">(</span><span class="s">"Initializing Parser"</span><span class="p">);</span>
+<span class="k">let</span> <span class="k">mut</span> <span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span> <span class="p">{</span>
+<span class="n">lexer</span><span class="p">,</span>
+<span class="n">cur_token</span><span class="p">:</span> <span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">peek_token</span><span class="p">:</span> <span class="n">Token</span> <span class="p">{</span>
+<span class="n">text</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">kind</span><span class="p">:</span> <span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span>
+<span class="p">},</span>
+<span class="n">tree</span><span class="p">:</span> <span class="n">ParseTree</span> <span class="p">{</span>
+<span class="n">states</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="n">initial_state</span><span class="p">:</span> <span class="s">""</span><span class="nf">.to_string</span><span class="p">(),</span>
+<span class="n">symbols</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="n">transitions</span><span class="p">:</span> <span class="nn">Vec</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+<span class="p">},</span>
+<span class="p">};</span>
+<span class="n">parser</span><span class="nf">.next_token</span><span class="p">();</span> <span class="c">// Initialize peek_token</span>
+<span class="n">parser</span><span class="nf">.next_token</span><span class="p">();</span> <span class="c">// Initialize cur_token</span>
+<span class="n">parser</span>
+<span class="p">}</span>
 
     <span class="c">// Check if the current token matches the expected token type</span>
     <span class="k">fn</span> <span class="nf">check_token</span><span class="p">(</span><span class="o">&amp;</span><span class="k">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="n">TokenType</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">bool</span> <span class="p">{</span>
@@ -3534,6 +3543,7 @@ etc.</p>
         <span class="k">self</span><span class="nf">.consume</span><span class="p">(</span><span class="nn">TokenType</span><span class="p">::</span><span class="n">EOF</span><span class="p">,</span> <span class="nn">None</span><span class="p">::</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Token</span><span class="p">)</span><span class="o">&gt;</span><span class="p">);</span>
         <span class="nd">debug!</span><span class="p">(</span><span class="s">"PROGRAM"</span><span class="p">);</span>
     <span class="p">}</span>
+
 <span class="p">}</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
@@ -3547,6 +3557,7 @@ very minimal specification. You can find the full code and instructions to run <
 
 <p>One thing still bugs me: at the end of the day, we just substituted the parsed
 values within the program. Can we actually construct the program as in:</p>
+
 <ol>
   <li>Creating a module</li>
   <li>Defining functions inside it</li>
@@ -3556,7 +3567,7 @@ values within the program. Can we actually construct the program as in:</p>
 <p>We can go a level deeper and work with LLVM IR. We won’t try to have all bells
 and whistles, but just simulate the state machine and print the result.</p>
 
-<p>That is the content of the [next post][link_here].</p>
+<p>That is the content of the <a href="link_here">next post</a> [Proposed].</p>
 
       </article>
 

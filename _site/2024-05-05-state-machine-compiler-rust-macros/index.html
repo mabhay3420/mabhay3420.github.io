@@ -282,7 +282,7 @@ We also concluded that in order to test different state machine, we
 would like a better way, as writing full code involves a lot of
 boilerplate.</p>
 
-<p><a href="link_here">Rust Macros</a> allow us to generate rust code by
+<p><a href="https://doc.rust-lang.org/book/ch19-06-macros.html">Rust Macros</a> allow us to generate rust code by
 parsing patterns and using them at appropriate places.</p>
 
 <h2 id="structure">Structure</h2>
@@ -902,7 +902,7 @@ multiple actions. e.g. <code class="language-plaintext highlighter-rouge">R, P(x
 We need to pass <code class="language-plaintext highlighter-rouge">tape_machine</code> and <code class="language-plaintext highlighter-rouge">steps</code> in the <code class="language-plaintext highlighter-rouge">transition_rules!</code> macros. Why? Because we cannot just use
 arbitrary variables in macros. Macros can use the variables that are
 defined inside the body or the ones that are explicitly passed
-to the macro. [Read more about this][link_here]</p>
+to the macro. <a href="https://veykril.github.io/tlborm/decl-macros/minutiae/hygiene.html">Read more about this</a></p>
 
 <p>Alright, now we have all the macros defined, let’s look at the final
 program:</p>
