@@ -7,26 +7,31 @@ html {
 }
 
 body {
-  font-family: 'Source Sans Pro',monospace;
+  font-family: 'Fira Code', monospace;
   font-size: 1rem;
   color: #ffffff;
   position: relative;
   background-color: #0E1A2D;
   
 }
+
 p {
-  line-height: 1.5;
-  margin: 1.875rem 0;
+  line-height: 1.6;
+  margin: 1.5rem 0;
 }
-h1,h2,h3,h4,h5,h6 {
-  font-family: 'Fira Code', monospace;
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Fira Code', sans-serif;
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.2;
 }
+
 h1 {
   font-size: 2.25rem;
   text-shadow: 0 0 3px #ff0000, 0 0 3px rgb(26, 2, 248);
 }
+
+
 h2 {
   font-size: 1.875rem;
 }
@@ -845,6 +850,7 @@ table tr td :last-child {
 /* --- Code blocks --- */
 
 code {
+  font-family: 'Fira Code', 'Courier New', monospace;
   padding: 0.125rem 0.25rem;
   color: #e8e00f;
   background-color: #535051;
