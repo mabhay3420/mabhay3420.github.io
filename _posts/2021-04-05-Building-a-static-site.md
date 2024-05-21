@@ -11,7 +11,7 @@ comments: true
 readtime: true
 ---
 
-This is my first post and a test post. 
+This is my first post and a test post.
 I will try some different things so bear with me if they get not-so-interesting.
 I will go step by step on how the whole process was completed. I am on Ubuntu 20.04.Using bash terminal.
 
@@ -21,7 +21,7 @@ I will go step by step on how the whole process was completed. I am on Ubuntu 20
 **Note:** Make sure git is installed on your system.
 
 - Clone from beautiful-jekyll : Derived From [Here](https://stackoverflow.com/questions/6613166/how-to-duplicate-a-git-repository-without-forking)
-{%highlight bash linenos %}
+{% highlight rust linenos %}
 $ mkdir foo; cd foo
 #move to a scratch dir
 
@@ -47,7 +47,7 @@ $ git clone git@github.com:exampleuser/exampleuser.github.io.git
 {: .box-warning}
 **Warning:** The commands presented here have been tested on Ubuntu 20.04 and were run on bash terminal. In case your system is very different (Ubuntu older versions should work fine) and you are not familiar with commands please refer to the source given above.
 
-{%highlight bash linenos %}
+{% highlight rust linenos %}
 $ sudo apt-get install ruby-full build-essential zlib1g-dev
 #install ruby and other required packages
 
@@ -66,7 +66,7 @@ $ gem install jekyll bundler
 
 - Build the site : The page will be automatically update whenever you change some file except configuration files. In the later case you need to repeat only last step again.
 
-{%highlight bash linenos %}
+{% highlight rust linenos %}
 $ cd exampleuser.github.io
 #move to the source folder(depends on where you cloned the repo)
 

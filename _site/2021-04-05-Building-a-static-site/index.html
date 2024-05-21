@@ -267,7 +267,7 @@
       
 
       <article role="main" class="blog-post">
-        <p>This is my first post and a test post. 
+        <p>This is my first post and a test post.
 I will try some different things so bear with me if they get not-so-interesting.
 I will go step by step on how the whole process was completed. I am on Ubuntu 20.04.Using bash terminal.</p>
 
@@ -279,7 +279,7 @@ I will go step by step on how the whole process was completed. I am on Ubuntu 20
   <li>Clone from beautiful-jekyll : Derived From <a href="https://stackoverflow.com/questions/6613166/how-to-duplicate-a-git-repository-without-forking">Here</a></li>
 </ul>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -295,22 +295,22 @@ I will go step by step on how the whole process was completed. I am on Ubuntu 20
 14
 15
 16
-</pre></td><td class="code"><pre><span class="nv">$ </span><span class="nb">mkdir </span>foo<span class="p">;</span> <span class="nb">cd </span>foo
-<span class="c">#move to a scratch dir</span>
+</pre></td><td class="code"><pre><span class="err">$</span> <span class="n">mkdir</span> <span class="n">foo</span><span class="p">;</span> <span class="n">cd</span> <span class="n">foo</span>
+<span class="err">#</span><span class="k">move</span> <span class="n">to</span> <span class="n">a</span> <span class="n">scratch</span> <span class="n">dir</span>
 
-<span class="nv">$ </span>git clone <span class="nt">--bare</span> git@github.com:daattali/beautiful-jekyll.git
-<span class="c">#make a bare clone of this amazing template</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">clone</span> <span class="o">--</span><span class="n">bare</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="py">.com</span><span class="p">:</span><span class="n">daattali</span><span class="o">/</span><span class="n">beautiful</span><span class="o">-</span><span class="n">jekyll</span><span class="py">.git</span>
+<span class="err">#</span><span class="n">make</span> <span class="n">a</span> <span class="n">bare</span> <span class="n">clone</span> <span class="n">of</span> <span class="n">this</span> <span class="n">amazing</span> <span class="n">template</span>
 
-<span class="nv">$ </span><span class="nb">cd </span>beautiful-jekyll
-<span class="nv">$ </span>git push <span class="nt">--mirror</span> git@github.com:exampleuser/exampleuser.github.io.git
-<span class="c">#push to the github page source</span>
+<span class="err">$</span> <span class="n">cd</span> <span class="n">beautiful</span><span class="o">-</span><span class="n">jekyll</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">push</span> <span class="o">--</span><span class="n">mirror</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="py">.com</span><span class="p">:</span><span class="n">exampleuser</span><span class="o">/</span><span class="n">exampleuser</span><span class="py">.github.io.git</span>
+<span class="err">#</span><span class="n">push</span> <span class="n">to</span> <span class="n">the</span> <span class="n">github</span> <span class="n">page</span> <span class="n">source</span>
 
-<span class="nv">$ </span><span class="nb">cd</span> ../
-<span class="nv">$ </span><span class="nb">rm</span> <span class="nt">-rf</span> beautiful-jekyll
-<span class="c">#remove temporary directory</span>
+<span class="err">$</span> <span class="n">cd</span> <span class="o">../</span>
+<span class="err">$</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="n">beautiful</span><span class="o">-</span><span class="n">jekyll</span>
+<span class="err">#</span><span class="n">remove</span> <span class="n">temporary</span> <span class="n">directory</span>
 
-<span class="nv">$ </span>git clone git@github.com:exampleuser/exampleuser.github.io.git
-<span class="c">#Assuming Github Page setup already done</span>
+<span class="err">$</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="py">.com</span><span class="p">:</span><span class="n">exampleuser</span><span class="o">/</span><span class="n">exampleuser</span><span class="py">.github.io.git</span>
+<span class="err">#</span><span class="n">Assuming</span> <span class="n">Github</span> <span class="n">Page</span> <span class="n">setup</span> <span class="n">already</span> <span class="n">done</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <ul>
@@ -324,7 +324,7 @@ I will go step by step on how the whole process was completed. I am on Ubuntu 20
 
 <p class="box-warning"><strong>Warning:</strong> The commands presented here have been tested on Ubuntu 20.04 and were run on bash terminal. In case your system is very different (Ubuntu older versions should work fine) and you are not familiar with commands please refer to the source given above.</p>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -335,17 +335,17 @@ I will go step by step on how the whole process was completed. I am on Ubuntu 20
 9
 10
 11
-</pre></td><td class="code"><pre><span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install </span>ruby-full build-essential zlib1g-dev
-<span class="c">#install ruby and other required packages</span>
+</pre></td><td class="code"><pre><span class="err">$</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">ruby</span><span class="o">-</span><span class="n">full</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">zlib1g</span><span class="o">-</span><span class="n">dev</span>
+<span class="err">#</span><span class="n">install</span> <span class="n">ruby</span> <span class="n">and</span> <span class="n">other</span> <span class="n">required</span> <span class="n">packages</span>
 
-<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'# Install Ruby Gems to ~/gems'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
-<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'export GEM_HOME="$HOME/gems"'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
-<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'export PATH="$HOME/gems/bin:$PATH"'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
-<span class="nv">$ </span><span class="nb">source</span> ~/.bashrc
-<span class="c">#These steps setup the gem(RubyGems Packages) installation directory in your home directory and update the PATH variable.</span>
+<span class="err">$</span> <span class="n">echo</span> <span class="err">'#</span> <span class="n">Install</span> <span class="n">Ruby</span> <span class="n">Gems</span> <span class="n">to</span> <span class="o">~/</span><span class="n">gems</span><span class="err">'</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="py">.bashrc</span>
+<span class="err">$</span> <span class="n">echo</span> <span class="nv">'export</span> <span class="n">GEM_HOME</span><span class="o">=</span><span class="s">"$HOME/gems"</span><span class="err">'</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="py">.bashrc</span>
+<span class="err">$</span> <span class="n">echo</span> <span class="nv">'export</span> <span class="n">PATH</span><span class="o">=</span><span class="s">"$HOME/gems/bin:$PATH"</span><span class="err">'</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="py">.bashrc</span>
+<span class="err">$</span> <span class="n">source</span> <span class="o">~/</span><span class="py">.bashrc</span>
+<span class="err">#</span><span class="n">These</span> <span class="n">steps</span> <span class="n">setup</span> <span class="n">the</span> <span class="nf">gem</span><span class="p">(</span><span class="n">RubyGems</span> <span class="n">Packages</span><span class="p">)</span> <span class="n">installation</span> <span class="n">directory</span> <span class="n">in</span> <span class="n">your</span> <span class="n">home</span> <span class="n">directory</span> <span class="n">and</span> <span class="n">update</span> <span class="n">the</span> <span class="n">PATH</span> <span class="n">variable</span><span class="err">.</span>
 
-<span class="nv">$ </span>gem <span class="nb">install </span>jekyll bundler
-<span class="c">#install jekyll and bundler : will take some time</span>
+<span class="err">$</span> <span class="n">gem</span> <span class="n">install</span> <span class="n">jekyll</span> <span class="n">bundler</span>
+<span class="err">#</span><span class="n">install</span> <span class="n">jekyll</span> <span class="n">and</span> <span class="n">bundler</span> <span class="p">:</span> <span class="n">will</span> <span class="n">take</span> <span class="n">some</span> <span class="n">time</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <p class="box-error"><strong>Error:</strong> In case you get any error try updating your system using “sudo apt-get update” and then repeat the same steps. Otherwise StackOverflow is your friend.</p>
@@ -354,7 +354,7 @@ I will go step by step on how the whole process was completed. I am on Ubuntu 20
   <li>Build the site : The page will be automatically update whenever you change some file except configuration files. In the later case you need to repeat only last step again.</li>
 </ul>
 
-<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+<figure class="highlight"><pre><code class="language-rust" data-lang="rust"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
 2
 3
 4
@@ -363,15 +363,15 @@ I will go step by step on how the whole process was completed. I am on Ubuntu 20
 7
 8
 9
-</pre></td><td class="code"><pre><span class="nv">$ </span><span class="nb">cd </span>exampleuser.github.io
-<span class="c">#move to the source folder(depends on where you cloned the repo)</span>
+</pre></td><td class="code"><pre><span class="err">$</span> <span class="n">cd</span> <span class="n">exampleuser</span><span class="py">.github.io</span>
+<span class="err">#</span><span class="k">move</span> <span class="n">to</span> <span class="n">the</span> <span class="n">source</span> <span class="nf">folder</span><span class="p">(</span><span class="n">depends</span> <span class="n">on</span> <span class="k">where</span> <span class="n">you</span> <span class="n">cloned</span> <span class="n">the</span> <span class="n">repo</span><span class="p">)</span>
 
-<span class="nv">$ </span>bundle <span class="nb">install</span>
-<span class="c">#setup gem files</span>
+<span class="err">$</span> <span class="n">bundle</span> <span class="n">install</span>
+<span class="err">#</span><span class="n">setup</span> <span class="n">gem</span> <span class="n">files</span>
 
-<span class="nv">$ </span>bundle <span class="nb">exec </span>jekyll serve
-<span class="c">#Ctrl+click on the local host server : You are all set</span>
-<span class="c">#Run this command if you changed some configration file</span>
+<span class="err">$</span> <span class="n">bundle</span> <span class="n">exec</span> <span class="n">jekyll</span> <span class="n">serve</span>
+<span class="err">#</span><span class="n">Ctrl</span><span class="o">+</span><span class="n">click</span> <span class="n">on</span> <span class="n">the</span> <span class="n">local</span> <span class="n">host</span> <span class="n">server</span> <span class="p">:</span> <span class="n">You</span> <span class="n">are</span> <span class="n">all</span> <span class="n">set</span>
+<span class="err">#</span><span class="n">Run</span> <span class="n">this</span> <span class="n">command</span> <span class="k">if</span> <span class="n">you</span> <span class="n">changed</span> <span class="n">some</span> <span class="n">configration</span> <span class="n">file</span>
 </pre></td></tr></tbody></table></code></pre></figure>
 
 <ul>
