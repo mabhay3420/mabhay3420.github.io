@@ -10,6 +10,29 @@
     
     
       <item>
+        <title>State Machine Compiler - Going lower down the stack</title>
+        <description>
+          Translating to LLVM IR - 
+          We will be translating the state machine language to LLVM IR.
+
+
+  Setup
+    
+      Install LLVM ( v18 to work with rust bindings)
+      Install inkwell
+      Make modifications to the build command to make sure it can find the required libraries. See: https://github.com/TheDan64/inkwell/issues/345#issuecomment-2278650151
+    
+  
+  Write basic llvm compiler trait
+
+
+        </description>
+        <pubDate>Fri, 09 Aug 2024 00:00:00 +0530</pubDate>
+        <link>http://localhost:4000/2024-08-09-state-machine-compiler-llvm-ir/</link>
+        <guid isPermaLink="true">http://localhost:4000/2024-08-09-state-machine-compiler-llvm-ir/</guid>
+      </item>
+    
+      <item>
         <title>State Machine Compiler - A Small Language</title>
         <description>
           Generating Rust code from minimal specification - 
